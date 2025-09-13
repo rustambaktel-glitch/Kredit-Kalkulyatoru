@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Kredit Kalkulyatoru</title>
+  <title>BAKFON Kredit Kalkulyatoru</title>
   <style>
     :root{ 
-      --bg:#f7f9fc; --text:#0f172a; --card:#ffffff; --border:#e7eaf0; --muted:#51607a; --primary:#2563eb;
+      --bg:#f7f9fc; --text:#0f172a; --card:#ffffff; --border:#e7eaf0; --muted:#51607a; --primary:#dc2626;
       --pill-bg:#eef2ff; --pill-border:#c7d2fe; --input-bg:#ffffff; --input-border:#cfd5e1; --shadow:0 6px 18px rgba(2,6,23,.06);
       --radius:14px; --warn-bg:#fff1f2; --warn-border:#fecaca; --warn-text:#991b1b;
       --ok-bg:#f0fdf4; --ok-border:#bbf7d0; --ok-text:#14532d;
@@ -14,8 +14,8 @@
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;font-size:16px;line-height:1.55}
     .wrap{max-width:1200px;margin:0 auto;padding:24px}
-    header{display:flex;align-items:center;justify-content:space-between;margin:0 0 16px 0}
-    header h1{margin:0;font-size:28px;font-weight:700;letter-spacing:.2px;color:#111827}
+    header{text-align:center;margin:0 0 16px 0}
+    header h1{margin:0;font-size:32px;font-weight:800;letter-spacing:.2px;color:var(--primary)}
     h2{font-size:22px;font-weight:700;color:#111827;margin:6px 0 0}
     h3{font-size:18px;font-weight:700;color:#111827;margin:0 0 8px}
     .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
@@ -28,7 +28,8 @@
     label{font-size:13px;color:#334155;font-weight:600}
     input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text)}
     .btn{border:1px solid #cbd5e1;background:#f1f5f9;color:#0f172a;padding:11px 16px;border-radius:12px;cursor:pointer;transition:.15s ease;box-shadow:var(--shadow);font-weight:600}
-    .btn.primary{background:linear-gradient(180deg,#3b82f6,#2563eb);border-color:#1d4ed8;color:#fff}
+    .btn.success{background:linear-gradient(180deg,#22c55e,#16a34a);border-color:#15803d;color:#fff}
+    .btn.danger{background:linear-gradient(180deg,#ef4444,#dc2626);border-color:#b91c1c;color:#fff}
     .btn.ghost{background:#fff}
     .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--pill-border);padding:6px 10px;border-radius:999px;background:var(--pill-bg);color:#3730a3;font-size:12px}
     .pill.risk-low{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
@@ -53,23 +54,11 @@
 <body>
   <div class="wrap">
     <header>
-      <h1>Kredit Kalkulyatoru</h1>
+      <h1>BAKFON Kredit Kalkulyatoru</h1>
     </header>
-
-    <div class="card">
-      <div class="muted">Formul: (Məhsul dəyəri − Avtomatik İlkin ödəniş) ÷ Müddət. İlkin ödəniş <strong>risk</strong>, <strong>əmək haqqı</strong> və <strong>digər öhdəliklər</strong> əsasında tənzimlənir. DTI (öhdəlik/gəlir) və DSR (aylıq/net) qaydaları tətbiq olunur.</div>
-    </div>
 
     <section id="calc" class="card">
       <div class="row">
-        <div class="col-4">
-          <label>Müştəri adı</label>
-          <input id="custName" type="text" placeholder="Ad Soyad" />
-        </div>
-        <div class="col-4">
-          <label>Əlaqə nömrəsi</label>
-          <input id="custPhone" type="tel" placeholder="050 xxx xx xx" />
-        </div>
         <div class="col-4">
           <label>Məhsul dəyəri (AZN)</label>
           <input id="price" type="number" min="0" step="0.01" value="1000" />
@@ -102,9 +91,8 @@
           <input id="oblig" type="number" min="0" step="1" value="0" />
         </div>
         <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-          <button class="btn primary" onclick="calc()">Hesabla</button>
-          <button class="btn" onclick="resetForm()">Sıfırla</button>
-          <button class="btn ghost" onclick="exportCSV()">Excel (CSV)</button>
+          <button class="btn success" onclick="calc()">Hesabla</button>
+          <button class="btn danger" onclick="resetForm()">Sıfırla</button>
           <button class="btn ghost" onclick="exportPrint()">PDF (Çap)</button>
         </div>
       </div>
@@ -119,62 +107,39 @@
     </div>
 
     <section class="card"><canvas id="chart" height="180"></canvas></section>
-
-    <section class="card">
-      <h3>Daxili testlər</h3>
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 8px">
-        <button class="btn" onclick="runTests()">Testləri işə sal</button>
-        <span id="testSummary" class="muted"></span>
-      </div>
-      <div id="testResults" class="muted"></div>
-    </section>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script>
-    // Utils
+    // ===== Utils
     const fmtAZN = n=> (new Intl.NumberFormat('az-AZ',{style:'currency',currency:'AZN',maximumFractionDigits:2})).format(n||0);
     const toNum = id=> Number((document.getElementById(id)?.value) ?? 0);
 
-    // Risk siyasəti (baza faizləri) və limitlər
+    // ===== Policy & limits
     const POLICY_RISK_ONLY = { low: 0.20, med: 0.30, high: 0.50 };
     const MIN_DOWN_AZN = 50;
-    const MAX_OBLIG_SHARE = 0.50; // DTI həddi: öhdəlik/gəlir > 50% → kredit ayrılmır
-    const MAX_DSR = 0.40; // Aylıq ödəniş net gəlirin 40%-ni aşmamalıdır
+    const MAX_OBLIG_SHARE = 0.50; // DTI həddi (öhdəlik/gəlir)
+    const MAX_DSR = 0.40;         // Aylıq/net gəlir limiti
 
-    // İlkin ödəniş: risk + ödəmə qabiliyyəti
+    // İlkin ödəniş hesabı: risk + ödəmə qabiliyyəti
     function getDownPayment(price, riskKey, salary=0, oblig=0){
       const base = POLICY_RISK_ONLY[riskKey] ?? POLICY_RISK_ONLY.med;
       salary = Number(salary)||0; oblig = Number(oblig)||0;
       const net = Math.max(0, salary - oblig);
-      const ratio = salary>0 ? net / salary : 0; // 0..1
+      const ratio = salary>0 ? net / salary : 0;
       let mod = 0;
       if(ratio >= 0.70) mod = -0.10; else if(ratio >= 0.50) mod = -0.05; else if(ratio >= 0.35) mod = 0.00; else if(ratio >= 0.20) mod = +0.10; else mod = +0.20;
       if(riskKey==='high') mod *= 0.7;
       const pct = Math.min(0.85, Math.max(0.10, base + mod));
       let down = price * pct;
-      if(down < MIN_DOWN_AZN) down = MIN_DOWN_AZN; if(down > price) down = price;
+      if(down < MIN_DOWN_AZN) down = MIN_DOWN_AZN;
+      if(down > price) down = price;
       return { down, pct, base, ratio, net };
     }
 
-    // Excel (CSV)
-    function tableToCSV(table){
-      const rows=[...table.querySelectorAll('tr')].map(tr=>[...tr.children].map(td=>('"'+td.innerText.replace(/"/g,'""')+'"')));
-      return rows.map(r=>r.join(',')).join('\n');
-    }
-    function exportCSV(){
-      const table=document.querySelector('#scheduleWrap table');
-      if(!table){ alert('Öncə hesablayın.'); return; }
-      const name=(document.getElementById('custName')?.value||'')||'Musteri';
-      const csv=tableToCSV(table);
-      const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`odenis_cedveli_${name}.csv`; a.click();
-    }
-
-    // PDF (Çap)
+    // Print/PDF export
     function exportPrint(){
       const w=window.open('','_blank');
-      const name=document.getElementById('custName')?.value||'';
-      const phone=document.getElementById('custPhone')?.value||'';
       const summary=document.getElementById('summary').innerHTML;
       const sched=document.getElementById('scheduleWrap').innerHTML;
       w.document.write(`<!doctype html><html><head><meta charset='utf-8'><title>Kredit Çap</title>
@@ -185,14 +150,13 @@
         </style></head><body>
         <h1>Kredit hesablaması</h1>
         <div class='muted'>${new Date().toLocaleString('az-AZ')}</div>
-        <div class='block'><strong>Müştəri:</strong> ${name||'-'} &nbsp; <strong>Telefon:</strong> ${phone||'-'}</div>
         <div class='block'>${summary}</div>
         <div class='block'>${sched}</div>
       </body></html>`);
       w.document.close(); w.focus(); w.print();
     }
 
-    let chart;
+    let chart=null;
     function calc(){
       const price=toNum('price');
       const months=toNum('months');
@@ -201,7 +165,7 @@
       const oblig=toNum('oblig');
       if(months<=0){ alert('Müddət ən az 1 ay olmalıdır.'); return; }
 
-      // DTI yoxlaması (öhdəlik/gəlir)
+      // DTI yoxlaması
       const dti = (salary>0)? (oblig/salary) : (oblig>0? Infinity : 0);
       if(dti > MAX_OBLIG_SHARE){
         const pctStr = Math.round(MAX_OBLIG_SHARE*100);
@@ -215,19 +179,19 @@
         return;
       }
 
-      // İlkin hesablamalar (baza qayda ilə)
+      // İlkin hesablamalar
       const baseRes = getDownPayment(price, risk, salary, oblig);
       let down = baseRes.down; let pct = baseRes.pct; const base = baseRes.base; const ratio = baseRes.ratio; const net = baseRes.net;
       let principal = Math.max(0, price - down);
       let monthly = months>0 ? principal / months : 0;
 
-      // DSR həddi (aylıq/net ≤ MAX_DSR): lazım gələrsə ilkin ödənişi avtomatik artır
+      // DSR həddi — lazım gələrsə ilkin ödənişi avtomatik artır
       const maxMonthly = Math.max(0, net * MAX_DSR);
       const needsAdj = monthly > maxMonthly + 1e-9;
       let autoAdj = false, prevDown = down, prevMonthly = monthly;
       if(needsAdj){
         const requiredPrincipal = Math.max(0, maxMonthly * months);
-        const newDownRaw = price - requiredPrincipal; // tələb olunan minimum ilkin ödəniş
+        const newDownRaw = price - requiredPrincipal;
         down = Math.min(price, Math.max(MIN_DOWN_AZN, Math.max(prevDown, newDownRaw)));
         pct = price>0 ? (down/price) : 0;
         principal = Math.max(0, price - down);
@@ -235,7 +199,7 @@
         autoAdj = true;
       }
 
-      // Ödəniş cədvəli
+      // Cədvəl
       let bal = principal; const rows=[]; const sd=new Date();
       for(let i=1;i<=months;i++){ bal=Math.max(0,bal-monthly); const d=new Date(sd); d.setMonth(d.getMonth()+i); rows.push({i,date:d.toISOString().slice(0,10),monthly,bal}); }
 
@@ -263,7 +227,7 @@
           </div>
         </div>`;
 
-      // Cədvəl
+      // Cədvəli göstər
       document.getElementById('scheduleWrap').innerHTML=
         `<table><thead><tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr></thead><tbody>`+
         rows.map(r=>`<tr><td>${r.i}</td><td>${r.date}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join('')+
@@ -281,42 +245,12 @@
       document.getElementById('risk').value='med';
       document.getElementById('salary').value=0;
       document.getElementById('oblig').value=0;
-      document.getElementById('custName').value='';
-      document.getElementById('custPhone').value='';
       document.getElementById('summary').innerHTML="";
       document.getElementById('scheduleWrap').innerHTML="";
       if(chart){ chart.destroy(); chart=null; }
     }
 
-    function runTests(){
-      const out=[]; const pass=n=>out.push(`<div style="color:#16a34a">✓ ${n}</div>`); const fail=(n,e)=>out.push(`<div style=\"color:#dc2626\">✗ ${n} — ${e}</div>`);
-      const approx=(a,b,eps=1e-6)=>Math.abs(a-b)<=eps;
-      try{ const r1=getDownPayment(1000,'med',1000,100); approx(r1.pct,0.20)? pass('Ödəmə qabiliyyəti yüksək → faiz azalır (med)'): fail('Faiz azalma','pct='+r1.pct); }catch(e){ fail('Test#1 istisna',e.message); }
-      try{ const r2=getDownPayment(1000,'med',1000,900); approx(r2.pct,0.50)? pass('Ödəmə qabiliyyəti aşağı → faiz artır (med)'): fail('Faiz artım','pct='+r2.pct); }catch(e){ fail('Test#2 istisna',e.message); }
-      try{ const r3=getDownPayment(1000,'high',1000,0); approx(r3.pct,0.43)? pass('Yüksək riskdə mod təsiri azalır'): fail('Yüksək risk mod','pct='+r3.pct); }catch(e){ fail('Test#3 istisna',e.message); }
-      try{ resetForm(); const v0 = toNum('price')===0 && toNum('salary')===0 && toNum('oblig')===0 && Number(document.getElementById('months').value)===3; v0? pass('Sıfırla dəyərləri düzgün qaytarır'): fail('Sıfırla','dəyərlər uyğunsuz'); }catch(e){ fail('Test#4 istisna',e.message); }
-      try{ // DTI blok
-        document.getElementById('price').value=1000; document.getElementById('months').value=6; document.getElementById('risk').value='med'; document.getElementById('salary').value=1000; document.getElementById('oblig').value=600; calc(); const warn = document.getElementById('summary').innerText.includes('kredit ayrılmır'); warn? pass('DTI həddi aşılırsa kredit verilmir (xəbərdarlıq)') : fail('DTI blok','xəbərdarlıq yoxdur');
-      }catch(e){ fail('Test#5 istisna',e.message); }
-      try{ // Auto-adjust ssenarisi: net=800, MAX_DSR=0.4 → maxMonthly=320; price=5000, months=6 → baza aylıq > 320 olacaq
-        document.getElementById('salary').value=1000; document.getElementById('oblig').value=200; document.getElementById('price').value=5000; document.getElementById('months').value=6; document.getElementById('risk').value='med';
-        calc();
-        const txt=document.getElementById('summary').innerText;
-        const hasAdj = txt.includes('avtomatik artırılıb') && txt.includes('Maks. aylıq');
-        hasAdj? pass('DSR həddini aşdıqda ilkin ödəniş avtomatik artırılır') : fail('Auto-adjust','göstərici yoxdur');
-      }catch(e){ fail('Test#6 istisna',e.message); }
-      try{ // Auto-adjust olmamalıdır (artıq uyğun)
-        document.getElementById('salary').value=1500; document.getElementById('oblig').value=100; document.getElementById('price').value=1200; document.getElementById('months').value=12; document.getElementById('risk').value='low';
-        calc();
-        const txt=document.getElementById('summary').innerText;
-        const noAdj = !txt.includes('avtomatik artırılıb');
-        noAdj? pass('Uyğun ssenaridə auto-adjust işləmir') : fail('Auto-adjust olmamalıdır','yenə işə düşüb');
-      }catch(e){ fail('Test#7 istisna',e.message); }
-      document.getElementById('testResults').innerHTML=out.join('');
-      const ok = out.every(x=>x.includes('✓'));
-      document.getElementById('testSummary').textContent = ok? 'Bütün testlər keçdi.' : 'Bəzi testlər uğursuz oldu.';
-    }
-
+    // İlk açılışda auto-hesabla
     window.addEventListener('load',()=>calc());
   </script>
 </body>
