@@ -68,7 +68,14 @@
         </div>
         <div class="col-3">
           <label>Müddət (ay)</label>
-          <input id="months" type="number" min="1" step="1" value="12" />
+          <select id="months">
+            <option value="3">3</option>
+            <option value="6">6</option>
+            <option value="9">9</option>
+            <option value="12" selected>12</option>
+            <option value="15">15</option>
+            <option value="18">18</option>
+          </select>
         </div>
         <div class="col-3">
           <label>Risk qrupu</label>
@@ -117,9 +124,9 @@
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script>
-    // UTILITIES
+    // UTILITIES (hardened getters)
     const fmtAZN = n=> (new Intl.NumberFormat('az-AZ',{style:'currency',currency:'AZN',maximumFractionDigits:2})).format(n||0);
-    const toNum = id=> Number(document.getElementById(id).value||0);
+    const toNum = id=> Number((document.getElementById(id)?.value) ?? 0);
     function setMode(val){ const el=document.getElementById('mode'); if(el) el.value = val; }
 
     // POLICY
@@ -152,7 +159,7 @@
     function calc(){
       const price=toNum('price');
       const months=toNum('months');
-      const risk=document.getElementById('risk').value;
+      const risk=(document.getElementById('risk')||{value:'med'}).value;
       const salary=toNum('salary');
       if(months<=0){ alert('Müddət ən az 1 ay olmalıdır.'); return; }
 
@@ -219,6 +226,13 @@
       const fail = (name,exp,act)=>results.push(`<div class="test-fail">✗ ${name} — gözlənilən: ${exp}, alındı: ${act}</div>`);
       const approxEqual=(a,b,eps=1e-6)=> Math.abs(a-b)<=eps;
 
+      // 0) DOM id-ləri mövcuddur
+      try{
+        const ids=['price','months','risk','salary','mode','summary','scheduleWrap','chart'];
+        const miss = ids.filter(id=> !document.getElementById(id));
+        miss.length===0 ? pass('Bütün əsas DOM id-ləri mövcuddur') : fail('DOM id-ləri', 'hamısı', 'çatışmır: '+miss.join(','));
+      }catch(e){ fail('DOM id yoxlaması','exception yoxdur',e.message); }
+
       // 1) riskOnly A/B/C
       try{
         setMode('riskOnly');
@@ -227,14 +241,14 @@
         r = getDownPayment(400,'high',300);     approxEqual(r.pct,0.50)? pass('riskOnly C 50%'): fail('riskOnly C pct','0.50',r.pct);
       }catch(e){ fail('riskOnly testləri','exception yoxdur',e.message); }
 
-        // 2) risk+salary bandı
+      // 2) risk+salary bandı
       try{
         setMode('riskSalary');
         const r = getDownPayment(1000,'med',600); // 500–799 → 30%
         approxEqual(r.pct,0.30)? pass('risk+salary B (500–799) 30%'): fail('risk+salary B pct','0.30',r.pct);
       }catch(e){ fail('risk+salary testləri','exception yoxdur',e.message); }
 
-      // 3) Monthly calc nümunəsi
+      // 3) Monthly calc nümunəsi (12 ay)
       try{
         setMode('riskOnly');
         const price=1000, months=10; const {down}=getDownPayment(price,'low',2000); const monthly=(price-down)/months;
@@ -255,6 +269,22 @@
         const r = getDownPayment(40,'high',0);
         approxEqual(r.down,40)? pass('Down clamp to price (40)'): fail('Down clamp','40',r.down);
       }catch(e){ fail('Clamp test','exception yoxdur',e.message); }
+
+      // 6) Müddət dropdown-u işləyir (9 ay)
+      try{
+        const sel = document.getElementById('months');
+        sel.value='9';
+        const mVal = toNum('months');
+        approxEqual(mVal,9) ? pass('Müddət select → 9 oxunur') : fail('Müddət select dəyəri','9',mVal);
+        // Əlavə: hesablamada effekti
+        setMode('riskOnly');
+        document.getElementById('price').value=1000;
+        document.getElementById('risk').value='low';
+        document.getElementById('salary').value=1500;
+        calc();
+        const txt = document.getElementById('summary').innerText;
+        (txt.includes('Aylıq') && txt.match(/\d+/)) ? pass('calc() 9 ay üçün işləyir') : fail('calc 9 ay', 'summary doludur', txt);
+      }catch(e){ fail('Müddət dropdown testi','exception yoxdur',e.message); }
 
       document.getElementById('testResults').innerHTML = results.join('');
       const ok = results.filter(r=>r.includes('test-fail')).length===0;
