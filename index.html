@@ -68,7 +68,6 @@
       <section id="calc" class="card">
         <div id="calcAlert" class="notice warn" style="display:none"></div>
         <div class="row">
-          <!-- Müştəri və məhsul xanası ilkin mərhələdə gizlədildi (sonradan rəsmiləşdirmədə açılacaq) -->
           <div class="col-4">
             <label>Məhsul dəyəri (AZN)</label>
             <input id="price" type="number" min="0" step="0.01" value="1000" />
@@ -144,6 +143,30 @@
                   <label>Məhsul adı/model</label>
                   <input id="prodName" type="text" placeholder="Telefon / Noutbuk ..." />
                 </div>
+                <div class="col-4">
+                  <label>Ş/V seriya və nömrəsi</label>
+                  <input id="idSerial" type="text" placeholder="AA3730079" />
+                </div>
+                <div class="col-4">
+                  <label>FIN kodu</label>
+                  <input id="finCode" type="text" placeholder="XXXXXXX" />
+                </div>
+                <div class="col-4">
+                  <label>Doğum tarixi</label>
+                  <input id="birthDate" type="date" />
+                </div>
+                <div class="col-12">
+                  <label>Ünvan</label>
+                  <input id="address" type="text" placeholder="Bakı şəhəri, ..." />
+                </div>
+                <div class="col-4">
+                  <label>IMEI 1</label>
+                  <input id="imei1" type="text" placeholder="XXXXXXXXXXXXXXX" />
+                </div>
+                <div class="col-4">
+                  <label>IMEI 2</label>
+                  <input id="imei2" type="text" placeholder="XXXXXXXXXXXXXXX" />
+                </div>
                 <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px">
                   <button class="btn success" onclick="finalizeAndPrint()">Təsdiqlə və Çap et</button>
                   <button class="btn" onclick="toggleFinalize(false)">Bağla</button>
@@ -166,10 +189,8 @@
     </main>
   </div>
 
-  <!-- Chart.js yalnız kitabxanadır, öz kodumuz ayrıca script-dədir -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   
-  <!-- Tətbiq skripti (BÜTÜN öz funksiyalarımız buradadır) -->
   <script>
     // ===== Utils
     const fmtAZN = n=> (new Intl.NumberFormat('az-AZ',{style:'currency',currency:'AZN',maximumFractionDigits:2})).format(n||0);
@@ -181,7 +202,6 @@
     const MAX_OBLIG_SHARE = 0.50; // xəbərdarlıq
     const MAX_DSR = 0.40;         // sərt limit
 
-    // Hesablamada istifadə olunan köməkçi
     function getDownPayment(price, riskKey, salary=0, oblig=0){
       const base = POLICY_RISK_ONLY[riskKey] ?? POLICY_RISK_ONLY.med;
       salary = Number(salary)||0; oblig = Number(oblig)||0;
@@ -197,7 +217,6 @@
       return { down, pct, base, ratio, net };
     }
 
-    // Çap (hesab xülasəsi + cədvəl)
     function exportPrint(){
       const w=window.open('','_blank');
       const summary=document.getElementById('summary').innerHTML;
@@ -216,7 +235,6 @@
       w.document.close(); w.focus(); w.print();
     }
 
-    // Əlavə gəlir UI
     function toggleExtraIncome(){
       const chk=document.getElementById('addIncomeChk');
       const typeWrap=document.getElementById('addIncomeTypeWrap');
@@ -241,7 +259,6 @@
 
     let chart=null;
 
-    // Əsas hesabla
     function calc(){
       ['risk','salary','oblig','addIncomeType','addIncomeAmt'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
       const riskEl=document.getElementById('risk');
@@ -348,7 +365,7 @@
     }
 
     function resetForm(){
-      ['price','months','risk','salary','oblig','addIncomeType','addIncomeAmt','custName','custPhone','prodName'].forEach(id=>{
+      ['price','months','risk','salary','oblig','addIncomeType','addIncomeAmt','custName','custPhone','prodName','idSerial','finCode','address','birthDate','imei1','imei2'].forEach(id=>{
         const el=document.getElementById(id); if(!el) return;
         if(id==='months') el.value=3; else if(id==='risk' || id==='addIncomeType') el.value=''; else el.value='';
         el.classList.remove('invalid');
@@ -368,9 +385,9 @@
       document.getElementById('summary').innerHTML="";
       document.getElementById('scheduleWrap').innerHTML="";
       if(chart){ chart.destroy(); chart=null; }
+      toggleFinalize(false);
     }
 
-    // === Rəsmiləşdirmə UI ===
     function toggleFinalize(force){
       const box=document.getElementById('finalizeWrap');
       if(!box) return;
@@ -380,7 +397,6 @@
     }
 
     function computeForDocs(){
-      // Kalkulyator dəyərlərini hesablamaq üçün (render etmədən)
       const risk=document.getElementById('risk').value;
       const salaryStr=document.getElementById('salary').value;
       const obligStr=document.getElementById('oblig').value;
@@ -425,44 +441,54 @@
     }
 
     function finalizeAndPrint(){
-      // 1) Müştəri & satış məlumat validasiyası
       const custName=(document.getElementById('custName')?.value||'').trim();
       const custPhone=(document.getElementById('custPhone')?.value||'').trim();
       const prodName=(document.getElementById('prodName')?.value||'').trim();
-      ['custName','custPhone','prodName'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
+      const idSerial=(document.getElementById('idSerial')?.value||'').trim();
+      const finCode=(document.getElementById('finCode')?.value||'').trim();
+      const address=(document.getElementById('address')?.value||'').trim();
+      const birthDate=(document.getElementById('birthDate')?.value||'').trim();
+      const imei1=(document.getElementById('imei1')?.value||'').trim();
+      const imei2=(document.getElementById('imei2')?.value||'').trim();
+
+      ['custName','custPhone','prodName','idSerial','finCode','address','birthDate'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
       const errs=[]; if(!custName) {document.getElementById('custName').classList.add('invalid'); errs.push('Müştəri adı');}
       if(!custPhone){document.getElementById('custPhone').classList.add('invalid'); errs.push('Əlaqə nömrəsi');}
       if(!prodName){document.getElementById('prodName').classList.add('invalid'); errs.push('Məhsul adı');}
+      if(!idSerial){document.getElementById('idSerial').classList.add('invalid'); errs.push('Ş/V seriya və nömrə');}
+      if(!finCode){document.getElementById('finCode').classList.add('invalid'); errs.push('FIN kodu');}
+      if(!address){document.getElementById('address').classList.add('invalid'); errs.push('Ünvan');}
+      if(!birthDate){document.getElementById('birthDate').classList.add('invalid'); errs.push('Doğum tarixi');}
       if(errs.length){ alert('Zəhmət olmasa doldurun: '+errs.join(', ')); return; }
 
-      // 2) Kalkulyasiya dəyərlərini hesablamaq
       try{ calc(); }catch(e){}
       let c; try{ c = computeForDocs(); }catch(e){ alert(e.message); return; }
 
-      // 3) Sənədləri hazırlayıb tək pəncərədə çap
       const contract=`<div class='page'>
         <h1 style='text-transform:uppercase'>MÜDDƏTLİ (NİSYƏ) ALQI-SATQI MÜQAVİLƏSİ №</h1>
         <div class='muted'>Bakı şəhəri — Tarix: ${new Date().toLocaleDateString('az-AZ')}</div>
         <div class='block'>
           Bir tərəfdən Azərbaycan Respublikasının qanunları və Normativ aktları əsasında öz nizamnaməsi ilə fəaliyyət göstərən
           <strong>“Baktel Electronics” Məhdud Məsuliyyətli Cəmiyyəti</strong> (bundan sonra “Satıcı firma”),
-          digər tərəfdən isə şəxsiyyətini təsdiq edən sənədin (seriya/nömrə: <em>—</em>) sahibi
-          <strong>${custName || '—'}</strong> (bundan sonra “Alıcı”) arasında aşağıdakılar barədə müqavilə bağlanıldı.
+          digər tərəfdən isə şəxsiyyətini təsdiq edən sənədin seriya/nömrəsi: <strong>${idSerial}</strong>, FIN kodu: <strong>${finCode}</strong>
+          olan <strong>${custName}</strong> (bundan sonra “Alıcı”) arasında aşağıdakılar barədə müqavilə bağlanıldı.
         </div>
 
         <h2>1. MÜQAVİLƏNİN PREDMETİ</h2>
         <div class='block'>
           Bakı şəhəri, Nəsimi rayonu, Nizami küçəsi ünvanında yerləşən “Baktel Electronics” MMC ilə qeydiyyatda olan
-          <strong>${custName || '—'}</strong> arasında tərtib edilmiş <strong>${new Date().toLocaleDateString('az-AZ')}</strong> tarixli
+          <strong>${custName}</strong> arasında tərtib edilmiş <strong>${new Date().toLocaleDateString('az-AZ')}</strong> tarixli
           <strong>${('ST'+new Date().getFullYear()+'/'+String(Date.now()).slice(-3))}</strong> saylı hesab-qaiməsinə əsasən
           şirkət tərəfindən dəyərinin qalan hissəsini müəyyən müddət ərzində ödəmək şərtilə aşağıdakı mal nisyə satılır:
           <br/><br/>
           <table style='width:100%; border-collapse:collapse'>
-            <tr><th style='text-align:left'>Məhsulun adı</th><td>${prodName || '—'}</td></tr>
+            <tr><th style='text-align:left'>Məhsulun adı</th><td>${prodName}</td></tr>
             <tr><th style='text-align:left'>İlkin ödəniş məbləği</th><td>${fmtAZN(c.down)}</td></tr>
             <tr><th style='text-align:left'>Kredit məbləği</th><td>${fmtAZN(c.principal)}</td></tr>
             <tr><th style='text-align:left'>Kreditin müddəti</th><td>${c.months} ay</td></tr>
             <tr><th style='text-align:left'>Aylıq ödəniş məbləği</th><td>${fmtAZN(c.monthly)}</td></tr>
+            ${imei1?`<tr><th style='text-align:left'>IMEI 1</th><td>${imei1}</td></tr>`:''}
+            ${imei2?`<tr><th style='text-align:left'>IMEI 2</th><td>${imei2}</td></tr>`:''}
           </table>
         </div>
 
@@ -487,13 +513,6 @@
           2.4.1. “Satıcı”nın razılığı ilə əşyanın dəyərini qismən və ya bir dəfəyə vaxtından əvvəl qaytarmaq.
         </div>
 
-        <h2>3. TƏRƏFLƏRİN MƏSULİYYƏTİ</h2>
-        <div class='block'>
-          3.1. Aylıq ödəniş gecikərsə, gecikilən hər gün üçün qrafikə uyğun aylıq ödəniş məbləğinin 3%-i cərimə tətbiq oluna bilər.<br/>
-          3.2. “Alıcı” aylıq ödənişi 5 gün gecikdirərsə, “Satıcı” borcun vaxtından əvvəl ödənilməsini tələb edə bilər.<br/>
-          3.3. “Alıcı” aylıq ödənişi 1 ay gecikdirərsə, “Satıcı” nisyə alınmış məhsulun IMEI qeydiyyatına məhdudiyyət qoya bilər.
-        </div>
-
         <h2>4. YEKUN MÜDDƏALAR</h2>
         <div class='block'>
           Bu müqavilə hər iki tərəf imzaladıqdan sonra qüvvəyə minir və öhdəliklər tam yerinə yetirilənədək qüvvədə olur. Müqavilə 2 (iki)
@@ -512,9 +531,12 @@
               </td>
               <td style='vertical-align:top; width:50%'>
                 <strong>Alıcı:</strong><br/>
-                A.S.A.: ${custName || '—'}<br/>
-                Ş/V seriya və nömrəsi: —<br/>
-                Ünvan: —<br/>
+                A.S.A.: ${custName}<br/>
+                Ş/V seriya və nömrəsi: ${idSerial}<br/>
+                FIN kodu: ${finCode}<br/>
+                Doğum tarixi: ${birthDate}<br/>
+                Ünvan: ${address}<br/>
+                Əlaqə: ${custPhone}<br/>
                 İmza: __________________
               </td>
             </tr>
