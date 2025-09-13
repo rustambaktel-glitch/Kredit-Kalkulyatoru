@@ -5,38 +5,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Kredit Kalkulyatoru</title>
   <style>
-    :root{ --bg:#0f172a; --card:#0b1226; --border:#18203a; --muted:#94a3b8 }
+    /* —— Light theme refresh —— */
+    :root{ 
+      --bg:#f8fafc; 
+      --text:#0b1020; 
+      --card:#ffffff; 
+      --border:#e5e7eb; 
+      --muted:#475569; 
+      --primary:#2563eb; 
+      --primary-600:#1d4ed8; 
+      --pill-bg:#eef2ff; 
+      --pill-border:#c7d2fe; 
+      --input-bg:#ffffff; 
+      --input-border:#cbd5e1; 
+    }
     *{box-sizing:border-box}
-    body{margin:0;background:#0b1020;color:#f8fafc;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
     .wrap{max-width:980px;margin:0 auto;padding:16px}
-    h1{margin:0 0 12px 0;font-size:22px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px}
+    h1{margin:0 0 12px 0;font-size:24px;letter-spacing:.2px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
     .row{display:grid;gap:10px}
     @media(min-width:720px){.row{grid-template-columns:repeat(12,1fr)}}
     .col-12{grid-column:span 12}
     .col-6{grid-column:span 6}
     .col-4{grid-column:span 4}
     .col-3{grid-column:span 3}
-    label{font-size:13px;color:#cbd5e1}
-    input,select{width:100%;padding:10px;border-radius:10px;border:1px solid #1f2937;background:#0a1224;color:#e2e8f0}
-    input:focus,select:focus{outline:2px solid #334155;border-color:#334155}
-    .btn{border:1px solid #1f2937;background:#0d1326;color:#e5e7eb;padding:10px 14px;border-radius:12px;cursor:pointer}
-    .btn.primary{background:linear-gradient(180deg,#1e293b,#0b1227);border-color:#1f2b48}
-    .pill{display:inline-block;border:1px solid #27324f;padding:6px 10px;border-radius:999px;background:#0b1225;color:#c7d2fe;font-size:12px}
+    label{font-size:13px;color:#334155}
+    input,select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text)}
+    input:focus,select:focus{outline:2px solid #93c5fd;border-color:#93c5fd;box-shadow:0 0 0 3px rgba(147,197,253,.35)}
+    .btn{border:1px solid #cbd5e1;background:#f1f5f9;color:#0f172a;padding:10px 14px;border-radius:12px;cursor:pointer;transition:.15s ease}
+    .btn:hover{background:#e2e8f0}
+    .btn.primary{background:linear-gradient(180deg,#3b82f6,#2563eb);border-color:#1d4ed8;color:#fff}
+    .btn.primary:hover{filter:brightness(1.05)}
+    .pill{display:inline-block;border:1px solid var(--pill-border);padding:6px 10px;border-radius:999px;background:var(--pill-bg);color:#3730a3;font-size:12px}
     .muted{color:var(--muted);font-size:13px}
-    table{width:100%;border-collapse:collapse}
-    th,td{border-bottom:1px solid #1f2937;padding:8px;font-size:13px;text-align:right}
+    table{width:100%;border-collapse:collapse;background:#fff}
+    th,td{border-bottom:1px solid var(--border);padding:10px 8px;font-size:13px;text-align:right}
+    th{background:#f8fafc}
     th:first-child,td:first-child{text-align:left}
-    canvas{background:#0a1224;border:1px solid #1f2937;border-radius:12px;padding:8px}
-    .kbd{background:#111827;border:1px solid #1f2937;padding:2px 6px;border-radius:6px;font-size:12px;color:#e5e7eb}
-    .test-pass{color:#bbf7d0} .test-fail{color:#fecaca}
+    canvas{background:#fff;border:1px solid var(--border);border-radius:12px;padding:8px}
+    .kbd{background:#f1f5f9;border:1px solid var(--border);padding:2px 6px;border-radius:6px;font-size:12px;color:#0f172a}
+    .test-pass{color:#16a34a} .test-fail{color:#dc2626}
+    .hint{display:flex;align-items:flex-start;gap:10px}
+    .hint svg{flex:0 0 auto}
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>Yalnız Kredit Kalkulyatoru</h1>
     <div class="card">
-      <div class="muted">Formul: <strong>Aylıq</strong> = (Məhsul dəyəri − Avtomatik <strong>İlkin ödəniş</strong>) ÷ Müddət. İlkin ödəniş iş yeri <strong>riskinə</strong> (və istəsən əməkhaqqına) görə avtomatik hesablanır.</div>
+      <div class="hint">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm0 14h0M12 7v7" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/></svg>
+        <div class="muted">Formul: <strong>Aylıq</strong> = (Məhsul dəyəri − Avtomatik <strong>İlkin ödəniş</strong>) ÷ Müddət. İlkin ödəniş iş yeri <strong>riskinə</strong> (və istəsən əməkhaqqına) görə avtomatik hesablanır.</div>
+      </div>
     </div>
 
     <section id="calc" class="card">
@@ -206,7 +227,7 @@
         r = getDownPayment(400,'high',300);     approxEqual(r.pct,0.50)? pass('riskOnly C 50%'): fail('riskOnly C pct','0.50',r.pct);
       }catch(e){ fail('riskOnly testləri','exception yoxdur',e.message); }
 
-      // 2) risk+salary bandı
+        // 2) risk+salary bandı
       try{
         setMode('riskSalary');
         const r = getDownPayment(1000,'med',600); // 500–799 → 30%
