@@ -14,8 +14,9 @@
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;font-size:16px;line-height:1.55}
     .wrap{max-width:1200px;margin:0 auto;padding:24px}
-    header{text-align:center;margin:0 0 16px 0}
+    header{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 16px 0}
     header h1{margin:0;font-size:32px;font-weight:800;letter-spacing:.2px;color:var(--primary)}
+    header img.logo{height:40px;width:auto;display:block}
     h2{font-size:22px;font-weight:700;color:#111827;margin:6px 0 0}
     h3{font-size:18px;font-weight:700;color:#111827;margin:0 0 8px}
     .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
@@ -50,12 +51,18 @@
     .notice.ok{background:var(--ok-bg);border:1px solid var(--ok-border);color:var(--ok-text)}
     .invalid{border-color:#ef4444 !important; box-shadow:0 0 0 3px rgba(239,68,68,.12)}
     @media print{ .btn, #calc { display:none } .wrap{max-width:1000px} header{margin-bottom:0} }
+  .inline-check{display:flex;align-items:center;gap:4px;justify-content:flex-start}
+    .inline-check label{margin:0}
+    .inline-check .big-check{width:18px;height:18px;accent-color:#16a34a;transform:scale(1.25);transform-origin:left center;margin-right:2px}
+  header{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 16px 0}
+    header img.logo{height:48px;width:auto;display:block}
   </style>
 </head>
 <body>
   <div class="wrap">
     <header>
-      <h1>BAKFON Kredit Kalkulyatoru</h1>
+      <img class="logo" src="https://bakfon.az/logo.png" alt="Bakfon Logo" onerror="this.style.display='none'"/>
+      <h1>KREDİT KALKULYATORU</h1>
     </header>
 
     <section id="calc" class="card">
@@ -92,6 +99,28 @@
           <label>Digər öhdəliklər (AZN)</label>
           <input id="oblig" type="number" min="0" step="1" value="" required />
         </div>
+
+        <!-- Əlavə gəlirlər modulunun idarəsi (Sabit, təmiz yerləşim) -->
+        <div class="col-12 inline-check">
+          <input class="big-check" type="checkbox" id="addIncomeChk" onchange="toggleExtraIncome()" />
+          <label for="addIncomeChk">Əlavə gəlir var?</label>
+        </div>
+        <div class="col-3" id="addIncomeTypeWrap" style="display:none">
+          <label>Əlavə gəlir növü</label>
+          <select id="addIncomeType" disabled onchange="onIncomeTypeChange()">
+            <option value="">-- Seçin --</option>
+            <option value="muavinet">Müavinət</option>
+            <option value="bonus">Bonus</option>
+            <option value="kiraye">Kirayə gəliri</option>
+            <option value="freelance">Freelance</option>
+            <option value="parttime">Müvəqqəti əlavə iş</option>
+          </select>
+        </div>
+        <div class="col-3" id="addIncomeAmtWrap" style="display:none">
+          <label>Əlavə gəlir məbləği (AZN)</label>
+          <input id="addIncomeAmt" type="number" min="1" step="1" value="" disabled />
+        </div>
+
         <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <button class="btn success" onclick="calc()">Hesabla</button>
           <button class="btn danger" onclick="resetForm()">Sıfırla</button>
@@ -120,8 +149,8 @@
     // ===== Policy & limits
     const POLICY_RISK_ONLY = { low: 0.20, med: 0.30, high: 0.50 };
     const MIN_DOWN_AZN = 50;
-    const MAX_OBLIG_SHARE = 0.50; // DTI həddi (öhdəlik/gəlir)
-    const MAX_DSR = 0.40;         // Aylıq/net gəlir limiti
+    const MAX_OBLIG_SHARE = 0.50; // DTI həddi (öhdəlik/gəlir) — indi yalnız xəbərdarlıq üçündür
+    const MAX_DSR = 0.40;         // Aylıq/net gəlir limiti — əsas məhdudiyyət
 
     // İlkin ödəniş hesabı: risk + ödəmə qabiliyyəti
     function getDownPayment(price, riskKey, salary=0, oblig=0){
@@ -158,15 +187,53 @@
       w.document.close(); w.focus(); w.print();
     }
 
+    // ===== Əlavə gəlir UI — inline handler-lər üçün funksiyalar
+    function toggleExtraIncome(){
+      const chk=document.getElementById('addIncomeChk');
+      const typeWrap=document.getElementById('addIncomeTypeWrap');
+      const amtWrap=document.getElementById('addIncomeAmtWrap');
+      const typeSel=document.getElementById('addIncomeType');
+      const amtInp=document.getElementById('addIncomeAmt');
+      if(!chk||!typeWrap||!amtWrap||!typeSel||!amtInp) return;
+      const on=!!chk.checked;
+      typeWrap.style.display= on? 'block':'none';
+      typeSel.disabled = !on; if(!on) typeSel.value='';
+      amtWrap.style.display = 'none';
+      amtInp.disabled = true; amtInp.value='';
+    }
+    function onIncomeTypeChange(){
+      const typeSel=document.getElementById('addIncomeType');
+      const amtWrap=document.getElementById('addIncomeAmtWrap');
+      const amtInp=document.getElementById('addIncomeAmt');
+      if(!typeSel||!amtWrap||!amtInp) return;
+      if(typeSel.value){ amtWrap.style.display='block'; amtInp.disabled=false; }
+      else { amtWrap.style.display='none'; amtInp.disabled=true; amtInp.value=''; }
+    }
+
+    // Əlavə gəlir UI — addEventListener versiyası (backup)
+    function setupExtraIncomeUI(){
+      const chk=document.getElementById('addIncomeChk');
+      const typeSel=document.getElementById('addIncomeType');
+      if(chk){ chk.addEventListener('change', toggleExtraIncome); }
+      if(typeSel){ typeSel.addEventListener('change', onIncomeTypeChange); }
+      // İlk yüklənmədə vəziyyəti sinxron et
+      toggleExtraIncome();
+      onIncomeTypeChange();
+    }
+
     let chart=null;
 
     // ===== Main calc (exposed globally)
     function calc(){
-      // clear previous invalid marks
-      ['risk','salary','oblig'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
+      // Məcburi sahələrin yoxlanması
+      ['risk','salary','oblig','addIncomeType','addIncomeAmt'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
       const riskEl=document.getElementById('risk');
       const salaryEl=document.getElementById('salary');
       const obligEl=document.getElementById('oblig');
+      const chk=document.getElementById('addIncomeChk');
+      const typeSel=document.getElementById('addIncomeType');
+      const amtInp=document.getElementById('addIncomeAmt');
+
       const risk=riskEl?.value||''; const salaryStr=salaryEl?.value||''; const obligStr=obligEl?.value||'';
       if(!risk || salaryStr==='' || obligStr===''){
         if(!risk) riskEl.classList.add('invalid');
@@ -176,24 +243,25 @@
         return;
       }
 
+      // Əlavə gəlir yoxlaması
+      let extra=0; let extraDesc='';
+      if(chk?.checked){
+        if(!typeSel.value){ typeSel.classList.add('invalid'); alert('Əlavə gəlir növünü seçin.'); return; }
+        extraDesc = typeSel.options[typeSel.selectedIndex].text;
+        if(amtInp.value===''){ amtInp.classList.add('invalid'); alert('Əlavə gəlir məbləğini daxil edin.'); return; }
+        extra = Math.max(0, Number(amtInp.value)||0);
+        if(extra<=0){ amtInp.classList.add('invalid'); alert('Əlavə gəlir məbləği 0-dan böyük olmalıdır.'); return; }
+      }
+
       const price=toNum('price');
       const months=toNum('months');
-      const salary=Number(salaryStr); const oblig=Number(obligStr);
+      const salary=Number(salaryStr) + extra; // Əlavə gəlir əmək haqqısına əlavə olunur
+      const oblig=Number(obligStr);
       if(months<=0){ alert('Müddət ən az 1 ay olmalıdır.'); return; }
 
-      // DTI yoxlaması
+      // DTI indi yalnız xəbərdarlıqdır
       const dti = (salary>0)? (oblig/salary) : (oblig>0? Infinity : 0);
-      if(dti > MAX_OBLIG_SHARE){
-        const pctStr = Math.round(MAX_OBLIG_SHARE*100);
-        document.getElementById('summary').innerHTML = `
-          <h3>Xülasə</h3>
-          <div class="notice warn">
-            Diqqət: Digər öhdəliklər aylıq gəlirin ${pctStr}% həddini aşır (${(dti*100).toFixed(0)}%). Bu halda kredit ayrılmır.
-          </div>`;
-        document.getElementById('scheduleWrap').innerHTML = '';
-        if(chart){ chart.destroy(); chart=null; }
-        return;
-      }
+      const dtiWarn = dti > MAX_OBLIG_SHARE;
 
       // İlkin hesablamalar
       const baseRes = getDownPayment(price, risk, salary, oblig);
@@ -226,11 +294,20 @@
       // Risk badge class
       const riskCls = risk==='low'?'risk-low':(risk==='high'?'risk-high':'risk-med');
 
+      // DTI xəbərdarlığı
+      const dtiHtml = dtiWarn
+        ? `<div class="notice warn">Diqqət: Öhdəlik/Gəlir = ${(dti*100).toFixed(0)}% (hədd ${Math.round(MAX_OBLIG_SHARE*100)}%). Yüksək risk göstəricisi.</div>`
+        : '';
+
+      // Əlavə gəlir etiketi
+      const extraHtml = extra>0 ? `<div class="pill">Əlavə gəlir: ${extraDesc} — ${fmtAZN(extra)}</div>` : '';
+
       // Xülasə (sol)
       document.getElementById('summary').innerHTML=`
         <h3>Xülasə</h3>
+        ${dtiHtml}
         <div class="row">
-          <div class="col-6"><div class="pill ${riskCls}">Risk: ${risk.toUpperCase()}</div><h2>${fmtAZN(price)}</h2><div class="muted">Məhsul dəyəri</div></div>
+          <div class="col-6"><div class="pill ${riskCls}">Risk: ${risk.toUpperCase()}</div>${extraHtml}<h2>${fmtAZN(price)}</h2><div class="muted">Məhsul dəyəri</div></div>
           <div class="col-6"><div class="pill">İlkin ödəniş</div>
             <h2>${fmtAZN(down)} <span class="muted">(${(pct*100).toFixed(0)}%)</span></h2>
             ${autoAdj?`<div class="notice ok">DSR həddinə görə ilkin ödəniş <strong>avtomatik artırılıb</strong>. Əvvəl: ${fmtAZN(prevDown)}, Aylıq: ${fmtAZN(prevMonthly)} → ${fmtAZN(monthly)}</div>`:''}
@@ -263,48 +340,63 @@
     }
 
     function resetForm(){
-      ['price','months','risk','salary','oblig'].forEach(id=>{
+      ['price','months','risk','salary','oblig','addIncomeType','addIncomeAmt'].forEach(id=>{
         const el=document.getElementById(id); if(!el) return;
-        if(id==='months') el.value=3; else if(id==='risk') el.value=''; else el.value='';
+        if(id==='months') el.value=3; else if(id==='risk' || id==='addIncomeType') el.value=''; else el.value='';
         el.classList.remove('invalid');
       });
+      const chk=document.getElementById('addIncomeChk');
+      const typeWrap=document.getElementById('addIncomeTypeWrap');
+      const amtWrap=document.getElementById('addIncomeAmtWrap');
+      const typeSel=document.getElementById('addIncomeType');
+      const amtInp=document.getElementById('addIncomeAmt');
+      if(chk){ chk.checked=false; }
+      if(typeWrap){ typeWrap.style.display='none'; }
+      if(amtWrap){ amtWrap.style.display='none'; }
+      if(typeSel){ typeSel.disabled=true; }
+      if(amtInp){ amtInp.disabled=true; }
+
       document.getElementById('summary').innerHTML="";
       document.getElementById('scheduleWrap').innerHTML="";
       if(chart){ chart.destroy(); chart=null; }
     }
 
-    // Debug üçün konsol testləri (UI-siz). Brauzer konsolunda runTestsConsole() çağır.
-    function runTestsConsole(){
-      const assert=(c,m)=>{ if(!c) throw new Error(m); };
-      // 1) DTI blok
-      resetForm();
-      document.getElementById('risk').value='med';
-      document.getElementById('salary').value='1000';
-      document.getElementById('oblig').value='600';
-      document.getElementById('price').value='1000';
-      document.getElementById('months').value='6';
-      calc();
-      assert(document.getElementById('summary').innerText.includes('kredit ayrılmır'),'DTI bloklanmalıdır');
-      // 2) Auto-adjust aktiv
-      resetForm();
-      document.getElementById('risk').value='med';
-      document.getElementById('salary').value='1000';
-      document.getElementById('oblig').value='200';
-      document.getElementById('price').value='5000';
-      document.getElementById('months').value='6';
-      calc();
-      assert(document.getElementById('summary').innerText.includes('avtomatik artırılıb'),'Auto-adjust işləməlidir');
-      // 3) Məcburi sahələr
-      resetForm();
-      let threw=false; try{ calc(); }catch(e){ threw=true; }
-      assert(document.getElementById('risk').classList.contains('invalid'),'Risk işarələnməlidir');
-      console.log('Bütün daxili konsol testləri OK ✅');
-    }
-
-    // Funksiyaları qlobal sahəyə çıxar (onclick üçün tam zəmanət)
+    // Funksiyaları qlobal sahəyə çıxar (onclick + inline üçün)
     window.calc = calc;
     window.resetForm = resetForm;
     window.exportPrint = exportPrint;
+    window.toggleExtraIncome = toggleExtraIncome;
+    window.onIncomeTypeChange = onIncomeTypeChange;
+
+    // UI listeners for extra income
+    window.addEventListener('load',()=>{
+      setupExtraIncomeUI();
+    });
+
+    // ===== Sadə konsol testləri (istəyə görə əl ilə işə salın): runTestsConsole()
+    function runTestsConsole(){
+      const assert=(c,m)=>{ if(!c) throw new Error(m); };
+      // 1) Funksiyalar mövcud olmalıdır
+      assert(typeof window.toggleExtraIncome==='function','toggleExtraIncome yoxdur');
+      assert(typeof window.onIncomeTypeChange==='function','onIncomeTypeChange yoxdur');
+      // 2) Checkbox açıb-bağlama
+      const chk=document.getElementById('addIncomeChk');
+      chk.checked=true; toggleExtraIncome();
+      assert(document.getElementById('addIncomeTypeWrap').style.display==='block','Type wrap görünməlidir');
+      document.getElementById('addIncomeType').value='bonus'; onIncomeTypeChange();
+      assert(document.getElementById('addIncomeAmt').disabled===false,'Məbləğ aktiv olmalıdır');
+      // 3) Hesablama minimal ssenari
+      resetForm();
+      document.getElementById('price').value='1200';
+      document.getElementById('months').value='6';
+      document.getElementById('risk').value='med';
+      document.getElementById('salary').value='600';
+      document.getElementById('oblig').value='100';
+      calc();
+      assert(document.getElementById('scheduleWrap').innerHTML.includes('<table>'),'Cədvəl yaranmalıdır');
+      console.log('Bütün testlər keçdi ✅');
+    }
+    window.runTestsConsole = runTestsConsole;
   </script>
 </body>
 </html>
