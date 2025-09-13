@@ -97,28 +97,42 @@
     </div>
 
     <section class="card"><canvas id="chart" height="180"></canvas></section>
+
+    <section class="card">
+      <h3>Daxili testlər</h3>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 8px">
+        <button class="btn" onclick="runTests()">Testləri işə sal</button>
+        <span id="testSummary" class="muted"></span>
+      </div>
+      <div id="testResults" class="muted"></div>
+    </section>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script>
+    // Utils
     const fmtAZN = n=> (new Intl.NumberFormat('az-AZ',{style:'currency',currency:'AZN',maximumFractionDigits:2})).format(n||0);
     const toNum = id=> Number((document.getElementById(id)?.value) ?? 0);
 
+    // Risk siyasəti (baza faizləri)
     const POLICY_RISK_ONLY = { low: 0.20, med: 0.30, high: 0.50 };
     const MIN_DOWN_AZN = 50;
+    // DTI qaydası: digər öhdəliklər maaşın bu payını aşarsa kredit ayrılmasın
+    const MAX_OBLIG_SHARE = 0.50; // 50% — istəsən dəyişə bilərik
 
+    // İlkin ödəniş: risk + ödəmə qabiliyyəti (əmək haqqı və digər öhdəliklər)
     function getDownPayment(price, riskKey, salary=0, oblig=0){
       const base = POLICY_RISK_ONLY[riskKey] ?? POLICY_RISK_ONLY.med;
       salary = Number(salary)||0; oblig = Number(oblig)||0;
       const net = Math.max(0, salary - oblig);
-      const ratio = salary>0 ? net / salary : 0;
+      const ratio = salary>0 ? net / salary : 0; // 0..1
       let mod = 0;
-      if(ratio >= 0.70) mod = -0.10;
-      else if(ratio >= 0.50) mod = -0.05;
-      else if(ratio >= 0.35) mod = 0.00;
-      else if(ratio >= 0.20) mod = +0.10;
-      else mod = +0.20;
-      if(riskKey==='high') mod *= 0.7;
+      if(ratio >= 0.70) mod = -0.10;         // rahat
+      else if(ratio >= 0.50) mod = -0.05;    // normaldan yaxşı
+      else if(ratio >= 0.35) mod = 0.00;     // normal
+      else if(ratio >= 0.20) mod = +0.10;    // gərgin
+      else mod = +0.20;                      // çox gərgin
+      if(riskKey==='high') mod *= 0.7;       // yüksək riskdə ehtiyatlılıq
       const pct = Math.min(0.85, Math.max(0.10, base + mod));
       let down = price * pct;
       if(down < MIN_DOWN_AZN) down = MIN_DOWN_AZN;
@@ -126,6 +140,7 @@
       return { down, pct, base, ratio, net };
     }
 
+    // Hesablayıcı
     let chart;
     function calc(){
       const price=toNum('price');
@@ -135,9 +150,23 @@
       const oblig=toNum('oblig');
       if(months<=0){ alert('Müddət ən az 1 ay olmalıdır.'); return; }
 
+      // DTI yoxlaması: əgər digər öhdəliklər maaşın MAX_OBLIG_SHARE-dən çoxdursa, kredit ayrılmasın
+      const dti = (salary>0)? (oblig/salary) : (oblig>0? Infinity : 0);
+      if(dti > MAX_OBLIG_SHARE){
+        const pctStr = Math.round(MAX_OBLIG_SHARE*100);
+        document.getElementById('summary').innerHTML = `
+          <h3>Xülasə</h3>
+          <div class="muted" style="padding:12px;border:1px solid #fecaca;background:#fff1f2;border-radius:12px;color:#991b1b">
+            Diqqət: Digər öhdəliklər aylıq gəlirin ${pctStr}% həddini aşır (${(dti*100).toFixed(0)}%). Bu halda kredit ayrılmır.
+          </div>`;
+        document.getElementById('scheduleWrap').innerHTML = '';
+        const ctx=document.getElementById('chart'); if(chart){ chart.destroy(); chart=null; }
+        return;
+      }
+
       const {down, pct, base, ratio, net} = getDownPayment(price, risk, salary, oblig);
       const principal = Math.max(0, price - down);
-      const monthly = principal / months;
+      const monthly = months>0 ? principal / months : 0;
 
       let bal = principal; const rows=[]; const sd=new Date();
       for(let i=1;i<=months;i++){ bal=Math.max(0,bal-monthly); const d=new Date(sd); d.setMonth(d.getMonth()+i); rows.push({i,date:d.toISOString().slice(0,10),monthly,bal}); }
@@ -162,6 +191,7 @@
       chart=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Qalıq borc',data:dataBal}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}},elements:{line:{tension:.25}}}});
     }
 
+    // Sıfırlama
     function resetForm(){
       document.getElementById('price').value=0;
       document.getElementById('months').value=3;
@@ -173,6 +203,49 @@
       const ctx=document.getElementById('chart'); if(chart) {chart.destroy(); chart=null;}
     }
 
+    // Testlər
+    function runTests(){
+      const out=[]; const pass=n=>out.push(`<div style="color:#16a34a">✓ ${n}</div>`); const fail=(n,e)=>out.push(`<div style=\"color:#dc2626\">✗ ${n} — ${e}</div>`);
+      const approx=(a,b,eps=1e-6)=>Math.abs(a-b)<=eps;
+      try{
+        const r1=getDownPayment(1000,'med',1000,100); // ratio=0.9 → base .30 + (-.10) = .20
+        approx(r1.pct,0.20)? pass('Ödəmə qabiliyyəti yüksək → faiz azalır (med)'): fail('Faiz azalma','pct='+r1.pct);
+      }catch(e){ fail('Test#1 istisna',e.message); }
+      try{
+        const r2=getDownPayment(1000,'med',1000,900); // ratio=0.1 → base .30 + .20 = .50
+        approx(r2.pct,0.50)? pass('Ödəmə qabiliyyəti aşağı → faiz artır (med)'): fail('Faiz artım','pct='+r2.pct);
+      }catch(e){ fail('Test#2 istisna',e.message); }
+      try{
+        const r3=getDownPayment(1000,'high',1000,0); // ratio=1 → mod -0.1 * 0.7 = -0.07 → .50-.07=.43
+        approx(r3.pct,0.43)? pass('Yüksək riskdə mod təsiri azalır'): fail('Yüksək risk mod','pct='+r3.pct);
+      }catch(e){ fail('Test#3 istisna',e.message); }
+      try{
+        resetForm();
+        const v0 = toNum('price')===0 && toNum('salary')===0 && toNum('oblig')===0 && Number(document.getElementById('months').value)===3;
+        v0? pass('Sıfırla dəyərləri düzgün qaytarır'): fail('Sıfırla','dəyərlər uyğunsuz');
+      }catch(e){ fail('Test#4 istisna',e.message); }
+      try{
+        // DTI blok testi: 1000 maaş, 600 öhdəlik → 60% > 50% → blok
+        document.getElementById('price').value=1000; document.getElementById('months').value=6; document.getElementById('risk').value='med';
+        document.getElementById('salary').value=1000; document.getElementById('oblig').value=600;
+        calc();
+        const warn = document.getElementById('summary').innerText.includes('kredit ayrılmır');
+        warn? pass('DTI həddi aşılırsa kredit verilmir (xəbərdarlıq çıxır)') : fail('DTI blok','xəbərdarlıq yoxdur');
+      }catch(e){ fail('Test#5 istisna',e.message); }
+      try{
+        // DTI normal: 1000 maaş, 400 öhdəlik → 40% ≤ 50% → icazə
+        document.getElementById('price').value=1000; document.getElementById('months').value=6; document.getElementById('risk').value='low';
+        document.getElementById('salary').value=1000; document.getElementById('oblig').value=400;
+        calc();
+        const okSummary = document.getElementById('summary').innerText.includes('Aylıq');
+        okSummary? pass('DTI həddində və ya altında kredit hesablanır') : fail('DTI normal','xülasə çıxmadı');
+      }catch(e){ fail('Test#6 istisna',e.message); }
+      document.getElementById('testResults').innerHTML=out.join('');
+      const ok = out.every(x=>x.includes('✓'));
+      document.getElementById('testSummary').textContent = ok? 'Bütün testlər keçdi.' : 'Bəzi testlər uğursuz oldu.';
+    }
+
+    // Auto-calc on load
     window.addEventListener('load',()=>calc());
   </script>
 </body>
