@@ -5,59 +5,47 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Kredit Kalkulyatoru</title>
   <style>
-    /* —— Light theme refresh —— */
     :root{ 
-      --bg:#f8fafc; 
-      --text:#0b1020; 
-      --card:#ffffff; 
-      --border:#e5e7eb; 
-      --muted:#475569; 
-      --primary:#2563eb; 
-      --primary-600:#1d4ed8; 
-      --pill-bg:#eef2ff; 
-      --pill-border:#c7d2fe; 
-      --input-bg:#ffffff; 
-      --input-border:#cbd5e1; 
+      --bg:#f7f9fc; --text:#0f172a; --card:#ffffff; --border:#e7eaf0; --muted:#51607a; --primary:#2563eb;
+      --pill-bg:#eef2ff; --pill-border:#c7d2fe; --input-bg:#ffffff; --input-border:#cfd5e1; --shadow:0 6px 18px rgba(2,6,23,.06);
+      --radius:14px;
     }
     *{box-sizing:border-box}
-    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
-    .wrap{max-width:980px;margin:0 auto;padding:16px}
-    h1{margin:0 0 12px 0;font-size:24px;letter-spacing:.2px}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 2px rgba(15,23,42,.04)}
-    .row{display:grid;gap:10px}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;font-size:16px;line-height:1.55}
+    .wrap{max-width:1200px;margin:0 auto;padding:24px}
+    header{display:flex;align-items:center;justify-content:space-between;margin:0 0 16px 0}
+    header h1{margin:0;font-size:28px;font-weight:700;letter-spacing:.2px;color:#111827}
+    h2{font-size:22px;font-weight:700;color:#111827;margin:6px 0 0}
+    h3{font-size:18px;font-weight:700;color:#111827;margin:0 0 8px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
+    .row{display:grid;gap:14px}
     @media(min-width:720px){.row{grid-template-columns:repeat(12,1fr)}}
     .col-12{grid-column:span 12}
     .col-6{grid-column:span 6}
     .col-4{grid-column:span 4}
     .col-3{grid-column:span 3}
-    label{font-size:13px;color:#334155}
-    input,select{width:100%;padding:10px;border-radius:10px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text)}
-    input:focus,select:focus{outline:2px solid #93c5fd;border-color:#93c5fd;box-shadow:0 0 0 3px rgba(147,197,253,.35)}
-    .btn{border:1px solid #cbd5e1;background:#f1f5f9;color:#0f172a;padding:10px 14px;border-radius:12px;cursor:pointer;transition:.15s ease}
-    .btn:hover{background:#e2e8f0}
+    label{font-size:13px;color:#334155;font-weight:600}
+    input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text)}
+    .btn{border:1px solid #cbd5e1;background:#f1f5f9;color:#0f172a;padding:11px 16px;border-radius:12px;cursor:pointer;transition:.15s ease;box-shadow:var(--shadow);font-weight:600}
     .btn.primary{background:linear-gradient(180deg,#3b82f6,#2563eb);border-color:#1d4ed8;color:#fff}
-    .btn.primary:hover{filter:brightness(1.05)}
-    .pill{display:inline-block;border:1px solid var(--pill-border);padding:6px 10px;border-radius:999px;background:var(--pill-bg);color:#3730a3;font-size:12px}
-    .muted{color:var(--muted);font-size:13px}
-    table{width:100%;border-collapse:collapse;background:#fff}
-    th,td{border-bottom:1px solid var(--border);padding:10px 8px;font-size:13px;text-align:right}
-    th{background:#f8fafc}
-    th:first-child,td:first-child{text-align:left}
-    canvas{background:#fff;border:1px solid var(--border);border-radius:12px;padding:8px}
-    .kbd{background:#f1f5f9;border:1px solid var(--border);padding:2px 6px;border-radius:6px;font-size:12px;color:#0f172a}
-    .test-pass{color:#16a34a} .test-fail{color:#dc2626}
-    .hint{display:flex;align-items:flex-start;gap:10px}
-    .hint svg{flex:0 0 auto}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--pill-border);padding:6px 10px;border-radius:999px;background:var(--pill-bg);color:#3730a3;font-size:12px}
+    .muted{color:var(--muted);font-size:14px}
+    table{width:100%;border-collapse:separate;border-spacing:0;background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+    thead th{position:sticky;top:0;background:#f8fafc;padding:12px 10px;font-weight:700;font-size:14px;color:#111827;border-bottom:1px solid var(--border);text-align:right}
+    tbody td{padding:12px 10px;border-bottom:1px solid var(--border);font-size:13px;text-align:right}
+    tbody tr:nth-child(odd){background:rgba(2,6,23,.02)}
+    canvas{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px}
+    .layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1>Yalnız Kredit Kalkulyatoru</h1>
+    <header>
+      <h1>Kredit Kalkulyatoru</h1>
+    </header>
+
     <div class="card">
-      <div class="hint">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2Zm0 14h0M12 7v7" stroke="#2563eb" stroke-width="2" stroke-linecap="round"/></svg>
-        <div class="muted">Formul: <strong>Aylıq</strong> = (Məhsul dəyəri − Avtomatik <strong>İlkin ödəniş</strong>) ÷ Müddət. İlkin ödəniş iş yeri <strong>riskinə</strong> (və istəsən əməkhaqqına) görə avtomatik hesablanır.</div>
-      </div>
+      <div class="muted">Formul: (Məhsul dəyəri − Avtomatik İlkin ödəniş) ÷ Müddət. İlkin ödəniş <strong>risk</strong>, <strong>əmək haqqı</strong> və <strong>digər öhdəliklər</strong> əsasında tənzimlənir.</div>
     </div>
 
     <section id="calc" class="card">
@@ -90,212 +78,102 @@
           <input id="salary" type="number" min="0" step="1" value="800" />
         </div>
         <div class="col-3">
-          <label>Hesablamanın qaydası</label>
-          <select id="mode">
-            <option value="riskOnly" selected>Yalnız risk qrupuna görə</option>
-            <option value="riskSalary">Risk + əmək haqqına görə</option>
-          </select>
+          <label>Digər öhdəliklər (AZN)</label>
+          <input id="oblig" type="number" min="0" step="1" value="0" />
         </div>
-        <div class="col-12" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-          <button class="btn primary" onclick="calc()">Hesabla (Enter)</button>
-          <button class="btn" onclick="exportCSV()">CSV export</button>
-          <span class="muted">Qısa yol: <span class="kbd">Enter</span></span>
+        <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+          <button class="btn primary" onclick="calc()">Hesabla</button>
+          <button class="btn" onclick="resetForm()">Sıfırla</button>
         </div>
       </div>
     </section>
 
-    <section class="card" id="summary"></section>
-    <section class="card"><canvas id="chart" height="140"></canvas></section>
-    <section class="card">
-      <h3>Ödəniş cədvəli</h3>
-      <div id="scheduleWrap" style="overflow:auto;max-height:360px"></div>
-    </section>
+    <div class="layout">
+      <section class="card" id="summary"></section>
+      <section class="card">
+        <h3>Ödəniş cədvəli</h3>
+        <div id="scheduleWrap" style="overflow:auto;max-height:420px"></div>
+      </section>
+    </div>
 
-    <section class="card">
-      <h3>Daxili testlər</h3>
-      <div class="muted">Modul sadələşdirildiyi üçün yalnız kalkulyatorla bağlı testlər saxlanılıb.</div>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px">
-        <button class="btn" onclick="runTests()">Testləri işə sal</button>
-        <span id="testSummary" class="muted"></span>
-      </div>
-      <div id="testResults" class="muted" style="margin-top:8px"></div>
-    </section>
+    <section class="card"><canvas id="chart" height="180"></canvas></section>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script>
-    // UTILITIES (hardened getters)
     const fmtAZN = n=> (new Intl.NumberFormat('az-AZ',{style:'currency',currency:'AZN',maximumFractionDigits:2})).format(n||0);
     const toNum = id=> Number((document.getElementById(id)?.value) ?? 0);
-    function setMode(val){ const el=document.getElementById('mode'); if(el) el.value = val; }
 
-    // POLICY
-    const POLICY = {
-      low: [ {min:1500, pct:0.10}, {min:800, pct:0.15}, {min:500, pct:0.20}, {min:0, pct:0.30} ],
-      med: [ {min:1500, pct:0.15}, {min:800, pct:0.20}, {min:500, pct:0.30}, {min:0, pct:0.40} ],
-      high:[ {min:1500, pct:0.25}, {min:800, pct:0.35}, {min:500, pct:0.45}, {min:0, pct:0.60} ]
-    };
     const POLICY_RISK_ONLY = { low: 0.20, med: 0.30, high: 0.50 };
     const MIN_DOWN_AZN = 50;
 
-    function getDownPayment(price, riskKey, salary){
-      const mode = (document.getElementById('mode')||{value:'riskOnly'}).value;
-      let down = 0, pct = 0;
-      if(mode==='riskOnly'){
-        pct = POLICY_RISK_ONLY[riskKey] ?? POLICY_RISK_ONLY.med;
-        down = price * pct;
-      }else{
-        const bands = POLICY[riskKey]||POLICY.med;
-        const rule = bands.find(b=> salary >= b.min) || bands[bands.length-1];
-        pct = rule.pct; down = price * pct;
-      }
+    function getDownPayment(price, riskKey, salary=0, oblig=0){
+      const base = POLICY_RISK_ONLY[riskKey] ?? POLICY_RISK_ONLY.med;
+      salary = Number(salary)||0; oblig = Number(oblig)||0;
+      const net = Math.max(0, salary - oblig);
+      const ratio = salary>0 ? net / salary : 0;
+      let mod = 0;
+      if(ratio >= 0.70) mod = -0.10;
+      else if(ratio >= 0.50) mod = -0.05;
+      else if(ratio >= 0.35) mod = 0.00;
+      else if(ratio >= 0.20) mod = +0.10;
+      else mod = +0.20;
+      if(riskKey==='high') mod *= 0.7;
+      const pct = Math.min(0.85, Math.max(0.10, base + mod));
+      let down = price * pct;
       if(down < MIN_DOWN_AZN) down = MIN_DOWN_AZN;
       if(down > price) down = price;
-      return {down, pct, mode};
+      return { down, pct, base, ratio, net };
     }
 
-    // CALCULATOR
-    let chart, calcDoneOnce=false;
+    let chart;
     function calc(){
       const price=toNum('price');
       const months=toNum('months');
-      const risk=(document.getElementById('risk')||{value:'med'}).value;
+      const risk=document.getElementById('risk').value;
       const salary=toNum('salary');
+      const oblig=toNum('oblig');
       if(months<=0){ alert('Müddət ən az 1 ay olmalıdır.'); return; }
 
-      const {down, pct, mode} = getDownPayment(price, risk, salary);
+      const {down, pct, base, ratio, net} = getDownPayment(price, risk, salary, oblig);
       const principal = Math.max(0, price - down);
       const monthly = principal / months;
 
-      // schedule
-      let bal = principal;
-      const rows=[]; const sd=new Date();
-      for(let i=1;i<=months;i++){
-        bal = Math.max(0, bal - monthly);
-        const d=new Date(sd); d.setMonth(d.getMonth()+i);
-        rows.push({i,date:d.toISOString().slice(0,10), monthly, principalPart:monthly, interest:0, bal});
-      }
+      let bal = principal; const rows=[]; const sd=new Date();
+      for(let i=1;i<=months;i++){ bal=Math.max(0,bal-monthly); const d=new Date(sd); d.setMonth(d.getMonth()+i); rows.push({i,date:d.toISOString().slice(0,10),monthly,bal}); }
 
-      // summary
-      document.getElementById('summary').innerHTML = `
+      document.getElementById('summary').innerHTML=`
+        <h3>Xülasə</h3>
         <div class="row">
-          <div class="col-3"><div class="pill">Məhsul dəyəri</div><h2>${fmtAZN(price)}</h2></div>
-          <div class="col-3"><div class="pill">Avto. ilkin ödəniş</div><h2>${fmtAZN(down)} <span class="muted">(${(pct*100).toFixed(0)}%)</span><br><span class="muted">Rejim: ${mode==='riskOnly'?'Yalnız risk':'Risk + əməkhaqqı'}</span></h2></div>
-          <div class="col-3"><div class="pill">Kredit məbləği</div><h2>${fmtAZN(principal)}</h2></div>
-          <div class="col-3"><div class="pill">Aylıq ödəniş</div><h2>${fmtAZN(monthly)}</h2></div>
+          <div class="col-6"><div class="pill">Məhsul</div><h2>${fmtAZN(price)}</h2></div>
+          <div class="col-6"><div class="pill">İlkin ödəniş</div><h2>${fmtAZN(down)} <span class="muted">(${(pct*100).toFixed(0)}%)</span></h2></div>
+          <div class="col-6"><div class="pill">Kredit</div><h2>${fmtAZN(principal)}</h2></div>
+          <div class="col-6"><div class="pill">Aylıq</div><h2>${fmtAZN(monthly)}</h2></div>
+          <div class="col-12"><div class="muted">Risk baza payı: ${(base*100).toFixed(0)}% • Net gəlir: ${fmtAZN(net)} (${(ratio*100).toFixed(0)}%)</div></div>
         </div>`;
 
-      // table
-      const table = [`<table><thead><tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Əsas</th><th>Faiz</th><th>Qalıq</th></tr></thead><tbody>`,
-        rows.map(r=>`<tr><td>${r.i}</td><td>${r.date}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.principalPart)}</td><td>${fmtAZN(r.interest)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join(''),
-        `</tbody></table>`].join('');
-      document.getElementById('scheduleWrap').innerHTML = table;
+      document.getElementById('scheduleWrap').innerHTML=
+        `<table><thead><tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr></thead><tbody>`+
+        rows.map(r=>`<tr><td>${r.i}</td><td>${r.date}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join('')+
+        `</tbody></table>`;
 
-      // chart
-      const labels = rows.map(r=> r.i);
-      const dataBal = rows.map(r=> Number(r.bal.toFixed(2)) );
-      const ctx=document.getElementById('chart');
-      if(chart) chart.destroy();
-      chart = new Chart(ctx,{ type:'line', data:{ labels, datasets:[ {label:'Qalıq borc', data:dataBal} ] }, options:{ responsive:true, maintainAspectRatio:false, scales:{ y:{ beginAtZero:true } } } });
-
-      calcDoneOnce=true;
+      const labels=rows.map(r=>r.i); const dataBal=rows.map(r=>Number(r.bal.toFixed(2)));
+      const ctx=document.getElementById('chart'); if(chart) chart.destroy();
+      chart=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Qalıq borc',data:dataBal}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}},elements:{line:{tension:.25}}}});
     }
 
-    // ENTER shortcut
-    document.addEventListener('keydown', (e)=>{
-      if(e.key==='Enter') { e.preventDefault(); calc(); }
-    });
-
-    // CSV
-    function buildCSVFromTableEl(table){
-      const rows=[...table.querySelectorAll('tr')].map(tr=>[...tr.children].map(td=>td.innerText));
-      return rows.map(r=>r.join(',')).join('\n');
-    }
-    function exportCSV(){
-      const table = document.querySelector('#scheduleWrap table');
-      if(!table){ alert('Öncə hesablayın.'); return; }
-      const csv = buildCSVFromTableEl(table);
-      const blob=new Blob([csv],{type:'text/csv'});
-      const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='odenis_cedveli.csv'; a.click();
+    function resetForm(){
+      document.getElementById('price').value=0;
+      document.getElementById('months').value=3;
+      document.getElementById('risk').value='med';
+      document.getElementById('salary').value=0;
+      document.getElementById('oblig').value=0;
+      document.getElementById('summary').innerHTML="";
+      document.getElementById('scheduleWrap').innerHTML="";
+      const ctx=document.getElementById('chart'); if(chart) {chart.destroy(); chart=null;}
     }
 
-    // TESTS (only calculator-related)
-    function runTests(){
-      const results=[];
-      const pass = name=>results.push(`<div class="test-pass">✓ ${name}</div>`);
-      const fail = (name,exp,act)=>results.push(`<div class="test-fail">✗ ${name} — gözlənilən: ${exp}, alındı: ${act}</div>`);
-      const approxEqual=(a,b,eps=1e-6)=> Math.abs(a-b)<=eps;
-
-      // 0) DOM id-ləri mövcuddur
-      try{
-        const ids=['price','months','risk','salary','mode','summary','scheduleWrap','chart'];
-        const miss = ids.filter(id=> !document.getElementById(id));
-        miss.length===0 ? pass('Bütün əsas DOM id-ləri mövcuddur') : fail('DOM id-ləri', 'hamısı', 'çatışmır: '+miss.join(','));
-      }catch(e){ fail('DOM id yoxlaması','exception yoxdur',e.message); }
-
-      // 1) riskOnly A/B/C
-      try{
-        setMode('riskOnly');
-        let r = getDownPayment(1000,'low',1600); approxEqual(r.pct,0.20)? pass('riskOnly A 20%'): fail('riskOnly A pct','0.20',r.pct);
-        r = getDownPayment(1000,'med',600);     approxEqual(r.pct,0.30)? pass('riskOnly B 30%'): fail('riskOnly B pct','0.30',r.pct);
-        r = getDownPayment(400,'high',300);     approxEqual(r.pct,0.50)? pass('riskOnly C 50%'): fail('riskOnly C pct','0.50',r.pct);
-      }catch(e){ fail('riskOnly testləri','exception yoxdur',e.message); }
-
-      // 2) risk+salary bandı
-      try{
-        setMode('riskSalary');
-        const r = getDownPayment(1000,'med',600); // 500–799 → 30%
-        approxEqual(r.pct,0.30)? pass('risk+salary B (500–799) 30%'): fail('risk+salary B pct','0.30',r.pct);
-      }catch(e){ fail('risk+salary testləri','exception yoxdur',e.message); }
-
-      // 3) Monthly calc nümunəsi (12 ay)
-      try{
-        setMode('riskOnly');
-        const price=1000, months=10; const {down}=getDownPayment(price,'low',2000); const monthly=(price-down)/months;
-        approxEqual(monthly,80)? pass('Monthly = (1000-200)/10 = 80'): fail('Monthly','80',monthly);
-      }catch(e){ fail('Monthly hesabı','exception yoxdur',e.message); }
-
-      // 4) CSV builder newline & headers
-      try{
-        const tbl=document.createElement('table');
-        tbl.innerHTML='<thead><tr><th>#</th><th>Tarix</th></tr></thead><tbody><tr><td>1</td><td>2025-09-13</td></tr></tbody>';
-        const csv=buildCSVFromTableEl(tbl);
-        (csv.includes('\n') && csv.includes('Tarix')) ? pass('CSV builder OK') : fail('CSV builder','newline + headers',csv);
-      }catch(e){ fail('CSV builder','exception yoxdur',e.message); }
-
-      // 5) Clamp: min və qiymətə
-      try{
-        setMode('riskOnly');
-        const r = getDownPayment(40,'high',0);
-        approxEqual(r.down,40)? pass('Down clamp to price (40)'): fail('Down clamp','40',r.down);
-      }catch(e){ fail('Clamp test','exception yoxdur',e.message); }
-
-      // 6) Müddət dropdown-u işləyir (9 ay)
-      try{
-        const sel = document.getElementById('months');
-        sel.value='9';
-        const mVal = toNum('months');
-        approxEqual(mVal,9) ? pass('Müddət select → 9 oxunur') : fail('Müddət select dəyəri','9',mVal);
-        // Əlavə: hesablamada effekti
-        setMode('riskOnly');
-        document.getElementById('price').value=1000;
-        document.getElementById('risk').value='low';
-        document.getElementById('salary').value=1500;
-        calc();
-        const txt = document.getElementById('summary').innerText;
-        (txt.includes('Aylıq') && txt.match(/\d+/)) ? pass('calc() 9 ay üçün işləyir') : fail('calc 9 ay', 'summary doludur', txt);
-      }catch(e){ fail('Müddət dropdown testi','exception yoxdur',e.message); }
-
-      document.getElementById('testResults').innerHTML = results.join('');
-      const ok = results.filter(r=>r.includes('test-fail')).length===0;
-      document.getElementById('testSummary').textContent = ok? 'Bütün testlər keçdi.' : 'Bəzi testlər uğursuz oldu — yuxarıya baxın.';
-    }
-
-    // Auto-calc once on load
-    window.addEventListener('load', ()=>{ if(!calcDoneOnce) calc(); });
-
-    // expose needed fns
-    Object.assign(window,{calc,exportCSV,runTests});
+    window.addEventListener('load',()=>calc());
   </script>
 </body>
 </html>
