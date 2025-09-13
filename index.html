@@ -100,6 +100,18 @@
             <label>Digər öhdəliklər (AZN)</label>
             <input id="oblig" type="number" min="0" step="1" value="" required />
           </div>
+
+          <!-- Manual ilkin ödəniş seçimi -->
+          <div class="col-12 inline-check">
+            <input class="big-check" type="checkbox" id="manualDownChk" onchange="toggleManualDown()" />
+            <label for="manualDownChk">İlkin ödənişi manual daxil et</label>
+          </div>
+          <div class="col-3" id="manualDownWrap" style="display:none">
+            <label>İlkin ödəniş (AZN)</label>
+            <input id="manualDownAmt" type="number" min="0" step="0.01" placeholder="0" disabled />
+          </div>
+
+          <!-- Əlavə gəlir seçimi -->
           <div class="col-12 inline-check">
             <input class="big-check" type="checkbox" id="addIncomeChk" onchange="toggleExtraIncome()" />
             <label for="addIncomeChk">Əlavə gəlir var?</label>
@@ -119,6 +131,7 @@
             <label>Əlavə gəlir məbləği (AZN)</label>
             <input id="addIncomeAmt" type="number" min="1" step="1" value="" disabled />
           </div>
+
           <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
             <button class="btn success" onclick="calc()">Hesabla</button>
             <button class="btn danger" onclick="resetForm()">Sıfırla</button>
@@ -166,6 +179,10 @@
                 <div class="col-4">
                   <label>IMEI 2</label>
                   <input id="imei2" type="text" placeholder="XXXXXXXXXXXXXXX" />
+                </div>
+                <div class="col-4">
+                  <label>Müqavilə №</label>
+                  <input id="contractNo" type="text" placeholder="ST2025/001" />
                 </div>
                 <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px">
                   <button class="btn success" onclick="finalizeAndPrint()">Təsdiqlə və Çap et</button>
@@ -257,10 +274,18 @@
       else { amtWrap.style.display='none'; amtInp.disabled=true; amtInp.value=''; }
     }
 
+    function toggleManualDown(){
+      const chk=document.getElementById('manualDownChk');
+      const wrap=document.getElementById('manualDownWrap');
+      const inp=document.getElementById('manualDownAmt');
+      if(!chk||!wrap||!inp) return;
+      const on=!!chk.checked; wrap.style.display=on?'block':'none'; inp.disabled=!on; if(!on) inp.value='';
+    }
+
     let chart=null;
 
     function calc(){
-      ['risk','salary','oblig','addIncomeType','addIncomeAmt'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
+      ['risk','salary','oblig','addIncomeType','addIncomeAmt','manualDownAmt'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
       const riskEl=document.getElementById('risk');
       const salaryEl=document.getElementById('salary');
       const obligEl=document.getElementById('oblig');
@@ -295,11 +320,19 @@
       const oblig=Number(document.getElementById('oblig').value||0);
       if(months<=0){ const a=document.getElementById('calcAlert'); if(a){a.style.display='block'; a.textContent='Müddət ən az 1 ay olmalıdır.';} return; }
 
-      const dti = (salary>0)? (oblig/salary) : (oblig>0? Infinity : 0);
-      const dtiWarn = dti > MAX_OBLIG_SHARE;
+      // Down payment: auto or manual
+      const mdChk=document.getElementById('manualDownChk');
+      const mdInp=document.getElementById('manualDownAmt');
+      let downInfo = getDownPayment(price, risk, salary, oblig);
+      let down = downInfo.down; let pct = downInfo.pct; const base = downInfo.base; const ratio = downInfo.ratio; const net = downInfo.net;
 
-      const baseRes = getDownPayment(price, risk, salary, oblig);
-      let down = baseRes.down; let pct = baseRes.pct; const base = baseRes.base; const ratio = baseRes.ratio; const net = baseRes.net;
+      let manualUsed=false;
+      if(mdChk && mdChk.checked){
+        const val = Math.max(0, Math.min(price, Number(mdInp.value||0)));
+        if(isNaN(val)) { mdInp.classList.add('invalid'); const a=document.getElementById('calcAlert'); if(a){a.style.display='block'; a.textContent='İlkin ödəniş ədədi olmalıdır.';} return; }
+        down = val; pct = price>0 ? (down/price) : 0; manualUsed=true;
+      }
+
       let principal = Math.max(0, price - down);
       let monthly = months>0 ? principal / months : 0;
 
@@ -309,7 +342,7 @@
       if(needsAdj){
         const requiredPrincipal = Math.max(0, maxMonthly * months);
         const newDownRaw = price - requiredPrincipal;
-        down = Math.min(price, Math.max(MIN_DOWN_AZN, Math.max(prevDown, newDownRaw)));
+        down = Math.min(price, Math.max(manualUsed? down : MIN_DOWN_AZN, Math.max(prevDown, newDownRaw)));
         pct = price>0 ? (down/price) : 0;
         principal = Math.max(0, price - down);
         monthly = months>0 ? principal / months : 0;
@@ -324,17 +357,20 @@
       }
 
       const riskCls = risk==='low'?'risk-low':(risk==='high'?'risk-high':'risk-med');
+      const dti = (salary>0)? (oblig/salary) : (oblig>0? Infinity : 0);
+      const dtiWarn = dti > MAX_OBLIG_SHARE;
       const dtiHtml = dtiWarn
         ? `<div class="notice warn">Diqqət: Öhdəlik/Gəlir = ${(dti*100).toFixed(0)}% (hədd ${Math.round(MAX_OBLIG_SHARE*100)}%). Yüksək risk göstəricisi.</div>`
         : '';
       const extraHtml = extra>0 ? `<div class="pill">Əlavə gəlir: ${extraDesc} — ${fmtAZN(extra)}</div>` : '';
+      const manualHtml = manualUsed ? `<div class="pill">İlkin ödəniş (manual)</div>` : '';
 
       document.getElementById('calcAlert').style.display='none';
       document.getElementById('summary').innerHTML=`
         <h3>Xülasə</h3>
         ${dtiHtml}
         <div class="row">
-          <div class="col-6"><div class="pill ${riskCls}">Risk: ${risk.toUpperCase()}</div>${extraHtml}<h2>${fmtAZN(price)}</h2><div class="muted">Məhsul dəyəri</div></div>
+          <div class="col-6"><div class="pill ${riskCls}">Risk: ${risk.toUpperCase()}</div>${extraHtml}${manualHtml}<h2>${fmtAZN(price)}</h2><div class="muted">Məhsul dəyəri</div></div>
           <div class="col-6"><div class="pill">İlkin ödəniş</div>
             <h2>${fmtAZN(down)} <span class="muted">(${(pct*100).toFixed(0)}%)</span></h2>
             ${autoAdj?`<div class="notice ok">DSR həddinə görə ilkin ödəniş <strong>avtomatik artırılıb</strong>. Əvvəl: ${fmtAZN(prevDown)}, Aylıq: ${fmtAZN(prevMonthly)} → ${fmtAZN(monthly)}</div>`:''}
@@ -365,7 +401,7 @@
     }
 
     function resetForm(){
-      ['price','months','risk','salary','oblig','addIncomeType','addIncomeAmt','custName','custPhone','prodName','idSerial','finCode','address','birthDate','imei1','imei2'].forEach(id=>{
+      ['price','months','risk','salary','oblig','addIncomeType','addIncomeAmt','custName','custPhone','prodName','idSerial','finCode','address','birthDate','imei1','imei2','contractNo','manualDownAmt'].forEach(id=>{
         const el=document.getElementById(id); if(!el) return;
         if(id==='months') el.value=3; else if(id==='risk' || id==='addIncomeType') el.value=''; else el.value='';
         el.classList.remove('invalid');
@@ -380,6 +416,13 @@
       if(amtWrap){ amtWrap.style.display='none'; }
       if(typeSel){ typeSel.disabled=true; }
       if(amtInp){ amtInp.disabled=true; }
+
+      const mdChk=document.getElementById('manualDownChk');
+      const mdWrap=document.getElementById('manualDownWrap');
+      const mdInp=document.getElementById('manualDownAmt');
+      if(mdChk){ mdChk.checked=false; }
+      if(mdWrap){ mdWrap.style.display='none'; }
+      if(mdInp){ mdInp.disabled=true; mdInp.value=''; }
 
       const alertBox=document.getElementById('calcAlert'); if(alertBox){ alertBox.style.display='none'; alertBox.textContent=''; }
       document.getElementById('summary').innerHTML="";
@@ -410,15 +453,22 @@
       const salary=Number(salaryStr)+extra;
       const oblig=Number(obligStr)||0;
 
-      const baseRes = getDownPayment(price, risk, salary, oblig);
-      let down = baseRes.down; let pct = baseRes.pct; const net = baseRes.net; const base = baseRes.base; const ratio = baseRes.ratio;
+      // Down payment (auto or manual)
+      const mdChk=document.getElementById('manualDownChk');
+      const mdInp=document.getElementById('manualDownAmt');
+      let downInfo = getDownPayment(price, risk, salary, oblig);
+      let down = downInfo.down; let pct = downInfo.pct; const net = downInfo.net; const base = downInfo.base; const ratio = downInfo.ratio;
+      if(mdChk && mdChk.checked){
+        const val = Math.max(0, Math.min(price, Number(mdInp.value||0)));
+        down = isNaN(val)? down: val; pct = price>0 ? (down/price) : 0;
+      }
       let principal = Math.max(0, price - down);
       let monthly = months>0 ? principal / months : 0;
       const maxMonthly = Math.max(0, net * MAX_DSR);
       if(monthly>maxMonthly){
         const requiredPrincipal = Math.max(0, maxMonthly * months);
         const newDownRaw = price - requiredPrincipal;
-        down = Math.min(price, Math.max(MIN_DOWN_AZN, Math.max(down, newDownRaw)));
+        down = Math.min(price, Math.max(mdChk&&mdChk.checked? down : MIN_DOWN_AZN, newDownRaw));
         pct = price>0 ? (down/price) : 0;
         principal = Math.max(0, price - down);
         monthly = months>0 ? principal / months : 0;
@@ -450,6 +500,7 @@
       const birthDate=(document.getElementById('birthDate')?.value||'').trim();
       const imei1=(document.getElementById('imei1')?.value||'').trim();
       const imei2=(document.getElementById('imei2')?.value||'').trim();
+      const contractNo=(document.getElementById('contractNo')?.value||'').trim();
 
       ['custName','custPhone','prodName','idSerial','finCode','address','birthDate'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
       const errs=[]; if(!custName) {document.getElementById('custName').classList.add('invalid'); errs.push('Müştəri adı');}
@@ -464,8 +515,11 @@
       try{ calc(); }catch(e){}
       let c; try{ c = computeForDocs(); }catch(e){ alert(e.message); return; }
 
+      const autoNo = 'ST'+new Date().getFullYear()+'/'+String(Date.now()).slice(-3);
+      const docNo = contractNo || autoNo;
+
       const contract=`<div class='page'>
-        <h1 style='text-transform:uppercase'>MÜDDƏTLİ (NİSYƏ) ALQI-SATQI MÜQAVİLƏSİ №</h1>
+        <h1 style='text-transform:uppercase'>MÜDDƏTLİ (NİSYƏ) ALQI-SATQI MÜQAVİLƏSİ № ${docNo}</h1>
         <div class='muted'>Bakı şəhəri — Tarix: ${new Date().toLocaleDateString('az-AZ')}</div>
         <div class='block'>
           Bir tərəfdən Azərbaycan Respublikasının qanunları və Normativ aktları əsasında öz nizamnaməsi ilə fəaliyyət göstərən
@@ -478,7 +532,7 @@
         <div class='block'>
           Bakı şəhəri, Nəsimi rayonu, Nizami küçəsi ünvanında yerləşən “Baktel Electronics” MMC ilə qeydiyyatda olan
           <strong>${custName}</strong> arasında tərtib edilmiş <strong>${new Date().toLocaleDateString('az-AZ')}</strong> tarixli
-          <strong>${('ST'+new Date().getFullYear()+'/'+String(Date.now()).slice(-3))}</strong> saylı hesab-qaiməsinə əsasən
+          <strong>${docNo}</strong> saylı hesab-qaiməsinə əsasən
           şirkət tərəfindən dəyərinin qalan hissəsini müəyyən müddət ərzində ödəmək şərtilə aşağıdakı mal nisyə satılır:
           <br/><br/>
           <table style='width:100%; border-collapse:collapse'>
@@ -547,12 +601,13 @@
       const scheduleRows=c.schedule.map(r=>`<tr><td>${r.i}</td><td>${r.date}</td><td style='text-align:right'>${fmtAZN(r.monthly)}</td><td style='text-align:right'>${fmtAZN(r.bal)}</td></tr>`).join('');
       const schedule=`<div class='page'>
         <h1>Ödəniş cədvəli</h1>
-        <div class='muted'>Müştəri: ${custName} • Məhsul: ${prodName}</div>
+        <div class='muted'>Müştəri: ${custName} • Məhsul: ${prodName} • Müqavilə № ${docNo}</div>
         <div class='block'><table><thead><tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr></thead><tbody>${scheduleRows}</tbody></table></div>
       </div>`;
 
       const warranty=`<div class='page'>
         <h1>Zəmanət talonu</h1>
+        <div class='muted'>Müqavilə № ${docNo}</div>
         <div class='block'>
           <strong>Müştəri:</strong> ${custName}<br/>
           <strong>Əlaqə:</strong> ${custPhone}<br/>
@@ -574,6 +629,7 @@
     window.onIncomeTypeChange=onIncomeTypeChange;
     window.toggleFinalize=toggleFinalize;
     window.finalizeAndPrint=finalizeAndPrint;
+    window.toggleManualDown=toggleManualDown;
   </script>
 </body>
 </html>
