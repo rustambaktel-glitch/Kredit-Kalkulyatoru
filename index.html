@@ -16,7 +16,6 @@
     .wrap{max-width:1200px;margin:0 auto;padding:24px}
     header{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 10px 0}
     header h1{margin:0;font-size:28px;font-weight:800;letter-spacing:.2px;color:var(--primary)}
-    header img.logo{height:44px;width:auto;display:block}
 
     .nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
     .tab{border:1px solid var(--border);background:#fff;color:#0f172a;padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:700;box-shadow:var(--shadow)}
@@ -34,6 +33,7 @@
     label{font-size:13px;color:#334155;font-weight:600}
     input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text)}
     .btn{border:1px solid #cbd5e1;background:#f1f5f9;color:#0f172a;padding:11px 16px;border-radius:12px;cursor:pointer;transition:.15s ease;box-shadow:var(--shadow);font-weight:700}
+    .btn.sm{padding:6px 10px;font-size:12px}
     .btn.success{background:linear-gradient(180deg,#22c55e,#16a34a);border-color:#15803d;color:#fff}
     .btn.danger{background:linear-gradient(180deg,#ef4444,#dc2626);border-color:#b91c1c;color:#fff}
     .btn.primary{background:linear-gradient(180deg,#38bdf8,#0ea5e9);border-color:#0284c7;color:#fff}
@@ -106,6 +106,7 @@
     <!-- KALKULYATOR (modul #1) -->
     <main id="view-calculator" style="display:none">
       <section id="calc" class="card">
+        <div id="calcAlert" class="notice warn" style="display:none"></div>
         <div class="row">
           <div class="col-4">
             <label>Məhsul dəyəri (AZN)</label>
@@ -217,9 +218,13 @@
     // ===== Router (Dashboard/Kalkulyator/Satış)
     function go(view){
       const map={dashboard:'view-dashboard', calculator:'view-calculator', sales:'view-sales'};
-      for(const k in map){ document.getElementById(map[k]).style.display = (k===view)?'block':'none'; }
+      for(const k in map){
+        const el=document.getElementById(map[k]);
+        if(el) el.style.display = (k===view)?'block':'none';
+      }
       ['dashboard','calculator','sales'].forEach(v=>{
-        document.getElementById('tab-'+v).classList.toggle('active', v===view);
+        const t=document.getElementById('tab-'+v);
+        if(t) t.classList.toggle('active', v===view);
       });
       if(view==='dashboard') renderDashboard();
       if(view==='sales') renderSales();
@@ -303,7 +308,7 @@
         if(!risk) riskEl.classList.add('invalid');
         if(salaryStr==='') salaryEl.classList.add('invalid');
         if(obligStr==='') obligEl.classList.add('invalid');
-        alert('Zəhmət olmasa Risk qrupu, Əmək haqqı və Digər öhdəlikləri daxil edin.');
+        const alertBox=document.getElementById('calcAlert'); if(alertBox){ alertBox.style.display='block'; alertBox.textContent='Zəhmət olmasa Risk qrupu, Əmək haqqı və Digər öhdəlikləri daxil edin.'; }
         return;
       }
 
@@ -356,6 +361,7 @@
         : '';
       const extraHtml = extra>0 ? `<div class="pill">Əlavə gəlir: ${extraDesc} — ${fmtAZN(extra)}</div>` : '';
 
+      document.getElementById('calcAlert').style.display='none';
       document.getElementById('summary').innerHTML=`
         <h3>Xülasə</h3>
         ${dtiHtml}
@@ -414,6 +420,18 @@
 
     // ===== Satış sadə state
     const state={ sales: [] };
+    const LS_KEY='bakfon_sales_v1';
+    function saveSales(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state.sales)); }catch(e){ console.warn('localStorage save error',e);} }
+    function loadSales(){
+      try{
+        const raw=localStorage.getItem(LS_KEY);
+        if(!raw) return;
+        const arr=JSON.parse(raw);
+        if(Array.isArray(arr)){
+          state.sales = arr.map(x=>({ ...x, ts: x.ts? new Date(x.ts): new Date() }));
+        }
+      }catch(e){ console.warn('localStorage load error',e); }
+    }
 
     function addSale(){
       const name=(document.getElementById('s_name').value||'').trim();
@@ -422,6 +440,7 @@
       if(!name||!product||!(amount>0)){ alert('Zəhmət olmasa bütün satış sahələrini doldurun.'); return; }
       const rec={ id: Date.now(), name, product, amount, ts:new Date() };
       state.sales.unshift(rec);
+      saveSales();
       clearSaleForm();
       renderSales();
       renderDashboard();
@@ -433,24 +452,66 @@
       const wrap=document.getElementById('salesTableWrap');
       if(!wrap) return;
       if(state.sales.length===0){ wrap.innerHTML='<div class="muted">Hələ satış yoxdur.</div>'; return; }
-      const rows=state.sales.map((s,i)=>`<tr><td>${i+1}</td><td style="text-align:left">${s.name}</td><td style="text-align:left">${s.product}</td><td>${fmtAZN(s.amount)}</td><td>${new Date(s.ts).toLocaleString('az-AZ')}</td></tr>`).join('');
-      wrap.innerHTML=`<table><thead><tr><th>#</th><th>Müştəri</th><th>Məhsul</th><th>Məbləğ</th><th>Tarix</th></tr></thead><tbody>${rows}</tbody></table>`;
+      const rows=state.sales.map((s,i)=>`<tr>
+        <td>${i+1}</td>
+        <td style="text-align:left">${s.name}</td>
+        <td style="text-align:left">${s.product}</td>
+        <td>${fmtAZN(s.amount)}</td>
+        <td>${new Date(s.ts).toLocaleString('az-AZ')}</td>
+        <td><button class="btn danger sm" onclick="deleteSale(${s.id})">Sil</button></td>
+      </tr>`).join('');
+      wrap.innerHTML=`<table><thead><tr><th>#<\/th><th>Müştəri<\/th><th>Məhsul<\/th><th>Məbləğ<\/th><th>Tarix<\/th><th>Əməliyyat<\/th><\/tr><\/thead><tbody>${rows}<\/tbody><\/table>`;
+    }
+    function deleteSale(id){
+      const rec=state.sales.find(s=>s.id===id);
+      if(!rec) return;
+      const ok=confirm(`"${rec.name}" müştərisini silmək istəyirsiniz? Bu əməliyyat geri qaytarılmır.`);
+      if(!ok) return;
+      state.sales = state.sales.filter(s=>s.id!==id);
+      saveSales();
+      renderSales();
+      renderDashboard();
+    }
+    function setupSalesEvents(){
+      const wrap=document.getElementById('salesTableWrap');
+      if(!wrap || wrap.__hasDelHandler) return;
+      wrap.addEventListener('click', (e)=>{
+        const btn=e.target.closest('button[data-del]');
+        if(!btn) return;
+        const id=Number(btn.getAttribute('data-del'));
+        if(id) deleteSale(id);
+      });
+      wrap.__hasDelHandler=true;
     }
     function renderDashboard(){
       const total = state.sales.length;
       const sum = state.sales.reduce((a,b)=>a+b.amount,0);
       const last = state.sales[0]?.ts ? new Date(state.sales[0].ts).toLocaleString('az-AZ') : '—';
       const fmt=n=> new Intl.NumberFormat('az-AZ').format(n||0);
-      document.getElementById('dash-total-sales').textContent = fmt(total);
-      document.getElementById('dash-total-amount').textContent = fmtAZN(sum);
-      document.getElementById('dash-last-sale').textContent = last;
+      const el1=document.getElementById('dash-total-sales'); if(el1) el1.textContent = fmt(total);
+      const el2=document.getElementById('dash-total-amount'); if(el2) el2.textContent = fmtAZN(sum);
+      const el3=document.getElementById('dash-last-sale'); if(el3) el3.textContent = last;
     }
 
-    // Global expose
-    window.go=go; window.calc=calc; window.resetForm=resetForm; window.exportPrint=exportPrint; window.toggleExtraIncome=toggleExtraIncome; window.onIncomeTypeChange=onIncomeTypeChange;
+    // Global expose (onclick üçün)
+    window.go=go; window.calc=calc; window.resetForm=resetForm; window.exportPrint=exportPrint; window.toggleExtraIncome=toggleExtraIncome; window.onIncomeTypeChange=onIncomeTypeChange; window.deleteSale=deleteSale;
 
     // İlk açılışda Dashboard
-    window.addEventListener('load',()=>{ go('dashboard'); });
+    window.addEventListener('load',()=>{
+      loadSales();
+      renderDashboard();
+      renderSales();
+      setupSalesEvents();
+      go('dashboard');
+    });
+
+    // (Optional) Konsol üçün qeyri-invaziv yoxlamalar — UI-də görünmür
+    function runSanity(){
+      if(typeof go!=='function') throw new Error('go funksiyası yoxdur');
+      go('sales'); go('dashboard');
+      console.log('Sanity OK: router işləyir ✅');
+    }
+    window.runSanity = runSanity;
   </script>
 </body>
 </html>
