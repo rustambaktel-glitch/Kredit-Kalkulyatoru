@@ -441,15 +441,85 @@
 
       // 3) Sənədləri hazırlayıb tək pəncərədə çap
       const contract=`<div class='page'>
-        <h1>Müqavilə</h1>
-        <div class='muted'>Tarix: ${new Date().toLocaleDateString('az-AZ')}</div>
-        <div class='block'><strong>Müştəri:</strong> ${custName} &nbsp; | &nbsp; <strong>Əlaqə:</strong> ${custPhone}</div>
+        <h1 style='text-transform:uppercase'>MÜDDƏTLİ (NİSYƏ) ALQI-SATQI MÜQAVİLƏSİ №</h1>
+        <div class='muted'>Bakı şəhəri — Tarix: ${new Date().toLocaleDateString('az-AZ')}</div>
         <div class='block'>
-          <strong>Məhsul:</strong> ${prodName}<br/>
-          <strong>Dəyər:</strong> ${fmtAZN(c.price)} • <strong>İlkin ödəniş:</strong> ${fmtAZN(c.down)} (${(c.pct*100).toFixed(0)}%)<br/>
-          <strong>Kredit məbləği:</strong> ${fmtAZN(c.principal)} • <strong>Müddət:</strong> ${c.months} ay • <strong>Aylıq:</strong> ${fmtAZN(c.monthly)}
+          Bir tərəfdən Azərbaycan Respublikasının qanunları və Normativ aktları əsasında öz nizamnaməsi ilə fəaliyyət göstərən
+          <strong>“Baktel Electronics” Məhdud Məsuliyyətli Cəmiyyəti</strong> (bundan sonra “Satıcı firma”),
+          digər tərəfdən isə şəxsiyyətini təsdiq edən sənədin (seriya/nömrə: <em>—</em>) sahibi
+          <strong>${custName || '—'}</strong> (bundan sonra “Alıcı”) arasında aşağıdakılar barədə müqavilə bağlanıldı.
         </div>
-        <div class='block'><strong>Şərtlər:</strong><br/>Müştəri göstərilən qrafik üzrə aylıq ödənişləri vaxtında həyata keçirməyi öhdəsinə götürür. Mübahisələr qanunvericilik çərçivəsində həll edilir.</div>
+
+        <h2>1. MÜQAVİLƏNİN PREDMETİ</h2>
+        <div class='block'>
+          Bakı şəhəri, Nəsimi rayonu, Nizami küçəsi ünvanında yerləşən “Baktel Electronics” MMC ilə qeydiyyatda olan
+          <strong>${custName || '—'}</strong> arasında tərtib edilmiş <strong>${new Date().toLocaleDateString('az-AZ')}</strong> tarixli
+          <strong>${('ST'+new Date().getFullYear()+'/'+String(Date.now()).slice(-3))}</strong> saylı hesab-qaiməsinə əsasən
+          şirkət tərəfindən dəyərinin qalan hissəsini müəyyən müddət ərzində ödəmək şərtilə aşağıdakı mal nisyə satılır:
+          <br/><br/>
+          <table style='width:100%; border-collapse:collapse'>
+            <tr><th style='text-align:left'>Məhsulun adı</th><td>${prodName || '—'}</td></tr>
+            <tr><th style='text-align:left'>İlkin ödəniş məbləği</th><td>${fmtAZN(c.down)}</td></tr>
+            <tr><th style='text-align:left'>Kredit məbləği</th><td>${fmtAZN(c.principal)}</td></tr>
+            <tr><th style='text-align:left'>Kreditin müddəti</th><td>${c.months} ay</td></tr>
+            <tr><th style='text-align:left'>Aylıq ödəniş məbləği</th><td>${fmtAZN(c.monthly)}</td></tr>
+          </table>
+        </div>
+
+        <h2>2. TƏRƏFLƏRİN HÜQUQLARI VƏ VƏZİFƏLƏRİ</h2>
+        <div class='block'>
+          <strong>2.1. “Satıcı firma” aşağıdakıları öz öhdəsinə götürür:</strong><br/>
+          2.1.1. “Alıcının” nisyə aldığı mala görə birdəfəlik haqqın hesablanmasının və tutulmasının düzgünlüyünə riayət etmək.<br/>
+          2.1.2. Bu müqavilə ilə bağlı konfidensiallığı qorumaq.<br/>
+          <br/>
+          <strong>2.2. “Alıcı” aşağıdakıları öz öhdəsinə götürür:</strong><br/>
+          2.2.1. Bu müqavilə üzrə bütün ödənişləri vaxtında həyata keçirmək (birdəfəlik haqq və aylıq ödənişlər “Satıcı” firmanın
+          xəzinəsinə daxil olduqdan sonra yerinə yetirilmiş hesab edilir).<br/>
+          2.2.2. “Alıcı”nın nisyə alınmış əşyanın sənədlərində dəyişiklik olduqda (ünvan, iş yeri və s.) 3 (üç) təqvim günü ərzində
+          “Satıcı firma”ya yazılı surətdə xəbər vermək.<br/>
+          2.2.3. “Satıcı firma”nın tələbi ilə “Alıcı”nın maliyyə durumunu müəyyən etməyə şərait yaratmaq.<br/>
+          2.2.4. Bu müqavilə ilə bağlı məlumatların konfidensiallığını qorumaq.<br/>
+          <br/>
+          <strong>2.3. “Satıcı firma”nın hüquqları:</strong><br/>
+          2.3.1. “Alıcı” şərtləri pozduqda müqaviləni vaxtından əvvəl ləğv etməyi və borcun dərhal ödənilməsini tələb etmək.<br/>
+          <br/>
+          <strong>2.4. “Alıcı”nın hüquqları:</strong><br/>
+          2.4.1. “Satıcı”nın razılığı ilə əşyanın dəyərini qismən və ya bir dəfəyə vaxtından əvvəl qaytarmaq.
+        </div>
+
+        <h2>3. TƏRƏFLƏRİN MƏSULİYYƏTİ</h2>
+        <div class='block'>
+          3.1. Aylıq ödəniş gecikərsə, gecikilən hər gün üçün qrafikə uyğun aylıq ödəniş məbləğinin 3%-i cərimə tətbiq oluna bilər.<br/>
+          3.2. “Alıcı” aylıq ödənişi 5 gün gecikdirərsə, “Satıcı” borcun vaxtından əvvəl ödənilməsini tələb edə bilər.<br/>
+          3.3. “Alıcı” aylıq ödənişi 1 ay gecikdirərsə, “Satıcı” nisyə alınmış məhsulun IMEI qeydiyyatına məhdudiyyət qoya bilər.
+        </div>
+
+        <h2>4. YEKUN MÜDDƏALAR</h2>
+        <div class='block'>
+          Bu müqavilə hər iki tərəf imzaladıqdan sonra qüvvəyə minir və öhdəliklər tam yerinə yetirilənədək qüvvədə olur. Müqavilə 2 (iki)
+          eyni nüsxədə tərtib edilmişdir. Mübahisələr Azərbaycan Respublikasının qüvvədə olan qanunvericiliyi ilə tənzimlənir.
+        </div>
+
+        <div class='block'>
+          <table style='width:100%'>
+            <tr>
+              <td style='vertical-align:top; width:50%'>
+                <strong>Satıcı:</strong><br/>
+                “Baktel Electronics” MMC<br/>
+                Ünvan: Bakı şəhəri, Nəsimi rayonu, Nizami küç., 187<br/>
+                VÖEN: 1505350851<br/>
+                İmza: __________________
+              </td>
+              <td style='vertical-align:top; width:50%'>
+                <strong>Alıcı:</strong><br/>
+                A.S.A.: ${custName || '—'}<br/>
+                Ş/V seriya və nömrəsi: —<br/>
+                Ünvan: —<br/>
+                İmza: __________________
+              </td>
+            </tr>
+          </table>
+        </div>
       </div>`;
 
       const scheduleRows=c.schedule.map(r=>`<tr><td>${r.i}</td><td>${r.date}</td><td style='text-align:right'>${fmtAZN(r.monthly)}</td><td style='text-align:right'>${fmtAZN(r.bal)}</td></tr>`).join('');
