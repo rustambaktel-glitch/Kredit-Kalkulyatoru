@@ -9,17 +9,13 @@
       --bg:#f7f9fc; --text:#0f172a; --card:#ffffff; --border:#e7eaf0; --muted:#51607a; --primary:#dc2626;
       --pill-bg:#eef2ff; --pill-border:#c7d2fe; --input-bg:#ffffff; --input-border:#cfd5e1; --shadow:0 6px 18px rgba(2,6,23,.06);
       --radius:14px; --warn-bg:#fff1f2; --warn-border:#fecaca; --warn-text:#991b1b;
-      --ok-bg:#f0fdf4; --ok-border:#bbf7d0; --ok-text:#14532d; --nav:#0ea5e9;
+      --ok-bg:#f0fdf4; --ok-border:#bbf7d0; --ok-text:#14532d;
     }
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;font-size:16px;line-height:1.55}
     .wrap{max-width:1200px;margin:0 auto;padding:24px}
     header{display:flex;align-items:center;justify-content:center;gap:10px;margin:0 0 10px 0}
     header h1{margin:0;font-size:28px;font-weight:800;letter-spacing:.2px;color:var(--primary)}
-
-    .nav{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:16px}
-    .tab{border:1px solid var(--border);background:#fff;color:#0f172a;padding:10px 14px;border-radius:999px;cursor:pointer;font-weight:700;box-shadow:var(--shadow)}
-    .tab.active{background:linear-gradient(180deg,#38bdf8,#0ea5e9);color:#fff;border-color:#0284c7}
 
     h2{font-size:22px;font-weight:700;color:#111827;margin:6px 0 0}
     h3{font-size:18px;font-weight:700;color:#111827;margin:0 0 8px}
@@ -33,11 +29,10 @@
     label{font-size:13px;color:#334155;font-weight:600}
     input,select,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid var(--input-border);background:var(--input-bg);color:var(--text)}
     .btn{border:1px solid #cbd5e1;background:#f1f5f9;color:#0f172a;padding:11px 16px;border-radius:12px;cursor:pointer;transition:.15s ease;box-shadow:var(--shadow);font-weight:700}
-    .btn.sm{padding:6px 10px;font-size:12px}
     .btn.success{background:linear-gradient(180deg,#22c55e,#16a34a);border-color:#15803d;color:#fff}
     .btn.danger{background:linear-gradient(180deg,#ef4444,#dc2626);border-color:#b91c1c;color:#fff}
-    .btn.primary{background:linear-gradient(180deg,#38bdf8,#0ea5e9);border-color:#0284c7;color:#fff}
     .btn.ghost{background:#fff}
+    .btn.primary{background:linear-gradient(180deg,#38bdf8,#0ea5e9);border-color:#0284c7;color:#fff}
     .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--pill-border);padding:6px 10px;border-radius:999px;background:var(--pill-bg);color:#3730a3;font-size:12px}
     .pill.risk-low{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
     .pill.risk-med{background:#fffbeb;border-color:#fde68a;color:#92400e}
@@ -59,7 +54,7 @@
     .inline-check{display:flex;align-items:center;gap:6px;justify-content:flex-start}
     .inline-check label{margin:0}
     .inline-check .big-check{width:18px;height:18px;accent-color:#16a34a;transform:scale(1.15);transform-origin:left center;margin-right:2px}
-    @media print{ .btn, .nav, #view-dashboard { display:none } .wrap{max-width:1000px} header{margin-bottom:0} }
+    @media print{ .btn, #calc { display:none } .wrap{max-width:1000px} header{margin-bottom:0} }
   </style>
 </head>
 <body>
@@ -68,46 +63,12 @@
       <h1>KREDİT KALKULYATORU</h1>
     </header>
 
-    <!-- Naviqasiya -->
-    <nav class="nav">
-      <button class="tab active" id="tab-dashboard" onclick="go('dashboard')">Dashboard</button>
-      <button class="tab" id="tab-calculator" onclick="go('calculator')">Kalkulyator</button>
-      <button class="tab" id="tab-sales" onclick="go('sales')">Satış</button>
-    </nav>
-
-    <!-- DASHBOARD (ilk görünən) -->
-    <main id="view-dashboard">
-      <section class="card">
-        <h3>Xoş gəldiniz!</h3>
-        <p class="muted">Tez başlanğıc üçün aşağıdakı qısa keçidlərdən istifadə edin.</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:10px">
-          <div class="card" style="margin:0;display:flex;flex-direction:column;gap:8px">
-            <h3>Kredit Kalkulyatoru</h3>
-            <p class="muted">Müştəri üçün kredit/aylıq ödənişi hesabla.</p>
-            <div><button class="btn primary" onclick="go('calculator')">Aç</button></div>
-          </div>
-          <div class="card" style="margin:0;display:flex;flex-direction:column;gap:8px">
-            <h3>Satış</h3>
-            <p class="muted">Yeni satış qeydi əlavə et və siyahıya bax.</p>
-            <div><button class="btn" onclick="go('sales')">Aç</button></div>
-          </div>
-        </div>
-      </section>
-      <section class="card">
-        <h3>Qısa göstəricilər</h3>
-        <div class="row">
-          <div class="col-4"><h2 id="dash-total-sales">0</h2><div class="muted">Satış sayı</div></div>
-          <div class="col-4"><h2 id="dash-total-amount">0 AZN</h2><div class="muted">Toplam məbləğ</div></div>
-          <div class="col-4"><h2 id="dash-last-sale">—</h2><div class="muted">Son satış</div></div>
-        </div>
-      </section>
-    </main>
-
-    <!-- KALKULYATOR (modul #1) -->
-    <main id="view-calculator" style="display:none">
+    <!-- KALKULYATOR (yeganə modul) -->
+    <main id="view-calculator">
       <section id="calc" class="card">
         <div id="calcAlert" class="notice warn" style="display:none"></div>
         <div class="row">
+          <!-- Müştəri və məhsul xanası ilkin mərhələdə gizlədildi (sonradan rəsmiləşdirmədə açılacaq) -->
           <div class="col-4">
             <label>Məhsul dəyəri (AZN)</label>
             <input id="price" type="number" min="0" step="0.01" value="1000" />
@@ -163,6 +124,32 @@
             <button class="btn success" onclick="calc()">Hesabla</button>
             <button class="btn danger" onclick="resetForm()">Sıfırla</button>
             <button class="btn ghost" onclick="exportPrint()">PDF (Çap)</button>
+            <button class="btn primary" onclick="toggleFinalize()">Əlavə rəsmiləşdir</button>
+          </div>
+
+          <!-- Rəsmiləşdirmə formu (gizli) -->
+          <div id="finalizeWrap" class="col-12" style="display:none">
+            <div class="card" style="margin:8px 0">
+              <h3>Rəsmiləşdirmə</h3>
+              <div class="row">
+                <div class="col-4">
+                  <label>Müştəri adı</label>
+                  <input id="custName" type="text" placeholder="Ad Soyad" />
+                </div>
+                <div class="col-4">
+                  <label>Əlaqə nömrəsi</label>
+                  <input id="custPhone" type="tel" placeholder="050 xxx xx xx" />
+                </div>
+                <div class="col-4">
+                  <label>Məhsul adı/model</label>
+                  <input id="prodName" type="text" placeholder="Telefon / Noutbuk ..." />
+                </div>
+                <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px">
+                  <button class="btn success" onclick="finalizeAndPrint()">Təsdiqlə və Çap et</button>
+                  <button class="btn" onclick="toggleFinalize(false)">Bağla</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -177,65 +164,24 @@
 
       <section class="card"><canvas id="chart" height="220"></canvas></section>
     </main>
-
-    <!-- SATIŞ modulu -->
-    <main id="view-sales" style="display:none">
-      <section class="card">
-        <h3>Yeni satış</h3>
-        <div class="row">
-          <div class="col-4">
-            <label>Müştəri adı</label>
-            <input id="s_name" type="text" placeholder="Ad Soyad" />
-          </div>
-          <div class="col-4">
-            <label>Məhsul</label>
-            <input id="s_product" type="text" placeholder="Məhsul adı/model" />
-          </div>
-          <div class="col-4">
-            <label>Məbləğ (AZN)</label>
-            <input id="s_amount" type="number" min="0" step="0.01" placeholder="0.00" />
-          </div>
-          <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <button class="btn primary" onclick="addSale()">Qeyd et</button>
-            <button class="btn" onclick="clearSaleForm()">Təmizlə</button>
-          </div>
-        </div>
-      </section>
-      <section class="card">
-        <h3>Satış siyahısı</h3>
-        <div id="salesTableWrap"></div>
-      </section>
-    </main>
-
   </div>
 
+  <!-- Chart.js yalnız kitabxanadır, öz kodumuz ayrıca script-dədir -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  
+  <!-- Tətbiq skripti (BÜTÜN öz funksiyalarımız buradadır) -->
   <script>
     // ===== Utils
     const fmtAZN = n=> (new Intl.NumberFormat('az-AZ',{style:'currency',currency:'AZN',maximumFractionDigits:2})).format(n||0);
     const toNum = id=> Number((document.getElementById(id)?.value) ?? 0);
 
-    // ===== Router (Dashboard/Kalkulyator/Satış)
-    function go(view){
-      const map={dashboard:'view-dashboard', calculator:'view-calculator', sales:'view-sales'};
-      for(const k in map){
-        const el=document.getElementById(map[k]);
-        if(el) el.style.display = (k===view)?'block':'none';
-      }
-      ['dashboard','calculator','sales'].forEach(v=>{
-        const t=document.getElementById('tab-'+v);
-        if(t) t.classList.toggle('active', v===view);
-      });
-      if(view==='dashboard') renderDashboard();
-      if(view==='sales') renderSales();
-    }
-
-    // ===== Policy & limits (kalkulyator)
+    // ===== Policy & limits
     const POLICY_RISK_ONLY = { low: 0.20, med: 0.30, high: 0.50 };
     const MIN_DOWN_AZN = 50;
-    const MAX_OBLIG_SHARE = 0.50;
-    const MAX_DSR = 0.40;
+    const MAX_OBLIG_SHARE = 0.50; // xəbərdarlıq
+    const MAX_DSR = 0.40;         // sərt limit
 
+    // Hesablamada istifadə olunan köməkçi
     function getDownPayment(price, riskKey, salary=0, oblig=0){
       const base = POLICY_RISK_ONLY[riskKey] ?? POLICY_RISK_ONLY.med;
       salary = Number(salary)||0; oblig = Number(oblig)||0;
@@ -251,6 +197,7 @@
       return { down, pct, base, ratio, net };
     }
 
+    // Çap (hesab xülasəsi + cədvəl)
     function exportPrint(){
       const w=window.open('','_blank');
       const summary=document.getElementById('summary').innerHTML;
@@ -294,6 +241,7 @@
 
     let chart=null;
 
+    // Əsas hesabla
     function calc(){
       ['risk','salary','oblig','addIncomeType','addIncomeAmt'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
       const riskEl=document.getElementById('risk');
@@ -305,27 +253,30 @@
 
       const risk=riskEl?.value||''; const salaryStr=salaryEl?.value||''; const obligStr=obligEl?.value||'';
       if(!risk || salaryStr==='' || obligStr===''){
-        if(!risk) riskEl.classList.add('invalid');
-        if(salaryStr==='') salaryEl.classList.add('invalid');
-        if(obligStr==='') obligEl.classList.add('invalid');
-        const alertBox=document.getElementById('calcAlert'); if(alertBox){ alertBox.style.display='block'; alertBox.textContent='Zəhmət olmasa Risk qrupu, Əmək haqqı və Digər öhdəlikləri daxil edin.'; }
+        const msgs=[];
+        if(!risk){ riskEl.classList.add('invalid'); msgs.push('Risk qrupunu seçin.'); }
+        if(salaryStr===''){ salaryEl.classList.add('invalid'); msgs.push('Aylıq əmək haqqını daxil edin.'); }
+        if(obligStr===''){ obligEl.classList.add('invalid'); msgs.push('Digər öhdəlikləri daxil edin.'); }
+        const alertBox=document.getElementById('calcAlert');
+        if(alertBox){ alertBox.style.display='block'; alertBox.innerHTML = msgs.map(m=>`• ${m}`).join('<br>'); }
+        (riskEl||salaryEl||obligEl)?.scrollIntoView({behavior:'smooth',block:'center'});
         return;
       }
 
       let extra=0; let extraDesc='';
       if(chk?.checked){
-        if(!typeSel.value){ typeSel.classList.add('invalid'); alert('Əlavə gəlir növünü seçin.'); return; }
+        if(!typeSel.value){ typeSel.classList.add('invalid'); const a=document.getElementById('calcAlert'); if(a){a.style.display='block'; a.textContent='Əlavə gəlir növünü seçin.';} return; }
         extraDesc = typeSel.options[typeSel.selectedIndex].text;
-        if(amtInp.value===''){ amtInp.classList.add('invalid'); alert('Əlavə gəlir məbləğini daxil edin.'); return; }
+        if(amtInp.value===''){ amtInp.classList.add('invalid'); const a=document.getElementById('calcAlert'); if(a){a.style.display='block'; a.textContent='Əlavə gəlir məbləğini daxil edin.';} return; }
         extra = Math.max(0, Number(amtInp.value)||0);
-        if(extra<=0){ amtInp.classList.add('invalid'); alert('Əlavə gəlir məbləği 0-dan böyük olmalıdır.'); return; }
+        if(extra<=0){ amtInp.classList.add('invalid'); const a=document.getElementById('calcAlert'); if(a){a.style.display='block'; a.textContent='Əlavə gəlir məbləği 0-dan böyük olmalıdır.';} return; }
       }
 
       const price=toNum('price');
       const months=toNum('months');
       const salary=Number(document.getElementById('salary').value||0) + extra;
       const oblig=Number(document.getElementById('oblig').value||0);
-      if(months<=0){ alert('Müddət ən az 1 ay olmalıdır.'); return; }
+      if(months<=0){ const a=document.getElementById('calcAlert'); if(a){a.style.display='block'; a.textContent='Müddət ən az 1 ay olmalıdır.';} return; }
 
       const dti = (salary>0)? (oblig/salary) : (oblig>0? Infinity : 0);
       const dtiWarn = dti > MAX_OBLIG_SHARE;
@@ -397,7 +348,7 @@
     }
 
     function resetForm(){
-      ['price','months','risk','salary','oblig','addIncomeType','addIncomeAmt'].forEach(id=>{
+      ['price','months','risk','salary','oblig','addIncomeType','addIncomeAmt','custName','custPhone','prodName'].forEach(id=>{
         const el=document.getElementById(id); if(!el) return;
         if(id==='months') el.value=3; else if(id==='risk' || id==='addIncomeType') el.value=''; else el.value='';
         el.classList.remove('invalid');
@@ -413,105 +364,124 @@
       if(typeSel){ typeSel.disabled=true; }
       if(amtInp){ amtInp.disabled=true; }
 
+      const alertBox=document.getElementById('calcAlert'); if(alertBox){ alertBox.style.display='none'; alertBox.textContent=''; }
       document.getElementById('summary').innerHTML="";
       document.getElementById('scheduleWrap').innerHTML="";
       if(chart){ chart.destroy(); chart=null; }
     }
 
-    // ===== Satış sadə state
-    const state={ sales: [] };
-    const LS_KEY='bakfon_sales_v1';
-    function saveSales(){ try{ localStorage.setItem(LS_KEY, JSON.stringify(state.sales)); }catch(e){ console.warn('localStorage save error',e);} }
-    function loadSales(){
-      try{
-        const raw=localStorage.getItem(LS_KEY);
-        if(!raw) return;
-        const arr=JSON.parse(raw);
-        if(Array.isArray(arr)){
-          state.sales = arr.map(x=>({ ...x, ts: x.ts? new Date(x.ts): new Date() }));
-        }
-      }catch(e){ console.warn('localStorage load error',e); }
+    // === Rəsmiləşdirmə UI ===
+    function toggleFinalize(force){
+      const box=document.getElementById('finalizeWrap');
+      if(!box) return;
+      const show = typeof force==='boolean' ? force : (box.style.display==='none');
+      box.style.display = show? 'block' : 'none';
+      if(show){ box.scrollIntoView({behavior:'smooth',block:'center'}); }
     }
 
-    function addSale(){
-      const name=(document.getElementById('s_name').value||'').trim();
-      const product=(document.getElementById('s_product').value||'').trim();
-      const amount=Number(document.getElementById('s_amount').value||0);
-      if(!name||!product||!(amount>0)){ alert('Zəhmət olmasa bütün satış sahələrini doldurun.'); return; }
-      const rec={ id: Date.now(), name, product, amount, ts:new Date() };
-      state.sales.unshift(rec);
-      saveSales();
-      clearSaleForm();
-      renderSales();
-      renderDashboard();
-    }
-    function clearSaleForm(){
-      ['s_name','s_product','s_amount'].forEach(id=>{ const el=document.getElementById(id); if(el) el.value=''; });
-    }
-    function renderSales(){
-      const wrap=document.getElementById('salesTableWrap');
-      if(!wrap) return;
-      if(state.sales.length===0){ wrap.innerHTML='<div class="muted">Hələ satış yoxdur.</div>'; return; }
-      const rows=state.sales.map((s,i)=>`<tr>
-        <td>${i+1}</td>
-        <td style="text-align:left">${s.name}</td>
-        <td style="text-align:left">${s.product}</td>
-        <td>${fmtAZN(s.amount)}</td>
-        <td>${new Date(s.ts).toLocaleString('az-AZ')}</td>
-        <td><button class="btn danger sm" onclick="deleteSale(${s.id})">Sil</button></td>
-      </tr>`).join('');
-      wrap.innerHTML=`<table><thead><tr><th>#<\/th><th>Müştəri<\/th><th>Məhsul<\/th><th>Məbləğ<\/th><th>Tarix<\/th><th>Əməliyyat<\/th><\/tr><\/thead><tbody>${rows}<\/tbody><\/table>`;
-    }
-    function deleteSale(id){
-      const rec=state.sales.find(s=>s.id===id);
-      if(!rec) return;
-      const ok=confirm(`"${rec.name}" müştərisini silmək istəyirsiniz? Bu əməliyyat geri qaytarılmır.`);
-      if(!ok) return;
-      state.sales = state.sales.filter(s=>s.id!==id);
-      saveSales();
-      renderSales();
-      renderDashboard();
-    }
-    function setupSalesEvents(){
-      const wrap=document.getElementById('salesTableWrap');
-      if(!wrap || wrap.__hasDelHandler) return;
-      wrap.addEventListener('click', (e)=>{
-        const btn=e.target.closest('button[data-del]');
-        if(!btn) return;
-        const id=Number(btn.getAttribute('data-del'));
-        if(id) deleteSale(id);
-      });
-      wrap.__hasDelHandler=true;
-    }
-    function renderDashboard(){
-      const total = state.sales.length;
-      const sum = state.sales.reduce((a,b)=>a+b.amount,0);
-      const last = state.sales[0]?.ts ? new Date(state.sales[0].ts).toLocaleString('az-AZ') : '—';
-      const fmt=n=> new Intl.NumberFormat('az-AZ').format(n||0);
-      const el1=document.getElementById('dash-total-sales'); if(el1) el1.textContent = fmt(total);
-      const el2=document.getElementById('dash-total-amount'); if(el2) el2.textContent = fmtAZN(sum);
-      const el3=document.getElementById('dash-last-sale'); if(el3) el3.textContent = last;
+    function computeForDocs(){
+      // Kalkulyator dəyərlərini hesablamaq üçün (render etmədən)
+      const risk=document.getElementById('risk').value;
+      const salaryStr=document.getElementById('salary').value;
+      const obligStr=document.getElementById('oblig').value;
+      const price=toNum('price');
+      const months=toNum('months');
+      if(!risk || salaryStr==='' || obligStr==='' || months<=0){
+        throw new Error('Zəhmət olmasa risk, əmək haqqı, öhdəliklər və müddəti düzgün daxil edin.');
+      }
+      const chk=document.getElementById('addIncomeChk');
+      const extra = chk?.checked ? Math.max(0, Number(document.getElementById('addIncomeAmt').value||0)) : 0;
+      const salary=Number(salaryStr)+extra;
+      const oblig=Number(obligStr)||0;
+
+      const baseRes = getDownPayment(price, risk, salary, oblig);
+      let down = baseRes.down; let pct = baseRes.pct; const net = baseRes.net; const base = baseRes.base; const ratio = baseRes.ratio;
+      let principal = Math.max(0, price - down);
+      let monthly = months>0 ? principal / months : 0;
+      const maxMonthly = Math.max(0, net * MAX_DSR);
+      if(monthly>maxMonthly){
+        const requiredPrincipal = Math.max(0, maxMonthly * months);
+        const newDownRaw = price - requiredPrincipal;
+        down = Math.min(price, Math.max(MIN_DOWN_AZN, Math.max(down, newDownRaw)));
+        pct = price>0 ? (down/price) : 0;
+        principal = Math.max(0, price - down);
+        monthly = months>0 ? principal / months : 0;
+      }
+      let bal=principal; const rows=[]; const sd=new Date();
+      for(let i=1;i<=months;i++){ bal=Math.max(0,bal-monthly); const d=new Date(sd); d.setMonth(d.getMonth()+i); rows.push({i,date:d.toISOString().slice(0,10),monthly,bal}); }
+      return {price, months, risk, salary, oblig, down, pct, principal, monthly, base, ratio, net, schedule:rows};
     }
 
-    // Global expose (onclick üçün)
-    window.go=go; window.calc=calc; window.resetForm=resetForm; window.exportPrint=exportPrint; window.toggleExtraIncome=toggleExtraIncome; window.onIncomeTypeChange=onIncomeTypeChange; window.deleteSale=deleteSale;
-
-    // İlk açılışda Dashboard
-    window.addEventListener('load',()=>{
-      loadSales();
-      renderDashboard();
-      renderSales();
-      setupSalesEvents();
-      go('dashboard');
-    });
-
-    // (Optional) Konsol üçün qeyri-invaziv yoxlamalar — UI-də görünmür
-    function runSanity(){
-      if(typeof go!=='function') throw new Error('go funksiyası yoxdur');
-      go('sales'); go('dashboard');
-      console.log('Sanity OK: router işləyir ✅');
+    function openPrintDocCombined(title, sectionsHtml){
+      const w=window.open('','_blank');
+      w.document.write(`<!doctype html><html><head><meta charset='utf-8'><title>${title}</title>
+      <style>body{font-family:system-ui,Segoe UI,Roboto;padding:18px} h1{margin:0 0 8px}
+      h2{margin:16px 0 6px} .muted{color:#64748b} table{width:100%;border-collapse:collapse}
+      th,td{border:1px solid #e5e7eb;padding:8px;text-align:left} th{text-align:left;background:#f8fafc}
+      .block{border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin:10px 0}
+      .page{page-break-after:always}
+      </style></head><body>${sectionsHtml}</body></html>`);
+      w.document.close(); w.focus(); w.print();
     }
-    window.runSanity = runSanity;
+
+    function finalizeAndPrint(){
+      // 1) Müştəri & satış məlumat validasiyası
+      const custName=(document.getElementById('custName')?.value||'').trim();
+      const custPhone=(document.getElementById('custPhone')?.value||'').trim();
+      const prodName=(document.getElementById('prodName')?.value||'').trim();
+      ['custName','custPhone','prodName'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
+      const errs=[]; if(!custName) {document.getElementById('custName').classList.add('invalid'); errs.push('Müştəri adı');}
+      if(!custPhone){document.getElementById('custPhone').classList.add('invalid'); errs.push('Əlaqə nömrəsi');}
+      if(!prodName){document.getElementById('prodName').classList.add('invalid'); errs.push('Məhsul adı');}
+      if(errs.length){ alert('Zəhmət olmasa doldurun: '+errs.join(', ')); return; }
+
+      // 2) Kalkulyasiya dəyərlərini hesablamaq
+      try{ calc(); }catch(e){}
+      let c; try{ c = computeForDocs(); }catch(e){ alert(e.message); return; }
+
+      // 3) Sənədləri hazırlayıb tək pəncərədə çap
+      const contract=`<div class='page'>
+        <h1>Müqavilə</h1>
+        <div class='muted'>Tarix: ${new Date().toLocaleDateString('az-AZ')}</div>
+        <div class='block'><strong>Müştəri:</strong> ${custName} &nbsp; | &nbsp; <strong>Əlaqə:</strong> ${custPhone}</div>
+        <div class='block'>
+          <strong>Məhsul:</strong> ${prodName}<br/>
+          <strong>Dəyər:</strong> ${fmtAZN(c.price)} • <strong>İlkin ödəniş:</strong> ${fmtAZN(c.down)} (${(c.pct*100).toFixed(0)}%)<br/>
+          <strong>Kredit məbləği:</strong> ${fmtAZN(c.principal)} • <strong>Müddət:</strong> ${c.months} ay • <strong>Aylıq:</strong> ${fmtAZN(c.monthly)}
+        </div>
+        <div class='block'><strong>Şərtlər:</strong><br/>Müştəri göstərilən qrafik üzrə aylıq ödənişləri vaxtında həyata keçirməyi öhdəsinə götürür. Mübahisələr qanunvericilik çərçivəsində həll edilir.</div>
+      </div>`;
+
+      const scheduleRows=c.schedule.map(r=>`<tr><td>${r.i}</td><td>${r.date}</td><td style='text-align:right'>${fmtAZN(r.monthly)}</td><td style='text-align:right'>${fmtAZN(r.bal)}</td></tr>`).join('');
+      const schedule=`<div class='page'>
+        <h1>Ödəniş cədvəli</h1>
+        <div class='muted'>Müştəri: ${custName} • Məhsul: ${prodName}</div>
+        <div class='block'><table><thead><tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr></thead><tbody>${scheduleRows}</tbody></table></div>
+      </div>`;
+
+      const warranty=`<div class='page'>
+        <h1>Zəmanət talonu</h1>
+        <div class='block'>
+          <strong>Müştəri:</strong> ${custName}<br/>
+          <strong>Əlaqə:</strong> ${custPhone}<br/>
+          <strong>Məhsul:</strong> ${prodName}<br/>
+          <strong>Satış tarixi:</strong> ${new Date().toLocaleDateString('az-AZ')}<br/>
+          <strong>Zəmanət müddəti:</strong> 12 ay (standart)
+        </div>
+        <div class='block'><strong>Qaydalar:</strong><br/>Mexaniki zədələr, suya düşmə və s. zəmanətə daxil deyil. Qüsur aşkarlanarsa, servis mərkəzinə müraciət edin.</div>
+      </div>`;
+
+      openPrintDocCombined('Sənədlər', contract + schedule + warranty);
+    }
+
+    // Qlobal çıxar (onclick üçün)
+    window.calc=calc;
+    window.resetForm=resetForm;
+    window.exportPrint=exportPrint;
+    window.toggleExtraIncome=toggleExtraIncome;
+    window.onIncomeTypeChange=onIncomeTypeChange;
+    window.toggleFinalize=toggleFinalize;
+    window.finalizeAndPrint=finalizeAndPrint;
   </script>
 </body>
 </html>
