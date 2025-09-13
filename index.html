@@ -48,6 +48,7 @@
     .notice{padding:12px;border-radius:12px;margin-top:8px}
     .notice.warn{background:var(--warn-bg);border:1px solid var(--warn-border);color:var(--warn-text)}
     .notice.ok{background:var(--ok-bg);border:1px solid var(--ok-border);color:var(--ok-text)}
+    .invalid{border-color:#ef4444 !important; box-shadow:0 0 0 3px rgba(239,68,68,.12)}
     @media print{ .btn, #calc { display:none } .wrap{max-width:1000px} header{margin-bottom:0} }
   </style>
 </head>
@@ -76,19 +77,20 @@
         </div>
         <div class="col-3">
           <label>Risk qrupu</label>
-          <select id="risk">
+          <select id="risk" required>
+            <option value="">-- Seçin --</option>
             <option value="low">Aşağı risk (A)</option>
-            <option value="med" selected>Orta risk (B)</option>
+            <option value="med">Orta risk (B)</option>
             <option value="high">Yüksək risk (C)</option>
           </select>
         </div>
         <div class="col-3">
           <label>Aylıq əmək haqqı (AZN)</label>
-          <input id="salary" type="number" min="0" step="1" value="800" />
+          <input id="salary" type="number" min="1" step="1" value="" required />
         </div>
         <div class="col-3">
           <label>Digər öhdəliklər (AZN)</label>
-          <input id="oblig" type="number" min="0" step="1" value="0" />
+          <input id="oblig" type="number" min="0" step="1" value="" required />
         </div>
         <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
           <button class="btn success" onclick="calc()">Hesabla</button>
@@ -106,7 +108,7 @@
       </section>
     </div>
 
-    <section class="card"><canvas id="chart" height="180"></canvas></section>
+    <section class="card"><canvas id="chart" height="220"></canvas></section>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
@@ -157,12 +159,26 @@
     }
 
     let chart=null;
+
+    // ===== Main calc (exposed globally)
     function calc(){
+      // clear previous invalid marks
+      ['risk','salary','oblig'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
+      const riskEl=document.getElementById('risk');
+      const salaryEl=document.getElementById('salary');
+      const obligEl=document.getElementById('oblig');
+      const risk=riskEl?.value||''; const salaryStr=salaryEl?.value||''; const obligStr=obligEl?.value||'';
+      if(!risk || salaryStr==='' || obligStr===''){
+        if(!risk) riskEl.classList.add('invalid');
+        if(salaryStr==='') salaryEl.classList.add('invalid');
+        if(obligStr==='') obligEl.classList.add('invalid');
+        alert('Zəhmət olmasa Risk qrupu, Əmək haqqı və Digər öhdəlikləri daxil edin.');
+        return;
+      }
+
       const price=toNum('price');
       const months=toNum('months');
-      const risk=(document.getElementById('risk')||{value:'med'}).value;
-      const salary=toNum('salary');
-      const oblig=toNum('oblig');
+      const salary=Number(salaryStr); const oblig=Number(obligStr);
       if(months<=0){ alert('Müddət ən az 1 ay olmalıdır.'); return; }
 
       // DTI yoxlaması
@@ -199,14 +215,18 @@
         autoAdj = true;
       }
 
-      // Cədvəl
+      // Ödəniş cədvəli
       let bal = principal; const rows=[]; const sd=new Date();
-      for(let i=1;i<=months;i++){ bal=Math.max(0,bal-monthly); const d=new Date(sd); d.setMonth(d.getMonth()+i); rows.push({i,date:d.toISOString().slice(0,10),monthly,bal}); }
+      for(let i=1;i<=months;i++){
+        bal=Math.max(0,bal-monthly);
+        const d=new Date(sd); d.setMonth(d.getMonth()+i);
+        rows.push({i,date:d.toISOString().slice(0,10),monthly,bal});
+      }
 
       // Risk badge class
       const riskCls = risk==='low'?'risk-low':(risk==='high'?'risk-high':'risk-med');
 
-      // Xülasə
+      // Xülasə (sol)
       document.getElementById('summary').innerHTML=`
         <h3>Xülasə</h3>
         <div class="row">
@@ -227,31 +247,64 @@
           </div>
         </div>`;
 
-      // Cədvəli göstər
-      document.getElementById('scheduleWrap').innerHTML=
-        `<table><thead><tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr></thead><tbody>`+
-        rows.map(r=>`<tr><td>${r.i}</td><td>${r.date}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join('')+
-        `</tbody></table>`;
+      // Cədvəl (sağ)
+      document.getElementById('scheduleWrap').innerHTML = `
+        <table>
+          <thead><tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr></thead>
+          <tbody>
+            ${rows.map(r=>`<tr><td>${r.i}</td><td>${r.date}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join('')}
+          </tbody>
+        </table>`;
 
-      // Qrafik
+      // Qrafik (aşağı)
       const labels=rows.map(r=>r.i); const dataBal=rows.map(r=>Number(r.bal.toFixed(2)));
       const ctx=document.getElementById('chart'); if(chart) chart.destroy();
       chart=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Qalıq borc',data:dataBal}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}},elements:{line:{tension:.25}}}});
     }
 
     function resetForm(){
-      document.getElementById('price').value=0;
-      document.getElementById('months').value=3;
-      document.getElementById('risk').value='med';
-      document.getElementById('salary').value=0;
-      document.getElementById('oblig').value=0;
+      ['price','months','risk','salary','oblig'].forEach(id=>{
+        const el=document.getElementById(id); if(!el) return;
+        if(id==='months') el.value=3; else if(id==='risk') el.value=''; else el.value='';
+        el.classList.remove('invalid');
+      });
       document.getElementById('summary').innerHTML="";
       document.getElementById('scheduleWrap').innerHTML="";
       if(chart){ chart.destroy(); chart=null; }
     }
 
-    // İlk açılışda auto-hesabla
-    window.addEventListener('load',()=>calc());
+    // Debug üçün konsol testləri (UI-siz). Brauzer konsolunda runTestsConsole() çağır.
+    function runTestsConsole(){
+      const assert=(c,m)=>{ if(!c) throw new Error(m); };
+      // 1) DTI blok
+      resetForm();
+      document.getElementById('risk').value='med';
+      document.getElementById('salary').value='1000';
+      document.getElementById('oblig').value='600';
+      document.getElementById('price').value='1000';
+      document.getElementById('months').value='6';
+      calc();
+      assert(document.getElementById('summary').innerText.includes('kredit ayrılmır'),'DTI bloklanmalıdır');
+      // 2) Auto-adjust aktiv
+      resetForm();
+      document.getElementById('risk').value='med';
+      document.getElementById('salary').value='1000';
+      document.getElementById('oblig').value='200';
+      document.getElementById('price').value='5000';
+      document.getElementById('months').value='6';
+      calc();
+      assert(document.getElementById('summary').innerText.includes('avtomatik artırılıb'),'Auto-adjust işləməlidir');
+      // 3) Məcburi sahələr
+      resetForm();
+      let threw=false; try{ calc(); }catch(e){ threw=true; }
+      assert(document.getElementById('risk').classList.contains('invalid'),'Risk işarələnməlidir');
+      console.log('Bütün daxili konsol testləri OK ✅');
+    }
+
+    // Funksiyaları qlobal sahəyə çıxar (onclick üçün tam zəmanət)
+    window.calc = calc;
+    window.resetForm = resetForm;
+    window.exportPrint = exportPrint;
   </script>
 </body>
 </html>
