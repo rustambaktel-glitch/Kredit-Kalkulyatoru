@@ -469,64 +469,119 @@
       let c; try{ c = computeForDocs(); }catch(e){ alert(e.message); return; }
 
       // CONTRACT (exact style)
-      const contractHTML=`<div class="print-a4 page-break">
-        <div class="print-title">MÜDDƏTLİ (NİSYƏ) ALQI SATQI MÜQAVİLƏSİ № ${contractNo}</div>
-        <div class="print-subtop"><div><strong>Bakı şəhəri</strong></div><div>${fmtAzDate(startDate)} cü il</div></div>
-        <div class="print-block">Bu müqaviləni (bundan sonra «Müqavilə» adlandırılacaq), bir tərəfdən Azərbaycan Respublikasının qanunvericiliyinə əsasən qeydə alınmış və Nizamnamə əsasında fəaliyyət göstərən “Baktel Electronics” Məhdud Məsuliyyətli Cəmiyyəti, Direktor Mahmudov İlqar Arif oğlu (VÖEN:1505350851) şəxsində, (bundan sonra “Satıcı” adlanacaq) və digər tərəfdən şəxsiyyət vəsiqəsinin seriya nömrəsi ${idSerial} şəxsində (bundan sonra “Alıcı” adlanacaq) (birlikdə “Tərəflər”) aşağıdakı müqaviləni (bundan sonra “Müqavilə”) bağladılar.</div>
-        <div class="print-h2">1. MÜQAVİLƏNİN PREDMETİ</div>
-        <ol class="print-ol">
-          <li>
-            1.1. Müqaviləyə əsasən Satıcı Alıcıya Müqaviləyə əlavə olunan, Müqavilədə və onun ayrılmaz tərkib hissəsi hesab edilən “Əlavə 1”-də göstərilən Mal(lar)ı sənədlər əsasında (qaimə, vergi hesab-fakturası, və s.) nisyə satır, Alıcı isə həmin Mal(lar)ı qəbul edir və bu müqavilə ilə razılaşdırılmış qaydada Mal(lar)ın dəyərini Satıcıya ödəməyi öhdəsinə götürür.
-            <div class="sub">
-              <table class="print-table" style="margin:3mm 0 5mm">
-                <tr><th style="width:35%">Məhsulun adı:</th><td>${prodName} ${imei1?`(${imei1})`:''}</td><td style="width:10%">&nbsp;</td></tr>
-                <tr><th>İlkin ödəniş məbləği:</th><td>${c.down.toFixed(2)}</td><td>AZN</td></tr>
-                <tr><th>Kredit məbləği:</th><td>${c.principal.toFixed(2)}</td><td>AZN</td></tr>
-                <tr><th>Kredit müddəti:</th><td>${c.months}</td><td>AY</td></tr>
-                <tr><th>Aylıq ödəniş məbləği:</th><td>${c.monthly.toFixed(2)}</td><td>AZN</td></tr>
-              </table>
-            </div>
-          </li>
-        </ol>
-        <div class="print-h2">2. TƏRƏFLƏRİN HÜQUQLARI VƏ VƏZİFƏLƏRİ</div>
-        <ol class="print-ol">
-          <li>2.1. Satıcının hüquqları:<div class="sub">2.1.1. Müqavilə ilə üzərinə götürdüyü vəzifələri vaxtında və lazımırca icra etməyi və onların pozulmasına yol verməməyi Alıcıdan tələb edir; 2.1.2. Alıcı bu müqavilənin şərtlərinin pozulmasına yol verdiyi halda müqavilənin vaxtından əvvəl ləğv edilməsinin və Alıcının müqavilə üzrə Satıcıya olan borcunun vaxtından əvvəl ödənilməsini tələb etmək.</div></li>
-          <li>2.2. Satıcının vəzifələri:<div class="sub">2.2.1. Alıcının nisyə aldığı Mala görə birdəfəlik haqqın hesablanmasının və tutulmasının düzgünlüyünə riayət etmək; 2.2.2. Satıcı əşyalara verilən zəmanət kitabçasının şərtlərinə uyğun məsuliyyət daşıyır.</div></li>
-          <li>2.3. Alıcının hüquqları:<div class="sub">2.3.1. Müqavilə ilə üzərinə götürdüyü vəzifələri vaxtında və lazımırca icra etməyi və onların pozulmasına yol verməməyi Satıcıdan tələb edir. 2.3.2. Satıcının razılığı ilə alqı-satqı predmeti olan əşyanın dəyərini qismən və yaxud tam olaraq bir dəfə vaxtından əvvəl qaytarmaq.</div></li>
-          <li>2.4. Alıcının vəzifələri:<div class="sub">2.4.1. Alqı-satqı predmeti olan əşyanın qiymətini bu Müqavilə ilə müəyyən olunmuş şərtlərlə və qaydada Satıcıya ödəmək; 2.4.2. Alqı-satqı predmeti olan əşyanın Alıcıya təhvil verildiyi andan etibarən Malın təsadüfən məhv olması və ya zədələnməsi riskini daşımaq; 2.4.3. Müqavilə ilə üzərinə götürdüyü vəzifələri vaxtında və lazımırca icra etməyi öhdəsinə götürür.</div></li>
-        </ol>
-        <div class="print-h2">3. TƏRƏFLƏRİN MƏSULİYYƏTİ</div>
-        <ol class="print-ol">
-          <li>3.1. “Satıcı” “Alıcı”dan Müqavilə üzrə müəyyən edilmiş aylıq ödənişini 5 (beş) təqvim gün gecikdirdiyi halda borcun vaxtından əvvəl ödənilməsini tələb edə bilər.</li>
-          <li>3.2. “Satıcı” “Alıcı” tərəfindən qrafikə uyğun aylıq ödənişini 30 (otuz) təqvim günündən artıq müddətə gecikdirdiyi və ya bu müqavilənin 3.1-ci maddəsinə əsasən 2 (iki) dəfədən çox gecikdirdiyi halda nisyə alınmış mal(lar)ın qeydiyyat nömrəsinin (İMEİ) deaktiv edilməsi və s.</li>
-        </ol>
-        <div class="print-h2">4. Əlavə şərtlər</div>
-        <ol class="print-ol">
-          <li>4.1. Ödəniş müddəti bitənədək nisyə satılmış Mal(lar) Satıcının girovu hesab edilir və borc bitənədək həmin Mal(lar) başqa şəxsə satıla və ya bağışlanıla bilməz.</li>
-          <li>4.2. “Alıcı” qəbul edir ki, bu müqavilənin ödəniş şərtləri pozulduğu halda girov Mal(lar) “Alıcı”dan geri alına bilər.</li>
-        </ol>
-        <div class="print-h2">5. Yekun müddəalar</div>
-        <ol class="print-ol">
-          <li>5.1. Bu müqavilə imzalandığı andan qüvvəyə minir və Tərəflərin qarşılıqlı öhdəliklərinin tam şəkildə yerinə yetirilməsindən sonra qüvvədən düşür.</li>
-          <li>5.2. Tərəflər razılığa gəlirlər ki, bu müqavilə üzrə bütün mübahisələr Bakı şəhəri Nərimanov Rayon Məhkəməsi vasitəsi ilə həll ediləcəkdir. Bu müqavilənin 3-cü maddəsinin tələblərinin pozulması ilə bağlı “Satıcı” məhkəməyə müraciət etdiyi halda xərclər Alıcı tərəfindən ödəniləcəkdir.</li>
-          <li>5.3. Müqavilə Azərbaycan dilində və eyni hüquqi qüvvəyə malik 2 (iki) nüsxədə tərtib olunur.</li>
-        </ol>
-        <div class="print-h2">6. Tərəflərin hüquqi ünvanı və rekvizitləri</div>
-        <table class="print-table">
-          <tr>
-            <td style="vertical-align:top; width:50%">
-              <strong>“Satıcı”</strong><br>“Baktel Electronics” MMC<br>VÖEN: 1505350851<br>Ünvan: Bakı şəhəri Nəsimi rayonu, Nizami küçəsi 187
-            </td>
-            <td style="vertical-align:top; width:50%">
-              <strong>“Alıcı”</strong><br>${custName}<br>Şəxsiyyət vəsiqəsinin seriya və nömrəsi: ${idSerial}<br>Şəxsiyyət vəsiqəsinin Fin kodu: ${finCode}<br>Qeydiyyat və yaşayış: ${address||'-'}<br>Telefon: ${custPhone||'-'}
-            </td>
-          </tr>
+      // 1) MÜQAVİLƏ
+const contractHTML = `
+<div class="print-a4 page-break">
+  <div class="print-title">MÜDDƏTLİ (NİSYƏ) ALQI-SATQI MÜQAVİLƏSİ № ${contractNo}</div>
+  <div class="print-subtop">
+    <div><strong>Bakı şəhəri</strong></div>
+    <div>${fmtAzDate(startDate)} tarixli</div>
+  </div>
+
+  <div class="print-block">
+    Bu müqaviləni (bundan sonra “Müqavilə”) bir tərəfdən Azərbaycan Respublikasının qanunvericiliyinə əsasən
+    qeydiyyatdan keçmiş və Nizamnamə əsasında fəaliyyət göstərən Baktel Electronics MMC (VÖEN: 1505350851),
+    Direktor Mahmudov İlqar Arif oğlu şəxsində (bundan sonra “Satıcı”), digər tərəfdən isə şəxsiyyət vəsiqəsinin
+    seriya və nömrəsi ${idSerial} olan ${custName} (bundan sonra “Alıcı”) birlikdə “Tərəflər” adlandırılmaqla
+    aşağıdakı şərtlərlə bağladılar.
+  </div>
+
+  <div class="print-h2">1. MÜQAVİLƏNİN PREDMETİ</div>
+  <ol class="print-ol">
+    <li>
+      1.1. Satıcı Alıcıya “Əlavə 1”də göstərilən Mal(lar)ı sənədlər (qaimə, vergi hesab-fakturası və s.) əsasında
+      nisyə satır, Alıcı isə Mal(lar)ı qəbul edib bu Müqavilə ilə müəyyən edilmiş qaydada dəyərini ödəməyi öhdəsinə götürür.
+      <div class="sub">
+        <table class="print-table" style="margin:3mm 0 5mm">
+          <tr><th style="width:35%">Məhsulun adı/modeli</th><td>${prodName} ${imei1 ? `(${imei1})` : ''}</td><td style="width:10%">&nbsp;</td></tr>
+          <tr><th>İlkin ödəniş məbləği</th><td>${c.down.toFixed(2)}</td><td>AZN</td></tr>
+          <tr><th>Kredit məbləği</th><td>${c.principal.toFixed(2)}</td><td>AZN</td></tr>
+          <tr><th>Kredit müddəti</th><td>${c.months}</td><td>ay</td></tr>
+          <tr><th>Aylıq ödəniş</th><td>${c.monthly.toFixed(2)}</td><td>AZN</td></tr>
         </table>
-        <div class="sign-cols">
-          <div class="sign"><div class="sigcap">Satıcı</div><span class="sigline"></span></div>
-          <div class="sign"><div class="sigcap">Alıcı</div><span class="sigline"></span></div>
-        </div>
-      </div>`;
+      </div>
+    </li>
+  </ol>
+
+  <div class="print-h2">2. TƏRƏFLƏRİN HÜQUQ VƏ VƏZİFƏLƏRİ</div>
+  <ol class="print-ol">
+    <li>
+      2.1. Satıcının hüquqları:
+      <div class="sub">
+        2.1.1. Müqavilə öhdəliklərinin vaxtında və lazımi qaydada icrasını Alıcıdan tələb etmək; 
+        2.1.2. Alıcı şərtləri pozduqda Müqaviləni vaxtından əvvəl ləğv edib borcun tam ödənilməsini tələb etmək.
+      </div>
+    </li>
+    <li>
+      2.2. Satıcının vəzifələri:
+      <div class="sub">
+        2.2.1. Birdəfəlik tutulmaların düzgün hesablanmasına riayət etmək; 
+        2.2.2. Zəmanət kitabçasının şərtlərinə uyğun məsuliyyət daşımaq.
+      </div>
+    </li>
+    <li>
+      2.3. Alıcının hüquqları:
+      <div class="sub">
+        2.3.1. Satıcıdan Müqavilə öhdəliklərinin vaxtında və düzgün icrasını tələb etmək; 
+        2.3.2. Satıcının razılığı ilə borcu qismən və ya tam şəkildə vaxtından əvvəl ödəmək.
+      </div>
+    </li>
+    <li>
+      2.4. Alıcının vəzifələri:
+      <div class="sub">
+        2.4.1. Mal(lar)ın dəyərini razılaşdırılmış qrafik üzrə ödəmək; 
+        2.4.2. Mal təhvil alındığı andan təsadüfən məhv olma/zədələnmə riskini daşımaq; 
+        2.4.3. Müqavilə öhdəliklərini vaxtında və tam icra etmək.
+      </div>
+    </li>
+  </ol>
+
+  <div class="print-h2">3. MƏSULİYYƏT</div>
+  <ol class="print-ol">
+    <li>3.1. Aylıq ödəniş 5 təqvim günü və daha çox gecikərsə, Satıcı borcun tam həcmdə vaxtından əvvəl ödənilməsini tələb edə bilər.</li>
+    <li>3.2. Ödəniş 30 təqvim günündən artıq gecikərsə və ya 3.1-ə əsasən 2 dəfədən çox gecikmə olarsa, nisyə alınmış cihazın İMEİ nömrəsinin deaktiv edilməsi və digər təsir tədbirləri tətbiq oluna bilər.</li>
+  </ol>
+
+  <div class="print-h2">4. ƏLAVƏ ŞƏRTLƏR</div>
+  <ol class="print-ol">
+    <li>4.1. Borc tam ödənilənədək Mal(lar) Satıcının girovu sayılır və üçüncü şəxslərə verilə bilməz.</li>
+    <li>4.2. Ödəniş şərtləri pozularsa, Mal(lar) Satıcı tərəfindən geri alına bilər.</li>
+  </ol>
+
+  <div class="print-h2">5. YEKUN MÜDDƏALAR</div>
+  <ol class="print-ol">
+    <li>5.1. Müqavilə imzalandığı andan qüvvəyə minir və öhdəliklər tam icra edildikdə qüvvədən düşür.</li>
+    <li>5.2. Mübahisələr Bakı şəhəri Nərimanov Rayon Məhkəməsində həll edilir. 3-cü bölüm üzrə məhkəmə müraciətləri zamanı xərclər Alıcı tərəfindən ödənilir.</li>
+    <li>5.3. Müqavilə Azərbaycan dilində iki (2) nüsxədə tərtib olunur və hər ikisi eyni hüquqi qüvvəyə malikdir.</li>
+  </ol>
+
+  <div class="print-h2">6. TƏRƏFLƏRİN REKVİZİTLƏRİ</div>
+  <table class="print-table">
+    <tr>
+      <td style="vertical-align:top; width:50%">
+        <strong>Satıcı:</strong><br>
+        Baktel Electronics MMC<br>
+        VÖEN: 1505350851<br>
+        Ünvan: Bakı şəhəri, Nəsimi r., Nizami k., 187<br>
+        Nümayəndə: ${sellerRep || '-'}
+      </td>
+      <td style="vertical-align:top; width:50%">
+        <strong>Alıcı:</strong><br>
+        ${custName}<br>
+        Ş/V seriya və nömrəsi: ${idSerial}<br>
+        Fin kodu: ${finCode}<br>
+        Ünvan: ${address || '-'}<br>
+        Telefon: ${custPhone || '-'}
+      </td>
+    </tr>
+  </table>
+
+  <div class="sign-cols">
+    <div class="sign"><div class="sigcap">Satıcı</div><span class="sigline"></span></div>
+    <div class="sign"><div class="sigcap">Alıcı</div><span class="sigline"></span></div>
+  </div>
+</div>`;
+
 
       // ELAVE 1
       const elave1=`<div class=\"print-a4 page-break\">
