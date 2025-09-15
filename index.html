@@ -26,7 +26,7 @@
     .col-4{grid-column:span 4}
     .col-3{grid-column:span 3}
     label{font-size:13px;color:#334155;font-weight:600}
-    input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--input-border);background:#fff;color:var(--text)}
+    input,select{width:100%;padding:12px;border-radius:12px;border:1px solid var(--input-border);background:#fff;color:#0f172a}
     .btn{border:1px solid #cbd5e1;background:#f1f5f9;color:#0f172a;padding:11px 16px;border-radius:12px;cursor:pointer;transition:.15s ease;box-shadow:var(--shadow);font-weight:700}
     .btn.success{background:linear-gradient(180deg,#22c55e,#16a34a);border-color:#15803d;color:#fff}
     .btn.danger{background:linear-gradient(180deg,#ef4444,#dc2626);border-color:#b91c1c;color:#fff}
@@ -82,13 +82,14 @@
         <div class="row">
           <div class="col-4">
             <label>Məhsul dəyəri (AZN)</label>
-            <input id="price" type="number" min="0" step="0.01" value="1828" />
+            <input id="price" type="number" min="0" step="0.01" placeholder="0.00" />
           </div>
           <div class="col-3">
             <label>Müddət (ay)</label>
-            <select id="months">
+            <select id="months" required>
+              <option value="">— Seçin —</option>
               <option value="3">3</option>
-              <option value="6" selected>6</option>
+              <option value="6">6</option>
               <option value="9">9</option>
               <option value="12">12</option>
               <option value="15">15</option>
@@ -98,7 +99,7 @@
           <div class="col-3">
             <label>Risk qrupu</label>
             <select id="risk" required>
-              <option value="">-- Seçin --</option>
+              <option value="">— Seçin —</option>
               <option value="low">Aşağı risk (A)</option>
               <option value="med">Orta risk (B)</option>
               <option value="high">Yüksək risk (C)</option>
@@ -129,7 +130,7 @@
           <div class="col-3" id="addIncomeTypeWrap" style="display:none">
             <label>Əlavə gəlir növü</label>
             <select id="addIncomeType" disabled onchange="onIncomeTypeChange()">
-              <option value="">-- Seçin --</option>
+              <option value="">— Seçin —</option>
               <option value="muavinet">Müavinət</option>
               <option value="bonus">Bonus</option>
               <option value="kiraye">Kirayə gəliri</option>
@@ -151,22 +152,34 @@
 
           <div id="finalizeWrap" class="col-12" style="display:none">
             <div class="card" style="margin:8px 0">
-              <h3>Rəsmiləşdirmə</h3>
+              <h3>Müştəri məlumatları</h3>
               <div class="row">
-                <div class="col-4"><label>Müştəri A.S.A.</label><input id="custName" type="text" placeholder="Ad Soyad" /></div>
-                <div class="col-4"><label>Əlaqə nömrəsi</label><input id="custPhone" type="tel" placeholder="050 xxx xx xx" /></div>
-                <div class="col-4"><label>Məhsul adı/model</label><input id="prodName" type="text" placeholder="Məhsul" /></div>
-                <div class="col-3"><label>Ş/V seriya və nömrəsi</label><input id="idSerial" type="text" placeholder="AA 0367083" /></div>
-                <div class="col-3"><label>FIN kodu</label><input id="finCode" type="text" placeholder="XXXXXXX" /></div>
-                <div class="col-3"><label>Doğum tarixi</label><input id="birthDate" type="date" /></div>
-                <div class="col-3"><label>Qeydiyyat/Yaşayış ünvanı</label><input id="address" type="text" /></div>
-                <div class="col-4"><label>IMEI 1</label><input id="imei1" type="text" /></div>
-                <div class="col-4"><label>IMEI 2</label><input id="imei2" type="text" /></div>
-                <div class="col-4"><label>Müqavilə №</label><input id="contractNo" type="text" placeholder="BT 13107" /></div>
-                <div class="col-3"><label>Filial</label><input id="branch" type="text" placeholder="Nəsimi" /></div>
-                <div class="col-3"><label>Valyuta</label><select id="currency"><option value="AZN" selected>AZN</option></select></div>
-                <div class="col-3"><label>Kreditin verilmə tarixi</label><input id="startDate" type="date" /></div>
-                <div class="col-3"><label>Satıcı nümayəndə</label><input id="sellerRep" type="text" placeholder="Elşən Zakirli" /></div>
+                <div class="col-4"><label>Müştəri A.S.A.</label><input id="custName" type="text" placeholder="Ad Soyad" required /></div>
+                <div class="col-4"><label>Əlaqə nömrəsi</label><input id="custPhone" type="tel" placeholder="050 xxx xx xx" required /></div>
+                <div class="col-4"><label>Məhsul adı/model</label><input id="prodName" type="text" placeholder="Məhsul" required /></div>
+
+                <div class="col-3"><label>Ş/V seriya və nömrəsi</label><input id="idSerial" type="text" placeholder="AA 0367083" required /></div>
+                <div class="col-3"><label>FIN kodu</label><input id="finCode" type="text" placeholder="XXXXXXX" required /></div>
+                <div class="col-3"><label>Doğum tarixi</label><input id="birthDate" type="date" required /></div>
+                <div class="col-3"><label>Qeydiyyat/Yaşayış ünvanı</label><input id="address" type="text" required /></div>
+
+                <div class="col-4"><label>IMEI 1</label><input id="imei1" type="text" required /></div>
+                <div class="col-4"><label>IMEI 2</label><input id="imei2" type="text" required /></div>
+                <div class="col-4"><label>Müqavilə №</label><input id="contractNo" type="text" placeholder="BT 13107" required /></div>
+
+                <div class="col-3"><label>Filial</label><input id="branch" type="text" value="Nəsimi" required /></div>
+                <div class="col-3"><label>Valyuta</label><select id="currency" required><option value="AZN" selected>AZN</option></select></div>
+                <div class="col-3"><label>Kreditin verilmə tarixi</label><input id="startDate" type="date" required /></div>
+
+                <div class="col-3">
+                  <label>Satıcı nümayəndə</label>
+                  <select id="sellerRep" required>
+                    <option value="">— Seçin —</option>
+                    <option>Vəliməmmədov Niyazi Səhhət oğlu</option>
+                    <option>Abaszadə Mədət Yusif oğlu</option>
+                  </select>
+                </div>
+
                 <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px">
                   <button class="btn success" onclick="finalizeAndPrint()">Təsdiqlə və Çap et</button>
                   <button class="btn" onclick="toggleFinalize(false)">Bağla</button>
@@ -194,17 +207,25 @@
     // ===== Utils
     const fmtAZN = n=> (new Intl.NumberFormat('az-AZ',{style:'currency',currency:'AZN',maximumFractionDigits:2})).format(n||0);
     const toNum = id=> Number((document.getElementById(id)?.value) ?? 0);
-    const azMonths = ['Yanvar','Fevral','Mart','Aprel','May','İyun','İyul','Avqust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
-    const fmtAzDate = (d)=>{const dt=new Date(d); const dd=String(dt.getDate()).padStart(2,'0'); const mm=String(dt.getMonth()+1).padStart(2,'0'); const yyyy=dt.getFullYear(); return `${dd}-${mm}-${yyyy}`;};
-    const fmtAzLong = (d)=>{const dt=new Date(d); return `${String(dt.getDate()).padStart(2,'0')}-${azMonths[dt.getMonth()]}-${dt.getFullYear()}`};
-    // NEW: dd.mm.yyyy formatter
-    const fmtDDMMYYYY = (d)=>{const dt=new Date(d); const dd=String(dt.getDate()).padStart(2,'0'); const mm=String(dt.getMonth()+1).padStart(2,'0'); const yyyy=dt.getFullYear(); return `${dd}.${mm}.${yyyy}`;};
+    const ddmmyyyy = (d)=>{ const dt=new Date(d); const dd=String(dt.getDate()).padStart(2,'0'); const mm=String(dt.getMonth()+1).padStart(2,'0'); const yyyy=dt.getFullYear(); return `${dd}.${mm}.${yyyy}`; };
+    const todayISO = ()=> { const t=new Date(); const mm=String(t.getMonth()+1).padStart(2,'0'); const dd=String(t.getDate()).padStart(2,'0'); return `${t.getFullYear()}-${mm}-${dd}`; };
 
     // ===== Policy & limits
     const POLICY_RISK_ONLY = { low: 0.20, med: 0.30, high: 0.50 };
     const MIN_DOWN_AZN = 50;
-    const MAX_OBLIG_SHARE = 0.50; // xəbərdarlıq
-    const MAX_DSR = 0.40;         // sərt limit
+    const MAX_OBLIG_SHARE = 0.50;
+    const MAX_DSR = 0.40;
+
+    // Set default start date on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const sd = document.getElementById('startDate');
+      if (sd && !sd.value) sd.value = todayISO();
+    });
+
+    function ensureStartDateDefault(){
+      const sd = document.getElementById('startDate');
+      if (sd && !sd.value) sd.value = todayISO();
+    }
 
     function getDownPayment(price, riskKey, salary=0, oblig=0){
       const base = POLICY_RISK_ONLY[riskKey] ?? POLICY_RISK_ONLY.med;
@@ -218,7 +239,7 @@
       let down = price * pct;
       if(down < MIN_DOWN_AZN) down = MIN_DOWN_AZN;
       if(down > price) down = price;
-      return { down, pct, base, ratio, net };
+      return { down, pct, ratio, net };
     }
 
     function exportPrint(){
@@ -232,7 +253,7 @@
         .block{border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin:8px 0}
         </style></head><body>
         <h1>Kredit hesablaması</h1>
-        <div class='muted'>${new Date().toLocaleString('az-AZ')}</div>
+        <div class='muted'>${ddmmyyyy(new Date())}</div>
         <div class='block'>${summary}</div>
         <div class='block'>${sched}</div>
       </body></html>`);
@@ -272,40 +293,45 @@
     let chart=null;
 
     function calc(){
-      ['risk','salary','oblig','addIncomeType','addIncomeAmt','manualDownAmt'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
+      ['risk','salary','oblig','addIncomeType','addIncomeAmt','manualDownAmt','months','price'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
       const riskEl=document.getElementById('risk');
       const salaryEl=document.getElementById('salary');
       const obligEl=document.getElementById('oblig');
+      const monthsEl=document.getElementById('months');
+      const priceEl=document.getElementById('price');
       const chk=document.getElementById('addIncomeChk');
       const typeSel=document.getElementById('addIncomeType');
       const amtInp=document.getElementById('addIncomeAmt');
 
       const risk=riskEl?.value||''; const salaryStr=salaryEl?.value||''; const obligStr=obligEl?.value||'';
-      if(!risk || salaryStr==='' || obligStr===''){
-        const msgs=[]; if(!risk){ riskEl.classList.add('invalid'); msgs.push('Risk qrupunu seçin.'); } if(salaryStr===''){ salaryEl.classList.add('invalid'); msgs.push('Aylıq əmək haqqını daxil edin.'); } if(obligStr===''){ obligEl.classList.add('invalid'); msgs.push('Digər öhdəlikləri daxil edin.'); }
+      const months=monthsEl?.value||''; const priceVal=priceEl?.value||'';
+      const msgs=[];
+      if(!priceVal){ priceEl.classList.add('invalid'); msgs.push('Məhsul dəyərini daxil edin.'); }
+      if(!months){ monthsEl.classList.add('invalid'); msgs.push('Müddəti seçin.'); }
+      if(!risk){ riskEl.classList.add('invalid'); msgs.push('Risk qrupunu seçin.'); }
+      if(salaryStr===''){ salaryEl.classList.add('invalid'); msgs.push('Aylıq əmək haqqını daxil edin.'); }
+      if(obligStr===''){ obligEl.classList.add('invalid'); msgs.push('Digər öhdəlikləri daxil edin.'); }
+
+      if(chk?.checked){
+        if(!typeSel.value){ typeSel.classList.add('invalid'); msgs.push('Əlavə gəlir növünü seçin.'); }
+        if(!amtInp.value){ amtInp.classList.add('invalid'); msgs.push('Əlavə gəlir məbləğini daxil edin.'); }
+      }
+
+      if(msgs.length){
         const alertBox=document.getElementById('calcAlert'); if(alertBox){ alertBox.style.display='block'; alertBox.innerHTML = msgs.map(m=>`• ${m}`).join('<br>'); }
         return;
       }
 
-      let extra=0; let extraDesc='';
-      if(chk?.checked){
-        if(!typeSel.value){ typeSel.classList.add('invalid'); const a=document.getElementById('calcAlert'); if(a){a.style.display='block'; a.textContent='Əlavə gəlir növünü seçin.';} return; }
-        extraDesc = typeSel.options[typeSel.selectedIndex].text;
-        if(amtInp.value===''){ amtInp.classList.add('invalid'); const a=document.getElementById('calcAlert'); if(a){a.style.display='block'; a.textContent='Əlavə gəlir məbləğini daxil edin.';} return; }
-        extra = Math.max(0, Number(amtInp.value)||0);
-        if(extra<=0){ amtInp.classList.add('invalid'); const a=document.getElementById('calcAlert'); if(a){a.style.display='block'; a.textContent='Əlavə gəlir məbləği 0-dan böyük olmalıdır.';} return; }
-      }
-
-      const price=toNum('price');
-      const months=toNum('months');
-      const salary=Number(salaryEl.value||0) + extra;
-      const oblig=Number(obligEl.value||0);
-      if(months<=0){ const a=document.getElementById('calcAlert'); if(a){a.style.display='block'; a.textContent='Müddət ən az 1 ay olmalıdır.';} return; }
+      let extra = chk?.checked ? Math.max(0, Number(amtInp.value||0)) : 0;
+      const price=Number(priceVal||0);
+      const monthsNum=Number(months);
+      const salary=Number(salaryStr||0) + extra;
+      const oblig=Number(obligStr||0);
+      if(monthsNum<=0){ const a=document.getElementById('calcAlert'); if(a){a.style.display='block'; a.textContent='Müddət ən az 1 ay olmalıdır.';} return; }
 
       const mdChk=document.getElementById('manualDownChk');
       const mdInp=document.getElementById('manualDownAmt');
-      let downInfo = getDownPayment(price, risk, salary, oblig);
-      let down = downInfo.down; let pct = downInfo.pct; const base = downInfo.base; const ratio = downInfo.ratio; const net = downInfo.net;
+      let {down, pct, ratio, net} = getDownPayment(price, risk, salary, oblig);
       let manualUsed=false;
       if(mdChk && mdChk.checked){
         const val = Math.max(0, Math.min(price, Number(mdInp.value||0)));
@@ -314,33 +340,30 @@
       }
 
       let principal = Math.max(0, price - down);
-      let monthly = months>0 ? principal / months : 0;
+      let monthly = monthsNum>0 ? principal / monthsNum : 0;
 
-      const maxMonthly = Math.max(0, net * 0.40);
-      const needsAdj = monthly > maxMonthly + 1e-9;
-      let autoAdj = false, prevDown = down, prevMonthly = monthly;
-      if(needsAdj){
-        const requiredPrincipal = Math.max(0, maxMonthly * months);
+      const maxMonthly = Math.max(0, net * MAX_DSR);
+      if(monthly > maxMonthly + 1e-9){
+        const requiredPrincipal = Math.max(0, maxMonthly * monthsNum);
         const newDownRaw = price - requiredPrincipal;
-        down = Math.min(price, Math.max(manualUsed? down : 50, Math.max(prevDown, newDownRaw)));
+        down = Math.min(price, Math.max(manualUsed? down : MIN_DOWN_AZN, Math.max(down, newDownRaw)));
         pct = price>0 ? (down/price) : 0;
         principal = Math.max(0, price - down);
-        monthly = months>0 ? principal / months : 0;
-        autoAdj = true;
+        monthly = monthsNum>0 ? principal / monthsNum : 0;
       }
 
       let bal = principal; const rows=[];
       const sd=(document.getElementById('startDate')?.value? new Date(document.getElementById('startDate').value): new Date());
       const day=sd.getDate();
-      for(let i=1;i<=months;i++){
+      for(let i=1;i<=monthsNum;i++){
         const d=new Date(sd); d.setMonth(d.getMonth()+i); d.setDate(day);
         bal=Math.max(0,bal-monthly);
         rows.push({i,date:d,monthly,bal});
       }
 
       const dti = (salary>0)? (oblig/salary) : (oblig>0? Infinity : 0);
-      const dtiWarn = dti > 0.50;
-      const dtiHtml = dtiWarn ? `<div class="notice warn">Diqqət: Öhdəlik/Gəlir ${(dti*100).toFixed(0)}% (hədd 50%).</div>` : '';
+      const dtiWarn = dti > MAX_OBLIG_SHARE;
+      const dtiHtml = dtiWarn ? `<div class="notice warn">Diqqət: Öhdəlik/Gəlir ${(dti*100).toFixed(0)}% (hədd ${Math.round(MAX_OBLIG_SHARE*100)}%).</div>` : '';
 
       document.getElementById('calcAlert').style.display='none';
       document.getElementById('summary').innerHTML=`
@@ -350,7 +373,6 @@
           <div class="col-6"><div class="pill">Risk</div><h2>${risk||'-'}</h2><div class="muted">Məhsul dəyəri: ${fmtAZN(price)}</div></div>
           <div class="col-6"><div class="pill">İlkin ödəniş</div>
             <h2>${fmtAZN(down)} <span class="muted">(${(pct*100).toFixed(0)}%)</span></h2>
-            ${autoAdj?`<div class="muted">Aylıq ödəniş DSR həddinə uyğunlaşdırıldı (maks: ${fmtAZN(maxMonthly)}).</div>`:''}
           </div>
           <div class="col-6"><div class="pill">Kredit</div><h2>${fmtAZN(principal)}</h2></div>
           <div class="col-6"><div class="pill">Aylıq</div><h2>${fmtAZN(monthly)}</h2></div>
@@ -360,7 +382,7 @@
       document.getElementById('scheduleWrap').innerHTML = `
         <table>
           <thead><tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr></thead>
-          <tbody>${rows.map(r=>`<tr><td>${r.i}</td><td>${fmtDDMMYYYY(r.date)}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join('')}</tbody>
+          <tbody>${rows.map(r=>`<tr><td>${r.i}</td><td>${ddmmyyyy(r.date)}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join('')}</tbody>
         </table>`;
 
       const labels=rows.map(r=>r.i); const dataBal=rows.map(r=>Number(r.bal.toFixed(2)));
@@ -371,7 +393,12 @@
     function resetForm(){
       ['price','months','risk','salary','oblig','addIncomeType','addIncomeAmt','custName','custPhone','prodName','idSerial','finCode','address','birthDate','imei1','imei2','contractNo','manualDownAmt','branch','currency','startDate','sellerRep'].forEach(id=>{
         const el=document.getElementById(id); if(!el) return;
-        if(id==='months') el.value=6; else if(id==='risk' || id==='addIncomeType') el.value=''; else el.value='';
+        if(id==='months' || id==='risk' || id==='addIncomeType' || id==='sellerRep'){ el.value=''; }
+        else if(id==='branch'){ el.value='Nəsimi'; }
+        else if(id==='currency'){ el.value='AZN'; }
+        else if(id==='price'){ el.value=''; }
+        else if(id==='startDate'){ el.value = todayISO(); }
+        else { el.value=''; }
         el.classList.remove('invalid');
       });
       const chk=document.getElementById('addIncomeChk');
@@ -403,7 +430,7 @@
       const box=document.getElementById('finalizeWrap'); if(!box) return;
       const show = typeof force==='boolean' ? force : (box.style.display==='none');
       box.style.display = show? 'block' : 'none';
-      if(show){ box.scrollIntoView({behavior:'smooth',block:'center'}); }
+      if(show){ ensureStartDateDefault(); box.scrollIntoView({behavior:'smooth',block:'center'}); }
     }
 
     function computeForDocs(){
@@ -411,9 +438,12 @@
       const salaryStr=document.getElementById('salary').value;
       const obligStr=document.getElementById('oblig').value;
       const price=toNum('price');
-      const months=toNum('months');
-      const startDateStr=document.getElementById('startDate').value || new Date().toISOString().slice(0,10);
-      if(!risk || salaryStr==='' || obligStr==='' || months<=0){ throw new Error('Zəhmət olmasa risk, əmək haqqı, öhdəliklər və müddəti düzgün daxil edin.'); }
+      const months=Number(document.getElementById('months').value||0);
+      const startDateStr=document.getElementById('startDate').value || todayISO();
+      if(!price){ throw new Error('Məhsul dəyərini daxil edin.'); }
+      if(!months){ throw new Error('Müddəti seçin.'); }
+      if(!risk || salaryStr==='' || obligStr===''){ throw new Error('Risk, əmək haqqı və öhdəlikləri düzgün daxil edin.'); }
+
       const chk=document.getElementById('addIncomeChk');
       const extra = chk?.checked ? Math.max(0, Number(document.getElementById('addIncomeAmt').value||0)) : 0;
       const salary=Number(salaryStr)+extra;
@@ -421,12 +451,17 @@
 
       const mdChk=document.getElementById('manualDownChk');
       const mdInp=document.getElementById('manualDownAmt');
-      let downInfo = getDownPayment(price, risk, salary, oblig);
-      let down = downInfo.down; let pct = downInfo.pct;
+      let {down, pct, net} = getDownPayment(price, risk, salary, oblig);
       if(mdChk && mdChk.checked){ const val = Math.max(0, Math.min(price, Number(mdInp.value||0))); if(!isNaN(val)) { down = val; pct = price>0 ? (down/price) : 0; } }
       let principal = Math.max(0, price - down);
       let monthly = months>0 ? principal / months : 0;
-
+      const maxMonthly = Math.max(0, net * MAX_DSR);
+      if(monthly>maxMonthly){
+        const requiredPrincipal = Math.max(0, maxMonthly * months);
+        const newDownRaw = price - requiredPrincipal;
+        down = Math.min(price, Math.max(mdChk&&mdChk.checked? down : MIN_DOWN_AZN, newDownRaw));
+        pct = price>0 ? (down/price) : 0; principal = Math.max(0, price - down); monthly = months>0 ? principal / months : 0;
+      }
       let bal=principal; const rows=[]; const sd = new Date(startDateStr); const day=sd.getDate();
       for(let i=1;i<=months;i++){ const d=new Date(sd); d.setMonth(d.getMonth()+i); d.setDate(day); bal=Math.max(0, bal-monthly); rows.push({i,date:d,monthly,bal}); }
       return {price, months, down, pct, principal, monthly, schedule:rows, startDate:sd};
@@ -459,13 +494,17 @@
     }
 
     function finalizeAndPrint(){
+      // Required checks for all customer fields are handled by attributes, but we also verify here
       const get=(id)=> (document.getElementById(id)?.value||'').trim();
+      const requiredIds=['custName','custPhone','prodName','idSerial','finCode','birthDate','address','imei1','imei2','contractNo','branch','currency','startDate','sellerRep'];
+      for(const id of requiredIds){
+        const el=document.getElementById(id); if(el && !el.value){ el.reportValidity?.(); alert('Zəhmət olmasa bütün müştəri məlumatlarını doldurun.'); return; }
+      }
+
       const custName=get('custName'); const custPhone=get('custPhone'); const prodName=get('prodName');
       const idSerial=get('idSerial'); const finCode=get('finCode'); const address=get('address'); const birthDate=get('birthDate');
-      const imei1=get('imei1'); const imei2=get('imei2'); const contractNo=get('contractNo')||('BT '+String(Date.now()).slice(-5));
-      const branch=get('branch')||'Nəsimi'; const currency=get('currency')||'AZN'; const startDate=get('startDate')|| new Date().toISOString().slice(0,10); const sellerRep=get('sellerRep')||'';
-
-      const required=['custName','prodName','idSerial']; let missing=[]; required.forEach(id=>{ if(!document.getElementById(id).value) missing.push(id); }); if(missing.length){ alert('Zəhmət olmasa tələb olunan sahələri doldurun.'); return; }
+      const imei1=get('imei1'); const imei2=get('imei2'); const contractNo=get('contractNo');
+      const branch=get('branch'); const currency=get('currency'); const startDate=get('startDate'); const sellerRep=get('sellerRep');
 
       let c; try{ c = computeForDocs(); }catch(e){ alert(e.message); return; }
 
@@ -475,13 +514,13 @@
         <div class="print-title">MÜDDƏTLİ (NİSYƏ) ALQI-SATQI MÜQAVİLƏSİ № ${contractNo}</div>
         <div class="print-subtop">
           <div><strong>Bakı şəhəri</strong></div>
-          <div>${fmtAzDate(startDate)} tarixli</div>
+          <div>${ddmmyyyy(startDate)} tarixli</div>
         </div>
 
         <div class="print-block">
           Bu müqaviləni (bundan sonra “Müqavilə”) bir tərəfdən Azərbaycan Respublikasının qanunvericiliyinə əsasən
           qeydiyyatdan keçmiş və Nizamnamə əsasında fəaliyyət göstərən “Baktel Electronics” MMC (VÖEN: 1505350851),
-          Direktor Mahmudov İlqar Arif oğlu şəxsində (bundan sonra “Satıcı”), digər tərəfdən isə şəxsiyyət vəsiqəsinin
+          ${sellerRep} şəxsində (bundan sonra “Satıcı”), digər tərəfdən isə şəxsiyyət vəsiqəsinin
           seriya və nömrəsi ${idSerial} olan ${custName} (bundan sonra “Alıcı”) birlikdə “Tərəflər” adlandırılmaqla
           aşağıdakı şərtlərlə bağladılar.
         </div>
@@ -539,7 +578,7 @@
         <div class="print-h2">3. MƏSULİYYƏT</div>
         <ol class="print-ol">
           <li>3.1. Aylıq ödəniş 5 təqvim günü və daha çox gecikərsə, Satıcı borcun tam həcmdə vaxtından əvvəl ödənilməsini tələb edə bilər.</li>
-          <li>3.2. Ödəniş 30 təqvim günündən artıq gecikərsə və ya 3.1-ə əsasən 2 dəfədən çox gecikmə olarsa, nisyə alınmış cihazın İMEİ nömrəsinin deaktiv edilməsi və digər təsir tədbirləri tətbiq oluna bilər.</li>
+          <li>3.2. Ödəniş 30 təqvim günündən artıq gecikərsə və ya 3.1-ə əsasən 2 dəfədən çox gecikmə olarsa, nisyə alınmış cihazın İMEİ nömrəsinin deaktiv edilməsi və digər tədbirlər tətbiq oluna bilər.</li>
         </ol>
 
         <div class="print-h2">4. ƏLAVƏ ŞƏRTLƏR</div>
@@ -551,7 +590,7 @@
         <div class="print-h2">5. YEKUN MÜDDƏALAR</div>
         <ol class="print-ol">
           <li>5.1. Müqavilə imzalandığı andan qüvvəyə minir və öhdəliklər tam icra edildikdə qüvvədən düşür.</li>
-          <li>5.2. Mübahisələr Bakı şəhəri Nərimanov Rayon Məhkəməsində həll edilir. 3-cü bölüm üzrə məhkəmə müraciətləri zamanı xərclər Alıcı tərəfindən ödənilir.</li>
+          <li>5.2. Mübahisələr Bakı şəhəri Nərimanov Rayon Məhkəməsində həll edilir.</li>
           <li>5.3. Müqavilə Azərbaycan dilində iki (2) nüsxədə tərtib olunur və hər ikisi eyni hüquqi qüvvəyə malikdir.</li>
         </ol>
 
@@ -563,15 +602,15 @@
               “Baktel Electronics” MMC<br>
               VÖEN: 1505350851<br>
               Ünvan: Bakı şəhəri, Nəsimi r., Nizami k., 187<br>
-              Nümayəndə: ${sellerRep || '-'}
+              Nümayəndə: ${sellerRep}
             </td>
             <td style="vertical-align:top; width:50%">
               <strong>Alıcı:</strong><br>
               ${custName}<br>
               Ş/V seriya və nömrəsi: ${idSerial}<br>
               Fin kodu: ${finCode}<br>
-              Ünvan: ${address || '-'}<br>
-              Telefon: ${custPhone || '-'}
+              Ünvan: ${address}<br>
+              Telefon: ${custPhone}
             </td>
           </tr>
         </table>
@@ -582,15 +621,15 @@
         </div>
       </div>`;
 
-      /* ==== 2) ƏLAVƏ 1 — başlıq böyük hərflə ==== */
+      /* ==== 2) ƏLAVƏ 1 ==== */
       const elave1 = `
       <div class="print-a4 page-break">
-        <div class="print-title">${fmtAzDate(startDate)} tarixli ${contractNo} saylı müqaviləyə</div>
+        <div class="print-title">${ddmmyyyy(startDate)} tarixli ${contractNo} saylı müqaviləyə</div>
         <div class="print-h2">ƏLAVƏ 1</div>
         <div class="print-block"><strong>Bakı şəhəri</strong></div>
 
         <div class="print-block">
-          Mən, <strong>${custName}</strong> (Ş/V № ${idSerial}, Fin: ${finCode}, doğum tarixi: ${birthDate || '-'})
+          Mən, <strong>${custName}</strong> (Ş/V № ${idSerial}, Fin: ${finCode}, doğum tarixi: ${ddmmyyyy(birthDate)})
           “Baktel Electronics” MMC-dən qarşılıqlı razılaşma əsasında hissə-hissə ödənişlə aldığım
           <strong>${prodName}</strong> cihazının İMEİ: ${imei1}${imei2 ? `; İMEİ 2: ${imei2}` : ''} nömrəsinin,
           Müqavilə şərtləri pozularsa, hüquqi əsaslar daxilində deaktiv edilməsinə və vahid şəbəkədə riskli müştəri
@@ -611,26 +650,23 @@
         </div>
 
         <div class="print-subtop">
-          <div>Tarix: ${fmtAzDate(startDate)}</div>
-          <div>Əlaqə: ${custPhone || '-'}</div>
+          <div>Tarix: ${ddmmyyyy(startDate)}</div>
+          <div>Əlaqə: ${custPhone}</div>
         </div>
       </div>`;
 
-      /* ==== 3) ƏLAVƏ 2 — Təhvil-Təslim (seriya nömrəsindən sonra müştərinin adı) ==== */
+      /* ==== 3) ƏLAVƏ 2 — Təhvil-Təslim ==== */
       const elave2 = `
       <div class="print-a4 page-break">
-        <div class="print-h2">2 saylı əlavə</div>
+        <div class="print-h2">2 SAYLI ƏLAVƏ</div>
 
         <div class="print-block" style="text-align:center; font-weight:700">
-          ${contractNo} saylı, ${fmtAzDate(startDate)} tarixli nisyə alqı-satqı müqaviləsi dair Təhvil-Təslim aktı
+          ${contractNo} saylı, ${ddmmyyyy(startDate)} tarixli nisyə alqı-satqı müqaviləsi dair Təhvil-Təslim aktı
         </div>
 
         <div class="print-subtop" style="align-items:flex-start">
           <div><strong>Bakı şəhəri</strong></div>
-          <div>
-            ${fmtAzDate(startDate)}<br>
-            cü il
-          </div>
+          <div>${ddmmyyyy(startDate)}</div>
         </div>
 
         <div class="print-block" style="text-align:justify">
@@ -643,7 +679,7 @@
         <ol class="print-ol">
           <li>
             1. Tərəflər hazırkı Təhvil-Təslim Aktını tərtib edərək təsdiq edirlər ki, Tərəflər arasında imzalanmış
-            ${contractNo} saylı, ${fmtAzDate(startDate)} tarixli nisyə alqı-satqı müqaviləsinə (bundan sonra – Müqavilə)
+            ${contractNo} saylı, ${ddmmyyyy(startDate)} tarixli nisyə alqı-satqı müqaviləsinə (bundan sonra – Müqavilə)
             əsasən, aşağıdakı cədvəldə göstərilən Mal(lar)ı Müqavilənin şərtlərinə uyğun şəkildə Alıcıya təhvil vermiş,
             Alıcı isə həmin Mal(lar)ı Satıcıdan tam və qüsursuz şəkildə təhvil almışdır:
           </li>
@@ -673,9 +709,7 @@
             2. Bu Aktın imzalandığı tarixdən etibarən Müqaviləyə uyğun olaraq Alıcı təsdiq və qəbul edir ki,
             Satıcı tərəfindən təhvil verilmiş Mallar işlək və qüsursuz vəziyyətdədir.
           </li>
-          <li>
-            3. Hazırkı Aktın doğruluğunu aşağıda öz imzalarımızla təsdiq edirik:
-          </li>
+          <li>3. Hazırkı Aktın doğruluğunu aşağıda öz imzalarımızla təsdiq edirik:</li>
         </ol>
 
         <div class="sign-cols">
@@ -696,7 +730,7 @@
           <td>${i+1}</td>
           <td>${c.monthly.toFixed(2)} AZN</td>
           <td>${r.bal.toFixed(2)} AZN</td>
-          <td>${fmtDDMMYYYY(r.date)}</td>
+          <td>${ddmmyyyy(r.date)}</td>
         </tr>`).join('');
 
       const odeme = `
@@ -707,7 +741,7 @@
         <table class="print-table" style="margin-top:6mm">
           <tr><th style="width:28%">Müştəri A.S.A.</th><td>${custName}</td></tr>
           <tr><th>Ş/V seriya və nömrəsi</th><td>${idSerial}</td></tr>
-          <tr><th>Kreditin verilmə tarixi</th><td>${fmtAzDate(startDate)}</td></tr>
+          <tr><th>Kreditin verilmə tarixi</th><td>${ddmmyyyy(startDate)}</td></tr>
           <tr><th>Müqavilə nömrəsi</th><td>${contractNo}</td></tr>
           <tr><th>Məhsul</th><td>${prodName} ${imei1 ? `(${imei1})` : ''}</td></tr>
           <tr><th>Satış qiyməti</th><td>${toNum('price').toFixed(2)} AZN</td></tr>
@@ -747,29 +781,16 @@
           • Zəmanət müddəti məhsulun satıldığı gündən hesablanır. • Hər hansı xarici zədə almamış (korpus və ekranda cızıq, batıq, əzik və s.) məhsul 14 gün ərzində müştərinin istəyi ilə qaytarıla və ya dəyişdirilə bilər.<br>
           • Əgər məhsulun zəmanət müddəti bitib və ya zəmanət şərtlərində göstərilən qüsurlar təyin edilməyibsə, bu zaman məhsul “Baktel Electronics” MMC-nin uyğun, ödənişli tarifləri ilə təmir olunur.<br>
           • Təmirə təqdim olunmuş məhsul müayinə və təmir məqsədilə 2–14 iş günü ərzində texniki servis mərkəzində saxlanıla bilər.<br>
-          • Təmir üçün lazım olan ehtiyat hissəsi və ya detal tapılmadıqda, onun sifarişi və gətirilməsi müəyyən vaxt tələb etdiyindən göstərilən müddət tərəflərin razılığı ilə müəyyən qədər uzadıla bilər. Zəmanət müddəti bitməmiş məhsulun texniki baxış və təmir xidməti onun rəsmi nümayəndəliyi tərəfindən daxili təlimatlara uyğun olaraq aparılır.
-        </div>
-
-        <div class="print-block"><strong>Satılmış məhsullar yalnız aşağıdakı şərtlər daxilində təmirə qəbul olunur:</strong></div>
-        <div class="print-block kecik">
-          • Təmir üçün müraciət edilmiş məhsulun yalnız bu blankda adı və soyadı qeyd olunan şəxsin şəxsiyyət vəsiqəsi ilə təqdim olunması;<br>
-          • Zəmanət müddətinin bitməməsi.
-        </div>
-
-        <div class="print-block"><strong>Məhsullar bu hallarda zəmanətli təmirə qəbul edilmir:</strong></div>
-        <div class="print-block kecik">
-          • Əgər məhsul “Baktel Electronics” MMC və digər rəsmi şirkətlərin servis mütəxəssislərinə təqdim olunmazdan əvvəl kənar şəxs tərəfindən təmir edilərsə və təmir haqqında lazımi sənədlər təqdim edilməzsə, eləcə də bu təmirin keyfiyyətsizliyi nəticəsində cihaz zədələnərsə;<br>
-          • Daxili və xarici zədələnmə, cihazın daxilinə yad cisim və ya maye düşməsi, yaxud digər xarici zərbə və nəticəsində yaranmış qüsurlar olduqda;<br>
-          • Gərginlik sıçrayışları və həddən artıq yüksək gərginlik səbəbindən yaranan nasazlıqlar olduqda.
+          • Təmir üçün lazım olan ehtiyat hissəsi və ya detal tapılmadıqda, onun sifarişi və gətirilməsi müəyyən vaxt tələb etdiyindən göstərilən müddət tərəflərin razılığı ilə müəyyən qədər uzadıla bilər.
         </div>
 
         <table class="print-table" style="margin-top:6mm">
-          <tr><th style="width:28%">Malın adı</th><td>${prodName}</td></tr>
+          <tr><th style="width:28%;">Malın adı</th><td>${prodName}</td></tr>
           <tr><th>İMEİ və ya SN</th><td>${imei1}${imei2 ? ` / ${imei2}` : ''}</td></tr>
           <tr><th>Zəmanət müddəti</th><td>1 (bir) il</td></tr>
-          <tr><th>Satış tarixi</th><td>${fmtAzDate(startDate)}</td></tr>
+          <tr><th>Satış tarixi</th><td>${ddmmyyyy(startDate)}</td></tr>
           <tr><th>Alıcının A.S.A.</th><td>${custName}</td></tr>
-          <tr><th>Alıcının əlaqə nömrəsi</th><td>${custPhone || '-'}</td></tr>
+          <tr><th>Alıcının əlaqə nömrəsi</th><td>${custPhone}</td></tr>
         </table>
 
         <div class="print-block" style="margin-top:6mm;"><strong>Şərtlərlə tanış oldum və razıyam</strong></div>
@@ -781,7 +802,7 @@
             <span class="sigline"></span>
           </div>
           <div class="sign" style="text-align:center">
-            ${sellerRep || 'Elşən Zakirli'}
+            ${sellerRep}
             <div class="sigcap">Satıcının adı, soyadı və imzası</div>
             <span class="sigline"></span>
           </div>
@@ -792,7 +813,9 @@
     }
 
     // Expose
-    window.calc=calc; window.resetForm=resetForm; window.exportPrint=exportPrint; window.toggleExtraIncome=toggleExtraIncome; window.onIncomeTypeChange=onIncomeTypeChange; window.toggleFinalize=toggleFinalize; window.finalizeAndPrint=finalizeAndPrint; window.toggleManualDown=toggleManualDown;
+    window.calc=calc; window.resetForm=resetForm; window.exportPrint=exportPrint;
+    window.toggleExtraIncome=toggleExtraIncome; window.onIncomeTypeChange=onIncomeTypeChange;
+    window.toggleFinalize=toggleFinalize; window.finalizeAndPrint=finalizeAndPrint; window.toggleManualDown=toggleManualDown;
   </script>
 </body>
 </html>
