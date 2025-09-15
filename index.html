@@ -468,7 +468,7 @@
 
       let c; try{ c = computeForDocs(); }catch(e){ alert(e.message); return; }
 
-      // ==== 1) MÜQAVİLƏ
+      /* ==== 1) MÜQAVİLƏ ==== */
       const contractHTML = `
       <div class="print-a4 page-break">
         <div class="print-title">MÜDDƏTLİ (NİSYƏ) ALQI-SATQI MÜQAVİLƏSİ № ${contractNo}</div>
@@ -581,7 +581,7 @@
         </div>
       </div>`;
 
-      // ==== 2) ƏLAVƏ 1 — İMEİ razılıq
+      /* ==== 2) ƏLAVƏ 1 — İMEİ razılıq ==== */
       const elave1 = `
       <div class="print-a4 page-break">
         <div class="print-title">${fmtAzDate(startDate)} tarixli ${contractNo} saylı müqaviləyə</div>
@@ -615,7 +615,7 @@
         </div>
       </div>`;
 
-      // ==== 3) ƏLAVƏ 2 — Təhvil-Təslim (sənin nümunəsinə uyğun)
+      /* ==== 3) ƏLAVƏ 2 — Təhvil-Təslim ==== */
       const elave2 = `
       <div class="print-a4 page-break">
         <div class="print-h2">2 saylı əlavə</div>
@@ -689,7 +689,7 @@
         </div>
       </div>`;
 
-      // ==== 4) ÖDƏNİŞ CƏDVƏLİ
+      /* ==== 4) ÖDƏNİŞ CƏDVƏLİ ==== */
       const schedRows = c.schedule.map((r,i)=>`
         <tr>
           <td>${i+1}</td>
@@ -728,27 +728,46 @@
         </div>
       </div>`;
 
-      // ==== 5) ZƏMANƏT TALONU
+      /* ==== 5) ZƏMANƏT TALONU (sənin mətni ilə) ==== */
       const zemanet = `
       <div class="print-a4 page-break">
-        <div class="print-title">Zəmanət talonu</div>
-        <div class="print-block">Zəmanət şərtləri:</div>
+        <div class="print-title">ZƏMANƏT TALONU</div>
+
+        <div class="print-block"><strong>Zəmanət şərtləri:</strong></div>
+
         <div class="print-block kecik">
-          • Zəmanət yalnız istehsalçı qüsurlarına şamil edilir və rəsmi servis tərəfindən müəyyənləşdirilir. <br>
-          • Zəmanət müddəti məhsulun satış tarixindən hesablanır. <br>
-          • Xarici zədəsi olmayan məhsul 14 gün ərzində qaytarıla və ya dəyişdirilə bilər. <br>
-          • Zəmanət şərtlərinə aid olmayan hallarda təmir ödənişlidir. Təmir müddəti 2–14 iş günü ola bilər. <br>
-          • Ehtiyat hissəsinin sifarişi hallarında müddət uzadıla bilər.
+          • Zəmanət blankı əsasında təmir yalnız istehsalçı səhvindən meydana gəlmiş qüsurlara şamil edilir.<br>
+          • Qüsurun istehsalçı tərəfindən baş verib vermədiyini yalnız “Baktel Electronics” MMC və digər rəsmi şirkətləlrin texniki servis mütəxəssisləri tərəfindən müəyyənləşdirilə bilər.<br>
+          • Zəmanət müddəti məhsulun satıldığı gündən hesablanır. • Hər hansı xarici zədə almamış (korpus və ekranda cızıq, batıq, əzik və s.) məhsul 14 gün ərzində müştərinin istəyi ilə qaytarıla və ya dəyişdirilə bilər.<br>
+          • Əgər məhsullun zəmanət müddəti bitib və ya zəmanət şərtlərində göstərilən qüsurlar təyin edilməyibsə, bu zaman məhsul “Baktel Electronics” MMC-nin uyğun, ödənişli tarifləri ilə təmir olunur.<br>
+          • Təmirə təqdim olunmuş məhsul müayinə və təmir məqsədilə 2-14 iş günü ərzində texniki servis mərkəzində saxlanıla bilər.<br>
+          • Təmir üçün lazım olan ehtiyyat hissəsi və ya detal tapılmadıqda, onun sifarişi və gətirilməsi müəyyən vaxt tələb etdiyindən göstərilən müddət tərəflərin razılığı ilə müəyyən qədər uzadıla bilər. Zəmanət müddəti bitməmiş məhsulun texniki baxış və təmir xidməti onun rəsmi nümayəndəliyi tərəfindən daxili təlimatlara uyğun olaraq aparılır
+        </div>
+
+        <div class="print-block"><strong>Satılmış məhsullar yalnız aşağıdakı şərtlər daxilində təmirə qəbul olunur:</strong></div>
+        <div class="print-block kecik">
+          • Təmir üçün müraciət edilmiş məhmsulun yalnız bu blankda adı və soyadı qeyd olunan şəxsin şəxsiyyət vəsiqəsi ilə təqdim olunması:<br>
+          • Zəmanət müddətinin bitməməsi.
+        </div>
+
+        <div class="print-block"><strong>Məhsullar bu hallarda zəmanətli təmirə qəbul edilmir:</strong></div>
+        <div class="print-block kecik">
+          • Əgər məhsul “Baktel Electronics” MMC və digər rəsmi şirkətlərin servis mütəxəssislərinə təqdim olunmazdan əvvəl hansısa kənar şəxs tərəfindən təmir edilər, təmir haqqında lazımi sənədlər verilməz<br>
+          • və bu təmirin keyfiyyətsizliyi nəticsində cihaz zədələnırsə;<br>
+          • Daxili və xarici zədələnmə cihazın daxilində yad cisim və ya maye düşməsi, yaxud digər xarici zərbə və nəticəsi yaranarsa;<br>
+          • Sıçrayışlar və gərginliyin həddən artıq yuxarı olması nəticəsində cihazda gərginlik və digər qüsurlar əmələ gələrsə.
         </div>
 
         <table class="print-table" style="margin-top:6mm">
-          <tr><th style="width:28%;">Malın adı</th><td>${prodName}</td></tr>
-          <tr><th>İMEİ/SN</th><td>${imei1}${imei2 ? ` / ${imei2}` : ''}</td></tr>
-          <tr><th>Zəmanət müddəti</th><td>12 ay</td></tr>
+          <tr><th style="width:28%">Malın adı</th><td>${prodName}</td></tr>
+          <tr><th>İMEİ və ya SN</th><td>${imei1}${imei2 ? ` / ${imei2}` : ''}</td></tr>
+          <tr><th>Zəmanət müddəti</th><td>1 (bir) il</td></tr>
           <tr><th>Satış tarixi</th><td>${fmtAzDate(startDate)}</td></tr>
-          <tr><th>Alıcı A.S.A.</th><td>${custName}</td></tr>
-          <tr><th>Əlaqə nömrəsi</th><td>${custPhone || '-'}</td></tr>
+          <tr><th>Alıcının A.S.A</th><td>${custName}</td></tr>
+          <tr><th>Alıcının əlaqə nömrəsi</th><td>${custPhone || '-'}</td></tr>
         </table>
+
+        <div class="print-block" style="margin-top:6mm;"><strong>Şərtlər ilə tanış oldum və razıyam</strong></div>
 
         <div class="sign-cols">
           <div class="sign" style="text-align:center">
@@ -757,7 +776,7 @@
             <span class="sigline"></span>
           </div>
           <div class="sign" style="text-align:center">
-            ${sellerRep || ' '}
+            ${sellerRep || 'Elşən Zakirli'}
             <div class="sigcap">Satıcının adı, soyadı və imzası</div>
             <span class="sigline"></span>
           </div>
