@@ -38,7 +38,6 @@
     thead th{position:sticky;top:0;background:#f8fafc;padding:12px 10px;font-weight:700;font-size:14px;color:#111827;border-bottom:1px solid var(--border);text-align:right}
     tbody td{padding:12px 10px;border-bottom:1px solid var(--border);font-size:13px;text-align:right}
     tbody tr:nth-child(odd){background:rgba(2,6,23,.02)}
-    canvas{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:8px}
     .layout{display:grid;grid-template-columns:1fr 1fr;gap:16px}
     .notice{padding:12px;border-radius:12px;margin-top:8px}
     .notice.warn{background:#fff1f2;border:1px solid #fecaca;color:#991b1b}
@@ -197,12 +196,9 @@
           <div id="scheduleWrap" style="overflow:auto;max-height:420px"></div>
         </section>
       </div>
-
-      <section class="card"><canvas id="chart" height="220"></canvas></section>
     </main>
   </div>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script>
     // ===== Utils
     const fmtAZN = n=> (new Intl.NumberFormat('az-AZ',{style:'currency',currency:'AZN',maximumFractionDigits:2})).format(n||0);
@@ -213,15 +209,14 @@
     // ===== Policy & limits
     const POLICY_RISK_ONLY = { low: 0.20, med: 0.30, high: 0.50 };
     const MIN_DOWN_AZN = 50;
-    const MAX_OBLIG_SHARE = 0.50;
-    const MAX_DSR = 0.40;
+    const MAX_OBLIG_SHARE = 0.50; // xəbərdarlıq
+    const MAX_DSR = 0.40;         // maksimum aylıq = net gəlirin 40%
 
-    // Set default start date on load
+    // Default date: cari gün
     window.addEventListener('DOMContentLoaded', () => {
       const sd = document.getElementById('startDate');
       if (sd && !sd.value) sd.value = todayISO();
     });
-
     function ensureStartDateDefault(){
       const sd = document.getElementById('startDate');
       if (sd && !sd.value) sd.value = todayISO();
@@ -230,8 +225,8 @@
     function getDownPayment(price, riskKey, salary=0, oblig=0){
       const base = POLICY_RISK_ONLY[riskKey] ?? POLICY_RISK_ONLY.med;
       salary = Number(salary)||0; oblig = Number(oblig)||0;
-      const net = Math.max(0, salary - oblig);
-      const ratio = salary>0 ? net / salary : 0;
+      const net = Math.max(0, salary - oblig);             // net gəlir
+      const ratio = salary>0 ? net / salary : 0;           // DTI invert
       let mod = 0;
       if(ratio >= 0.70) mod = -0.10; else if(ratio >= 0.50) mod = -0.05; else if(ratio >= 0.35) mod = 0.00; else if(ratio >= 0.20) mod = +0.10; else mod = +0.20;
       if(riskKey==='high') mod *= 0.7;
@@ -290,8 +285,6 @@
       const on=!!chk.checked; wrap.style.display=on?'block':'none'; inp.disabled=!on; if(!on) inp.value='';
     }
 
-    let chart=null;
-
     function calc(){
       ['risk','salary','oblig','addIncomeType','addIncomeAmt','manualDownAmt','months','price'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
       const riskEl=document.getElementById('risk');
@@ -329,6 +322,7 @@
       const oblig=Number(obligStr||0);
       if(monthsNum<=0){ const a=document.getElementById('calcAlert'); if(a){a.style.display='block'; a.textContent='Müddət ən az 1 ay olmalıdır.';} return; }
 
+      // İlkin ödəniş
       const mdChk=document.getElementById('manualDownChk');
       const mdInp=document.getElementById('manualDownAmt');
       let {down, pct, ratio, net} = getDownPayment(price, risk, salary, oblig);
@@ -342,16 +336,22 @@
       let principal = Math.max(0, price - down);
       let monthly = monthsNum>0 ? principal / monthsNum : 0;
 
+      // Maksimum aylıq (DSR 40% * net gəlir)
       const maxMonthly = Math.max(0, net * MAX_DSR);
+      let autoAdj=false;
       if(monthly > maxMonthly + 1e-9){
+        // uyğunlaşdır
         const requiredPrincipal = Math.max(0, maxMonthly * monthsNum);
         const newDownRaw = price - requiredPrincipal;
-        down = Math.min(price, Math.max(manualUsed? down : MIN_DOWN_AZN, Math.max(down, newDownRaw)));
+        const prevDown = down;
+        down = Math.min(price, Math.max(manualUsed? down : MIN_DOWN_AZN, Math.max(prevDown, newDownRaw)));
         pct = price>0 ? (down/price) : 0;
         principal = Math.max(0, price - down);
         monthly = monthsNum>0 ? principal / monthsNum : 0;
+        autoAdj=true;
       }
 
+      // Cədvəl
       let bal = principal; const rows=[];
       const sd=(document.getElementById('startDate')?.value? new Date(document.getElementById('startDate').value): new Date());
       const day=sd.getDate();
@@ -361,8 +361,15 @@
         rows.push({i,date:d,monthly,bal});
       }
 
+      // DTI xəbərdarlıq (öhdəlik/gəlir)
       const dti = (salary>0)? (oblig/salary) : (oblig>0? Infinity : 0);
       const dtiWarn = dti > MAX_OBLIG_SHARE;
+
+      // Xülasə (optimallaşdırılıb)
+      const statusBadge = monthly <= maxMonthly + 1e-9
+        ? `<span class="pill" style="border-color:#86efac;background:#ecfdf5;color:#166534">Uyğundur</span>`
+        : `<span class="pill" style="border-color:#fecaca;background:#fff1f2;color:#991b1b">Limitdən yüksək</span>`;
+
       const dtiHtml = dtiWarn ? `<div class="notice warn">Diqqət: Öhdəlik/Gəlir ${(dti*100).toFixed(0)}% (hədd ${Math.round(MAX_OBLIG_SHARE*100)}%).</div>` : '';
 
       document.getElementById('calcAlert').style.display='none';
@@ -370,12 +377,33 @@
         <h3>Xülasə</h3>
         ${dtiHtml}
         <div class="row">
-          <div class="col-6"><div class="pill">Risk</div><h2>${risk||'-'}</h2><div class="muted">Məhsul dəyəri: ${fmtAZN(price)}</div></div>
-          <div class="col-6"><div class="pill">İlkin ödəniş</div>
-            <h2>${fmtAZN(down)} <span class="muted">(${(pct*100).toFixed(0)}%)</span></h2>
+          <div class="col-6">
+            <div class="pill">Məhsul</div>
+            <h2>${fmtAZN(price)}</h2>
+            <div class="muted">Risk qrupu: <strong>${risk||'-'}</strong></div>
           </div>
-          <div class="col-6"><div class="pill">Kredit</div><h2>${fmtAZN(principal)}</h2></div>
-          <div class="col-6"><div class="pill">Aylıq</div><h2>${fmtAZN(monthly)}</h2></div>
+          <div class="col-6">
+            <div class="pill">İlkin ödəniş</div>
+            <h2>${fmtAZN(down)} <span class="muted">(${(pct*100).toFixed(0)}%)</span></h2>
+            ${autoAdj?`<div class="muted">Aylıq ödəniş DSR həddinə uyğunlaşdırıldı.</div>`:''}
+          </div>
+          <div class="col-6">
+            <div class="pill">Kredit məbləği</div>
+            <h2>${fmtAZN(principal)}</h2>
+          </div>
+          <div class="col-6">
+            <div class="pill">Seçilən aylıq</div>
+            <h2>${fmtAZN(monthly)} ${statusBadge}</h2>
+          </div>
+          <div class="col-6">
+            <div class="pill">Maks. aylıq (DSR 40%)</div>
+            <h2>${fmtAZN(maxMonthly)}</h2>
+            <div class="muted">Net gəlir: ${fmtAZN(Math.max(0, salary - oblig))}</div>
+          </div>
+          <div class="col-6">
+            <div class="pill">Müddət</div>
+            <h2>${monthsNum} ay</h2>
+          </div>
         </div>`;
 
       // UI Ödəniş cədvəli: tarix dd.mm.yyyy
@@ -384,10 +412,6 @@
           <thead><tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr></thead>
           <tbody>${rows.map(r=>`<tr><td>${r.i}</td><td>${ddmmyyyy(r.date)}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join('')}</tbody>
         </table>`;
-
-      const labels=rows.map(r=>r.i); const dataBal=rows.map(r=>Number(r.bal.toFixed(2)));
-      const ctx=document.getElementById('chart'); if(chart) chart.destroy();
-      chart=new Chart(ctx,{type:'line',data:{labels,datasets:[{label:'Qalıq borc',data:dataBal}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}},elements:{line:{tension:.25}}}});
     }
 
     function resetForm(){
@@ -422,7 +446,6 @@
       const alertBox=document.getElementById('calcAlert'); if(alertBox){ alertBox.style.display='none'; alertBox.textContent=''; }
       document.getElementById('summary').innerHTML="";
       document.getElementById('scheduleWrap').innerHTML="";
-      if(chart){ chart.destroy(); chart=null; }
       toggleFinalize(false);
     }
 
@@ -494,7 +517,6 @@
     }
 
     function finalizeAndPrint(){
-      // Required checks for all customer fields are handled by attributes, but we also verify here
       const get=(id)=> (document.getElementById(id)?.value||'').trim();
       const requiredIds=['custName','custPhone','prodName','idSerial','finCode','birthDate','address','imei1','imei2','contractNo','branch','currency','startDate','sellerRep'];
       for(const id of requiredIds){
@@ -724,7 +746,7 @@
         </div>
       </div>`;
 
-      /* ==== 4) ÖDƏNİŞ CƏDVƏLİ (tarix dd.mm.yyyy + sonda adlar) ==== */
+      /* ==== 4) ÖDƏNİŞ CƏDVƏLİ ==== */
       const schedRows = c.schedule.map((r,i)=>`
         <tr>
           <td>${i+1}</td>
