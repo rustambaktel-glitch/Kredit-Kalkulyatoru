@@ -56,7 +56,7 @@
     .print-ol > li{margin:2.2mm 0}
     .print-ol li .sub{margin-top:1.8mm}
     .print-table{width:100%; border-collapse:collapse; font-size:11pt}
-    .print-table th,.print-table td{border:1px solid #cbd5e1; padding:5px 7px; vertical-align:top}
+    .print-table th,.print-table td{border:1px solid var(--table-border); padding:5px 7px; vertical-align:top}
     .print-table th{background:#f5f5f5}
     .sign-cols{display:flex; justify-content:space-between; gap:16mm; margin-top:12mm}
     .sign{flex:1}
@@ -200,19 +200,19 @@
   </div>
 
   <script>
-    // ===== Utils
+    /* ==== UTIL ==== */
     const fmtAZN = n=> (new Intl.NumberFormat('az-AZ',{style:'currency',currency:'AZN',maximumFractionDigits:2})).format(n||0);
     const toNum = id=> Number((document.getElementById(id)?.value) ?? 0);
     const ddmmyyyy = (d)=>{ const dt=new Date(d); const dd=String(dt.getDate()).padStart(2,'0'); const mm=String(dt.getMonth()+1).padStart(2,'0'); const yyyy=dt.getFullYear(); return `${dd}.${mm}.${yyyy}`; };
     const todayISO = ()=> { const t=new Date(); const mm=String(t.getMonth()+1).padStart(2,'0'); const dd=String(t.getDate()).padStart(2,'0'); return `${t.getFullYear()}-${mm}-${dd}`; };
 
-    // ===== Policy & limits
+    /* ==== POLICY ==== */
     const POLICY_RISK_ONLY = { low: 0.20, med: 0.30, high: 0.50 };
     const MIN_DOWN_AZN = 50;
-    const MAX_OBLIG_SHARE = 0.50; // xəbərdarlıq
-    const MAX_DSR = 0.40;         // maksimum aylıq = net gəlirin 40%
+    const MAX_OBLIG_SHARE = 0.50;
+    const MAX_DSR = 0.40;
 
-    // Default date: cari gün
+    /* ==== DEFAULTS ==== */
     window.addEventListener('DOMContentLoaded', () => {
       const sd = document.getElementById('startDate');
       if (sd && !sd.value) sd.value = todayISO();
@@ -222,6 +222,7 @@
       if (sd && !sd.value) sd.value = todayISO();
     }
 
+    /* ==== HELPERS ==== */
     function getDownPayment(price, riskKey, salary=0, oblig=0){
       const base = POLICY_RISK_ONLY[riskKey] ?? POLICY_RISK_ONLY.med;
       salary = Number(salary)||0; oblig = Number(oblig)||0;
@@ -237,24 +238,7 @@
       return { down, pct, ratio, net };
     }
 
-    function exportPrint(){
-      const w=window.open('','_blank');
-      const summary=document.getElementById('summary').innerHTML;
-      const sched=document.getElementById('scheduleWrap').innerHTML;
-      w.document.write(`<!doctype html><html><head><meta charset='utf-8'><title>Kredit Çap</title>
-        <style>body{font-family:system-ui,Segoe UI,Roboto; padding:16px} h1{margin:0 0 8px} .muted{color:#64748b}
-        table{width:100%;border-collapse:collapse} th,td{border:1px solid #e5e7eb;padding:8px;text-align:right} th{text-align:right;background:#f8fafc}
-        th:first-child,td:first-child{text-align:left}
-        .block{border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin:8px 0}
-        </style></head><body>
-        <h1>Kredit hesablaması</h1>
-        <div class='muted'>${ddmmyyyy(new Date())}</div>
-        <div class='block'>${summary}</div>
-        <div class='block'>${sched}</div>
-      </body></html>`);
-      w.document.close(); w.focus(); w.print();
-    }
-
+    /* ==== UI TOGGLES ==== */
     function toggleExtraIncome(){
       const chk=document.getElementById('addIncomeChk');
       const typeWrap=document.getElementById('addIncomeTypeWrap');
@@ -276,7 +260,6 @@
       if(typeSel.value){ amtWrap.style.display='block'; amtInp.disabled=false; }
       else { amtWrap.style.display='none'; amtInp.disabled=true; amtInp.value=''; }
     }
-
     function toggleManualDown(){
       const chk=document.getElementById('manualDownChk');
       const wrap=document.getElementById('manualDownWrap');
@@ -284,7 +267,14 @@
       if(!chk||!wrap||!inp) return;
       const on=!!chk.checked; wrap.style.display=on?'block':'none'; inp.disabled=!on; if(!on) inp.value='';
     }
+    function toggleFinalize(force){
+      const box=document.getElementById('finalizeWrap'); if(!box) return;
+      const show = typeof force==='boolean' ? force : (box.style.display==='none');
+      box.style.display = show? 'block' : 'none';
+      if(show){ ensureStartDateDefault(); box.scrollIntoView({behavior:'smooth',block:'center'}); }
+    }
 
+    /* ==== CORE CALC ==== */
     function calc(){
       ['risk','salary','oblig','addIncomeType','addIncomeAmt','manualDownAmt','months','price'].forEach(id=>document.getElementById(id)?.classList.remove('invalid'));
       const riskEl=document.getElementById('risk');
@@ -325,7 +315,7 @@
       // İlkin ödəniş
       const mdChk=document.getElementById('manualDownChk');
       const mdInp=document.getElementById('manualDownAmt');
-      let {down, pct, ratio, net} = getDownPayment(price, risk, salary, oblig);
+      let {down, pct, net} = getDownPayment(price, risk, salary, oblig);
       let manualUsed=false;
       if(mdChk && mdChk.checked){
         const val = Math.max(0, Math.min(price, Number(mdInp.value||0)));
@@ -337,7 +327,7 @@
       let monthly = monthsNum>0 ? principal / monthsNum : 0;
 
       // Maksimum aylıq (DSR 40% * net gəlir)
-      const maxMonthly = Math.max(0, net * 0.40);
+      const maxMonthly = Math.max(0, net * MAX_DSR);
       let autoAdj=false;
       if(monthly > maxMonthly + 1e-9){
         const requiredPrincipal = Math.max(0, maxMonthly * monthsNum);
@@ -448,13 +438,25 @@
       toggleFinalize(false);
     }
 
-    function toggleFinalize(force){
-      const box=document.getElementById('finalizeWrap'); if(!box) return;
-      const show = typeof force==='boolean' ? force : (box.style.display==='none');
-      box.style.display = show? 'block' : 'none';
-      if(show){ ensureStartDateDefault(); box.scrollIntoView({behavior:'smooth',block:'center'}); }
+    function exportPrint(){
+      const w=window.open('','_blank');
+      const summary=document.getElementById('summary').innerHTML;
+      const sched=document.getElementById('scheduleWrap').innerHTML;
+      w.document.write(`<!doctype html><html><head><meta charset='utf-8'><title>Kredit Çap</title>
+        <style>body{font-family:system-ui,Segoe UI,Roboto; padding:16px} h1{margin:0 0 8px} .muted{color:#64748b}
+        table{width:100%;border-collapse:collapse} th,td{border:1px solid #e5e7eb;padding:8px;text-align:right} th{text-align:right;background:#f8fafc}
+        th:first-child,td:first-child{text-align:left}
+        .block{border:1px solid #e5e7eb;border-radius:10px;padding:12px;margin:8px 0}
+        </style></head><body>
+        <h1>Kredit hesablaması</h1>
+        <div class='muted'>${ddmmyyyy(new Date())}</div>
+        <div class='block'>${summary}</div>
+        <div class='block'>${sched}</div>
+      </body></html>`);
+      w.document.close(); w.focus(); w.print();
     }
 
+    /* ==== DOCS ==== */
     function computeForDocs(){
       const risk=document.getElementById('risk').value;
       const salaryStr=document.getElementById('salary').value;
@@ -477,7 +479,7 @@
       if(mdChk && mdChk.checked){ const val = Math.max(0, Math.min(price, Number(mdInp.value||0))); if(!isNaN(val)) { down = val; pct = price>0 ? (down/price) : 0; } }
       let principal = Math.max(0, price - down);
       let monthly = months>0 ? principal / months : 0;
-      const maxMonthly = Math.max(0, net * 0.40);
+      const maxMonthly = Math.max(0, net * MAX_DSR);
       if(monthly>maxMonthly){
         const requiredPrincipal = Math.max(0, maxMonthly * months);
         const newDownRaw = price - requiredPrincipal;
@@ -527,9 +529,9 @@
       const imei1=get('imei1'); const imei2=get('imei2'); const contractNo=get('contractNo');
       const branch=get('branch'); const currency=get('currency'); const startDate=get('startDate'); const sellerRep=get('sellerRep');
 
-      let c; try{ c = computeForDocs(); }catch(e){ alert(e.message); return; }
+      let comp; try{ comp = computeForDocs(); }catch(e){ alert(e.message); return; }
 
-      /* ==== 1) MÜQAVİLƏ – nümayəndə adı YOXDUR ==== */
+      /* ==== 1) MÜQAVİLƏ – nümayəndə adı yoxdur ==== */
       const contractHTML = `
       <div class="print-a4 page-break">
         <div class="print-title">MÜDDƏTLİ (NİSYƏ) ALQI-SATQI MÜQAVİLƏSİ № ${contractNo}</div>
@@ -553,10 +555,10 @@
             <div class="sub">
               <table class="print-table" style="margin:3mm 0 5mm">
                 <tr><th style="width:35%">Məhsulun adı/modeli</th><td>${prodName} ${imei1 ? `(${imei1})` : ''}</td><td style="width:10%">&nbsp;</td></tr>
-                <tr><th>İlkin ödəniş məbləği</th><td>${c.down.toFixed(2)}</td><td>AZN</td></tr>
-                <tr><th>Kredit məbləği</th><td>${c.principal.toFixed(2)}</td><td>AZN</td></tr>
-                <tr><th>Kredit müddəti</th><td>${c.months}</td><td>ay</td></tr>
-                <tr><th>Aylıq ödəniş</th><td>${c.monthly.toFixed(2)}</td><td>AZN</td></tr>
+                <tr><th>İlkin ödəniş məbləği</th><td>${comp.down.toFixed(2)}</td><td>AZN</td></tr>
+                <tr><th>Kredit məbləği</th><td>${comp.principal.toFixed(2)}</td><td>AZN</td></tr>
+                <tr><th>Kredit müddəti</th><td>${comp.months}</td><td>ay</td></tr>
+                <tr><th>Aylıq ödəniş</th><td>${comp.monthly.toFixed(2)}</td><td>AZN</td></tr>
               </table>
             </div>
           </li>
@@ -640,7 +642,7 @@
         </div>
       </div>`;
 
-      /* ==== 2) ƏLAVƏ 1 – nümayəndə adı YOXDUR ==== */
+      /* ==== 2) ƏLAVƏ 1 ==== */
       const elave1 = `
       <div class="print-a4 page-break">
         <div class="print-title">${ddmmyyyy(startDate)} tarixli ${contractNo} saylı müqaviləyə</div>
@@ -674,7 +676,7 @@
         </div>
       </div>`;
 
-      /* ==== 3) ƏLAVƏ 2 – nümayəndə adı YOXDUR ==== */
+      /* ==== 3) ƏLAVƏ 2 – Təhvil-Təslim ==== */
       const elave2 = `
       <div class="print-a4 page-break">
         <div class="print-h2">2 SAYLI ƏLAVƏ</div>
@@ -743,12 +745,11 @@
         </div>
       </div>`;
 
-      /* ==== 4) ÖDƏNİŞ CƏDVƏLİ – nümayəndə adı YOXDUR ==== */
-      const c = computeForDocs();
-      const schedRows = c.schedule.map((r,i)=>`
+      /* ==== 4) ÖDƏNİŞ CƏDVƏLİ ==== */
+      const schedRows = comp.schedule.map((r,i)=>`
         <tr>
           <td>${i+1}</td>
-          <td>${c.monthly.toFixed(2)} AZN</td>
+          <td>${comp.monthly.toFixed(2)} AZN</td>
           <td>${r.bal.toFixed(2)} AZN</td>
           <td>${ddmmyyyy(r.date)}</td>
         </tr>`).join('');
@@ -765,9 +766,9 @@
           <tr><th>Müqavilə nömrəsi</th><td>${contractNo}</td></tr>
           <tr><th>Məhsul</th><td>${prodName} ${imei1 ? `(${imei1})` : ''}</td></tr>
           <tr><th>Satış qiyməti</th><td>${toNum('price').toFixed(2)} AZN</td></tr>
-          <tr><th>İlkin ödəniş</th><td>${c.down.toFixed(2)} AZN</td></tr>
-          <tr><th>Qalıq borc</th><td>${c.principal.toFixed(2)} AZN</td></tr>
-          <tr><th>Müddət</th><td>${c.months} ay</td></tr>
+          <tr><th>İlkin ödəniş</th><td>${comp.down.toFixed(2)} AZN</td></tr>
+          <tr><th>Qalıq borc</th><td>${comp.principal.toFixed(2)} AZN</td></tr>
+          <tr><th>Müddət</th><td>${comp.months} ay</td></tr>
           <tr><th>Filial</th><td>${branch}</td></tr>
           <tr><th>Valyuta</th><td>${currency}</td></tr>
         </table>
@@ -789,19 +790,39 @@
         </div>
       </div>`;
 
-      /* ==== 5) ZƏMANƏT TALONU – nümayəndə adı BURADA VAR ==== */
+      /* ==== 5) ZƏMANƏT TALONU – nümayəndə burada göstərilir ==== */
       const zemanet = `
       <div class="print-a4 page-break">
         <div class="print-title">ZƏMANƏT TALONU</div>
-
         <div class="print-block"><strong>Zəmanət şərtləri:</strong></div>
         <div class="print-block kecik">
           • Zəmanət blankı əsasında təmir yalnız istehsalçı səhvindən meydana gəlmiş qüsurlara şamil edilir.<br>
-          • Qüsurun istehsalçı tərəfindən baş verib vermədiyini yalnız “Baktel Electronics” MMC və digər rəsmi şirkətlərin texniki servis mütəxəssisləri tərəfindən müəyyənləşdirilə bilər.<br>
-          • Zəmanət müddəti məhsulun satıldığı gündən hesablanır. • Hər hansı xarici zədə almamış (korpus və ekranda cızıq, batıq, əzik və s.) məhsul 14 gün ərzində müştərinin istəyi ilə qaytarıla və ya dəyişdirilə bilər.<br>
-          • Əgər məhsulun zəmanət müddəti bitib və ya zəmanət şərtlərində göstərilən qüsurlar təyin edilməyibsə, bu zaman məhsul “Baktel Electronics” MMC-nin uyğun, ödənişli tarifləri ilə təmir olunur.<br>
-          • Təmirə təqdim olunmuş məhsul müayinə və təmir məqsədilə 2–14 iş günü ərzində texniki servis mərkəzində saxlanıla bilər.<br>
-          • Təmir üçün lazım olan ehtiyat hissəsi və ya detal tapılmadıqda, onun sifarişi və gətirilməsi müəyyən vaxt tələb etdiyindən göstərilən müddət tərəflərin razılığı ilə müəyyən qədər uzadıla bilər.
+          • Qüsurun istehsalçı tərəfindən baş verib vermədiyini yalnız “Baktel Electronics” MMC və digər rəsmi şirkətləlrin
+          texniki servis mütəxəssisləri tərəfindən müəyyənləşdirilə bilər.<br>
+          • Zəmanət müddəti məhsulun satıldığı gündən hesablanır. • Hər hansı xarici zədə almamış (korpus və ekranda cızıq,
+          batıq, əzik və s.) məhsul 14 gün ərzində müştərinin istəyi ilə qaytarıla və ya dəyişdirilə bilər.<br>
+          • Əgər məhsullun zəmanət müddəti bitib və ya zəmanət şərtlərində göstərilən qüsurlar təyin edilməyibsə, bu zaman
+          məhsul “Baktel Electronics” MMC-nin uyğun, ödənişli tarifləri ilə təmir olunur.<br>
+          • Təmirə təqdim olunmuş məhsul müayinə və təmir məqsədilə 2-14 iş günü ərzində texniki servis mərkəzində
+          saxlanıla bilər.<br>
+          • Təmir üçün lazım olan ehtiyyat hissəsi və ya detal tapılmadıqda, onun sifarişi və gətirilməsi müəyyən vaxt
+          tələb etdiyindən göstərilən müddət tərəflərin razılığı ilə müəyyən qədər uzadıla bilər. Zəmanət müddəti bitməmiş
+          məhsulun
+          texniki baxış və təmir xidməti onun rəsmi nümayəndəliyi tərəfindən daxili təlimatlara uyğun olaraq aparılır
+        </div>
+
+        <div class="print-block"><strong>Satılmış məhsullar yalnız aşağıdakı şərtlər daxilində təmirə qəbul olunur:</strong></div>
+        <div class="print-block kecik">
+          • Təmir üçün müraciət edilmiş məhmsulun yalnız bu blankda adı və soyadı qeyd olunan şəxsin şəxsiyyət vəsiqəsi ilə təqdim olunması;<br>
+          • Zəmanət müddətinin bitməməsi.
+        </div>
+
+        <div class="print-block"><strong>Məhsullar bu hallarda zəmanətli təmirə qəbul edilmir:</strong></div>
+        <div class="print-block kecik">
+          • Əgər məhsul “Baktel Electronics” MMC və digər rəsmi şirkətlərin servis mütəxəssislərinə təqdim olunmazdan əvvəl
+          hansısa kənar şəxs tərəfindən təmir edilər, təmir haqqında lazımi sənədlər verilməz və bu təmirin keyfiyyətsizliyi nəticsində cihaz zədələnırsə;<br>
+          • Daxili və xarici zədələnmə, cihazın daxilində yad cisim və ya maye düşməsi, yaxud digər xarici zərbə nəticəsi yaranarsa;<br>
+          • Sıçrayışlar və gərginliyin həddən artıq yuxarı olması nəticəsində cihazda gərginlik və digər qüsurlar əmələ gələrsə.
         </div>
 
         <table class="print-table" style="margin-top:6mm">
@@ -809,11 +830,11 @@
           <tr><th>İMEİ və ya SN</th><td>${imei1}${imei2 ? ` / ${imei2}` : ''}</td></tr>
           <tr><th>Zəmanət müddəti</th><td>1 (bir) il</td></tr>
           <tr><th>Satış tarixi</th><td>${ddmmyyyy(startDate)}</td></tr>
-          <tr><th>Alıcının A.S.A.</th><td>${custName}</td></tr>
+          <tr><th>Alıcının A.S.A</th><td>${custName}</td></tr>
           <tr><th>Alıcının əlaqə nömrəsi</th><td>${custPhone}</td></tr>
         </table>
 
-        <div class="print-block" style="margin-top:6mm;"><strong>Şərtlərlə tanış oldum və razıyam</strong></div>
+        <div class="print-block" style="margin-top:6mm;"><strong>Şərtlər ilə tanış oldum və razıyam</strong></div>
 
         <div class="sign-cols">
           <div class="sign" style="text-align:center">
@@ -831,6 +852,16 @@
 
       openPrintDocCombined('Sənədlər', contractHTML + elave1 + elave2 + odeme + zemanet);
     }
+
+    /* ==== EXPOSE (düymələr üçün global) ==== */
+    window.calc=calc;
+    window.resetForm=resetForm;
+    window.exportPrint=exportPrint;
+    window.toggleExtraIncome=toggleExtraIncome;
+    window.onIncomeTypeChange=onIncomeTypeChange;
+    window.toggleFinalize=toggleFinalize;
+    window.finalizeAndPrint=finalizeAndPrint;
+    window.toggleManualDown=toggleManualDown;
   </script>
 </body>
 </html>
