@@ -197,6 +197,8 @@
     const azMonths = ['Yanvar','Fevral','Mart','Aprel','May','İyun','İyul','Avqust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
     const fmtAzDate = (d)=>{const dt=new Date(d); const dd=String(dt.getDate()).padStart(2,'0'); const mm=String(dt.getMonth()+1).padStart(2,'0'); const yyyy=dt.getFullYear(); return `${dd}-${mm}-${yyyy}`;};
     const fmtAzLong = (d)=>{const dt=new Date(d); return `${String(dt.getDate()).padStart(2,'0')}-${azMonths[dt.getMonth()]}-${dt.getFullYear()}`};
+    // NEW: dd.mm.yyyy formatter
+    const fmtDDMMYYYY = (d)=>{const dt=new Date(d); const dd=String(dt.getDate()).padStart(2,'0'); const mm=String(dt.getMonth()+1).padStart(2,'0'); const yyyy=dt.getFullYear(); return `${dd}.${mm}.${yyyy}`;};
 
     // ===== Policy & limits
     const POLICY_RISK_ONLY = { low: 0.20, med: 0.30, high: 0.50 };
@@ -314,50 +316,51 @@
       let principal = Math.max(0, price - down);
       let monthly = months>0 ? principal / months : 0;
 
-      const maxMonthly = Math.max(0, net * MAX_DSR);
+      const maxMonthly = Math.max(0, net * 0.40);
       const needsAdj = monthly > maxMonthly + 1e-9;
       let autoAdj = false, prevDown = down, prevMonthly = monthly;
       if(needsAdj){
         const requiredPrincipal = Math.max(0, maxMonthly * months);
         const newDownRaw = price - requiredPrincipal;
-        down = Math.min(price, Math.max(manualUsed? down : MIN_DOWN_AZN, Math.max(prevDown, newDownRaw)));
+        down = Math.min(price, Math.max(manualUsed? down : 50, Math.max(prevDown, newDownRaw)));
         pct = price>0 ? (down/price) : 0;
         principal = Math.max(0, price - down);
         monthly = months>0 ? principal / months : 0;
         autoAdj = true;
       }
 
-      let bal = principal; const rows=[]; const sd=(document.getElementById('startDate')?.value? new Date(document.getElementById('startDate').value): new Date());
+      let bal = principal; const rows=[];
+      const sd=(document.getElementById('startDate')?.value? new Date(document.getElementById('startDate').value): new Date());
       const day=sd.getDate();
-      for(let i=1;i<=months;i++){ const d=new Date(sd); d.setMonth(d.getMonth()+i); d.setDate(day); bal=Math.max(0,bal-monthly); rows.push({i,date:d.toISOString().slice(0,10),monthly,bal}); }
+      for(let i=1;i<=months;i++){
+        const d=new Date(sd); d.setMonth(d.getMonth()+i); d.setDate(day);
+        bal=Math.max(0,bal-monthly);
+        rows.push({i,date:d,monthly,bal});
+      }
 
-      const riskCls = 'pill';
       const dti = (salary>0)? (oblig/salary) : (oblig>0? Infinity : 0);
-      const dtiWarn = dti > MAX_OBLIG_SHARE;
-      const dtiHtml = dtiWarn ? `<div class="notice warn">Diqqət: Öhdəlik/Gəlir ${(dti*100).toFixed(0)}% (hədd ${Math.round(MAX_OBLIG_SHARE*100)}%).</div>` : '';
-      const extraHtml = extra>0 ? `<div class="pill">Əlavə gəlir: ${extraDesc} — ${fmtAZN(extra)}</div>` : '';
-      const manualHtml = manualUsed ? `<div class="pill">İlkin ödəniş (manual)</div>` : '';
+      const dtiWarn = dti > 0.50;
+      const dtiHtml = dtiWarn ? `<div class="notice warn">Diqqət: Öhdəlik/Gəlir ${(dti*100).toFixed(0)}% (hədd 50%).</div>` : '';
 
-      const maxMonthlyTxt = fmtAZN(maxMonthly);
       document.getElementById('calcAlert').style.display='none';
       document.getElementById('summary').innerHTML=`
         <h3>Xülasə</h3>
         ${dtiHtml}
         <div class="row">
-          <div class="col-6"><div class="${riskCls}">Risk: ${risk||'-'}</div>${extraHtml}${manualHtml}<h2>${fmtAZN(price)}</h2><div class="muted">Məhsul dəyəri</div></div>
+          <div class="col-6"><div class="pill">Risk</div><h2>${risk||'-'}</h2><div class="muted">Məhsul dəyəri: ${fmtAZN(price)}</div></div>
           <div class="col-6"><div class="pill">İlkin ödəniş</div>
             <h2>${fmtAZN(down)} <span class="muted">(${(pct*100).toFixed(0)}%)</span></h2>
-            ${autoAdj?`<div class="muted">Aylıq ödəniş DSR həddinə uyğunlaşdırıldı (maks: ${maxMonthlyTxt}).</div>`:''}
+            ${autoAdj?`<div class="muted">Aylıq ödəniş DSR həddinə uyğunlaşdırıldı (maks: ${fmtAZN(maxMonthly)}).</div>`:''}
           </div>
           <div class="col-6"><div class="pill">Kredit</div><h2>${fmtAZN(principal)}</h2></div>
           <div class="col-6"><div class="pill">Aylıq</div><h2>${fmtAZN(monthly)}</h2></div>
-          <div class="col-12"><div class="muted">Net gəlir: ${fmtAZN(net)} (${(ratio*100).toFixed(0)}%)</div></div>
         </div>`;
 
+      // UI Ödəniş cədvəli: tarix dd.mm.yyyy
       document.getElementById('scheduleWrap').innerHTML = `
         <table>
           <thead><tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr></thead>
-          <tbody>${rows.map(r=>`<tr><td>${r.i}</td><td>${r.date}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join('')}</tbody>
+          <tbody>${rows.map(r=>`<tr><td>${r.i}</td><td>${fmtDDMMYYYY(r.date)}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join('')}</tbody>
         </table>`;
 
       const labels=rows.map(r=>r.i); const dataBal=rows.map(r=>Number(r.bal.toFixed(2)));
@@ -419,12 +422,11 @@
       const mdChk=document.getElementById('manualDownChk');
       const mdInp=document.getElementById('manualDownAmt');
       let downInfo = getDownPayment(price, risk, salary, oblig);
-      let down = downInfo.down; let pct = downInfo.pct; const net = downInfo.net;
+      let down = downInfo.down; let pct = downInfo.pct;
       if(mdChk && mdChk.checked){ const val = Math.max(0, Math.min(price, Number(mdInp.value||0))); if(!isNaN(val)) { down = val; pct = price>0 ? (down/price) : 0; } }
       let principal = Math.max(0, price - down);
       let monthly = months>0 ? principal / months : 0;
-      const maxMonthly = Math.max(0, net * MAX_DSR);
-      if(monthly>maxMonthly){ const requiredPrincipal = Math.max(0, maxMonthly * months); const newDownRaw = price - requiredPrincipal; down = Math.min(price, Math.max(mdChk&&mdChk.checked? down : MIN_DOWN_AZN, newDownRaw)); pct = price>0 ? (down/price) : 0; principal = Math.max(0, price - down); monthly = months>0 ? principal / months : 0; }
+
       let bal=principal; const rows=[]; const sd = new Date(startDateStr); const day=sd.getDate();
       for(let i=1;i<=months;i++){ const d=new Date(sd); d.setMonth(d.getMonth()+i); d.setDate(day); bal=Math.max(0, bal-monthly); rows.push({i,date:d,monthly,bal}); }
       return {price, months, down, pct, principal, monthly, schedule:rows, startDate:sd};
@@ -580,11 +582,11 @@
         </div>
       </div>`;
 
-      /* ==== 2) ƏLAVƏ 1 — İMEİ razılıq ==== */
+      /* ==== 2) ƏLAVƏ 1 — başlıq böyük hərflə ==== */
       const elave1 = `
       <div class="print-a4 page-break">
         <div class="print-title">${fmtAzDate(startDate)} tarixli ${contractNo} saylı müqaviləyə</div>
-        <div class="print-h2">1 saylı əlavə</div>
+        <div class="print-h2">ƏLAVƏ 1</div>
         <div class="print-block"><strong>Bakı şəhəri</strong></div>
 
         <div class="print-block">
@@ -614,7 +616,7 @@
         </div>
       </div>`;
 
-      /* ==== 3) ƏLAVƏ 2 — Təhvil-Təslim (seriya nömrəsindən sonra müştərinin adı əlavə olundu) ==== */
+      /* ==== 3) ƏLAVƏ 2 — Təhvil-Təslim (seriya nömrəsindən sonra müştərinin adı) ==== */
       const elave2 = `
       <div class="print-a4 page-break">
         <div class="print-h2">2 saylı əlavə</div>
@@ -688,13 +690,13 @@
         </div>
       </div>`;
 
-      /* ==== 4) ÖDƏNİŞ CƏDVƏLİ (sonda tərəflərin adları açıq yazılıb) ==== */
+      /* ==== 4) ÖDƏNİŞ CƏDVƏLİ (tarix dd.mm.yyyy + sonda adlar) ==== */
       const schedRows = c.schedule.map((r,i)=>`
         <tr>
           <td>${i+1}</td>
           <td>${c.monthly.toFixed(2)} AZN</td>
           <td>${r.bal.toFixed(2)} AZN</td>
-          <td>${fmtAzLong(r.date)}</td>
+          <td>${fmtDDMMYYYY(r.date)}</td>
         </tr>`).join('');
 
       const odeme = `
