@@ -584,80 +584,153 @@ const contractHTML = `
 
 
       // ELAVE 1
-      const elave1=`<div class=\"print-a4 page-break\">
-        <div class=\"print-title\">${fmtAzDate(startDate)} ci il tarixli ${contractNo} saylı müqaviləyə</div>
-        <div class=\"print-h2\">1 saylı əlavə</div>
-        <div class=\"print-block\"><strong>Bakı şəhəri</strong></div>
-        <div class=\"print-block\">Mən <strong>${custName}</strong> (Şəxsiyyət vəsiqəsi № ${idSerial} Fin Kod : ${finCode} doğum tarixi ${birthDate||'-'}) “Baktel Electronics”dan aldığım qarşılıqlı razılaşma əsasında dəyərini hissə ödəmək üçün nəzərdə tutulmuş <strong>${prodName}</strong> markalı, İMEİ kodu: ${imei1}${imei2?`, 2 ci İMEİ kodu: ${imei2}`:''} mobil cihazın İMEİ nömrəsinin deaktiv edilməsinə(bağlanmasına) və vahid şəbəkə riskli müştəri siyahısına salınmağına etirazım yoxdur.</div>
-        <div class=\"sign-cols\"><div class=\"sign\"><div class=\"sigcap\">Satan</div><span class=\"sigline\"></span><div class=\"kecik\">\"Baktel Electronics\"</div></div><div class=\"sign\" style=\"text-align:right\"><div class=\"sigcap\">Alan</div><span class=\"sigline\"></span><div class=\"kecik\">${custName}</div></div></div>
-        <div class=\"print-subtop\"><div>Tarix: ${fmtAzDate(startDate)}</div><div>Əlaqə nömrəsi: ${custPhone||'-'}</div></div>
-      </div>`;
+      // 2) ƏLAVƏ 1 — İMEİ razılıq
+const elave1 = `
+<div class="print-a4 page-break">
+  <div class="print-title">${fmtAzDate(startDate)} tarixli ${contractNo} saylı müqaviləyə</div>
+  <div class="print-h2">1 saylı əlavə</div>
+  <div class="print-block"><strong>Bakı şəhəri</strong></div>
+
+  <div class="print-block">
+    Mən, <strong>${custName}</strong> (Ş/V № ${idSerial}, Fin: ${finCode}, doğum tarixi: ${birthDate || '-'})
+    Baktel Electronics MMC-dən qarşılıqlı razılaşma əsasında hissə-hissə ödənişlə aldığım
+    <strong>${prodName}</strong> cihazının İMEİ: ${imei1}${imei2 ? `; İMEİ 2: ${imei2}` : ''} nömrəsinin,
+    Müqavilə şərtləri pozularsa, hüquqi əsaslar daxilində deaktiv edilməsinə və vahid şəbəkədə riskli müştəri
+    siyahısına daxil edilməsinə etiraz etmirəm.
+  </div>
+
+  <div class="sign-cols">
+    <div class="sign">
+      <div class="sigcap">Satan</div>
+      <span class="sigline"></span>
+      <div class="kecik">Baktel Electronics MMC</div>
+    </div>
+    <div class="sign" style="text-align:right">
+      <div class="sigcap">Alan</div>
+      <span class="sigline"></span>
+      <div class="kecik">${custName}</div>
+    </div>
+  </div>
+
+  <div class="print-subtop">
+    <div>Tarix: ${fmtAzDate(startDate)}</div>
+    <div>Əlaqə: ${custPhone || '-'}</div>
+  </div>
+</div>`;
+
 
       // ELAVE 2 (Təhvil-Təslim)
-      const elave2=`<div class=\"print-a4 page-break\">
-        <div class=\"print-h2\">2 saylı əlavə</div>
-        <div class=\"print-block\" style=\"text-align:center; font-weight:700\">${contractNo} saylı, ${fmtAzDate(startDate)} tarixli Nisyə alqı-satqı müqaviləsi dair Təhvil-Təslim aktı</div>
-        <div class=\"print-subtop\"><div><strong>Bakı şəhəri</strong></div><div>${fmtAzDate(startDate)} cü il</div></div>
-        <ol class=\"print-ol\">
-          <li>1. Tərəflər hazırkı Təhvil-Təslim Aktını tərtib edərək təsdiq edirlər ki, Tərəflər arasında imzalanmış ${contractNo} saylı, ${fmtAzDate(startDate)} tarixli Nisyə alqı-satqı müqaviləsinə (bundan sonra – Müqavilə) əsasən, aşağıdakı cədvəldə göstərilən Mal(lar) Müqavilənin şərtlərinə uyğun şəkildə Alıcıya təhvil vermiş, Alıcı isə həmin Mal(lar)ı Satıcıdan tam və qüsursuz şəkildə təhvil almışdır:</li>
-        </ol>
-        <table class=\"print-table\" style=\"margin:4mm 0 6mm\">
-          <thead><tr><th style=\"width:6%\">№</th><th>Malların adları və təsviri (IMEI kodu)</th><th style=\"width:10%\">Miqdar</th><th style=\"width:18%\">Məbləğ AZN</th></tr></thead>
-          <tbody><tr><td>1</td><td>${prodName} ${imei1}</td><td>1</td><td>${toNum('price').toFixed(2)}</td></tr></tbody>
-        </table>
-        <ol class=\"print-ol\">
-          <li>2. Bu Aktın imzalandığı tarixdən etibarən Müqaviləyə uyğun olaraq Alıcı təsdiq və qəbul edir ki, Satıcı tərəfindən təhvil verilmiş Mallar işlək və qüsursuz vəziyyətdədir.</li>
-          <li>3. Hazırki Aktın doğruluğunu aşağıda öz imzalarımızla təsdiq edirik:</li>
-        </ol>
-        <div class=\"sign-cols\"><div class=\"sign\"><div class=\"sigcap\">Satıcı: Baktel Electronics MMC</div><span class=\"sigline\"></span></div><div class=\"sign\"><div class=\"sigcap\">Alıcı: ${custName}</div><span class=\"sigline\"></span></div></div>
-      </div>`;
+     // 3) ƏLAVƏ 2 — Təhvil-Təslim aktı
+const elave2 = `
+<div class="print-a4 page-break">
+  <div class="print-h2">2 saylı əlavə</div>
+  <div class="print-block" style="text-align:center; font-weight:700">
+    ${contractNo} saylı, ${fmtAzDate(startDate)} tarixli nisyə alqı-satqı müqaviləsinə dair Təhvil-Təslim aktı
+  </div>
+  <div class="print-subtop">
+    <div><strong>Bakı şəhəri</strong></div>
+    <div>${fmtAzDate(startDate)} tarixli</div>
+  </div>
+
+  <ol class="print-ol">
+    <li>1. Tərəflər təsdiq edirlər ki, aşağıda göstərilən Mal(lar) Müqavilənin şərtlərinə uyğun şəkildə Satıcı tərəfindən təhvil verilmiş, Alıcı tərəfindən tam və qüsursuz qəbul edilmişdir.</li>
+  </ol>
+
+  <table class="print-table" style="margin:4mm 0 6mm">
+    <thead>
+      <tr><th style="width:6%">№</th><th>Malların adı və təsviri (İMEİ)</th><th style="width:10%">Miqdar</th><th style="width:18%">Məbləğ, AZN</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td>${prodName} ${imei1 ? `(${imei1})` : ''}</td><td>1</td><td>${toNum('price').toFixed(2)}</td></tr>
+    </tbody>
+  </table>
+
+  <ol class="print-ol">
+    <li>2. Bu Aktın imzalanması ilə Alıcı Malların işlək və tam komplekt olduğunu təsdiq edir.</li>
+  </ol>
+
+  <div class="sign-cols">
+    <div class="sign"><div class="sigcap">Satıcı: Baktel Electronics MMC</div><span class="sigline"></span></div>
+    <div class="sign"><div class="sigcap">Alıcı: ${custName}</div><span class="sigline"></span></div>
+  </div>
+</div>`;
+
 
       // ÖDƏNİŞ CƏDVƏLİ
-      const schedRows = c.schedule.map((r,i)=>`<tr><td>${i+1}</td><td>${c.monthly.toFixed(2)} AZN</td><td>${r.bal.toFixed(2)} AZN</td><td>${fmtAzLong(r.date)}</td></tr>`).join('');
-      const odeme=`<div class=\"print-a4 page-break\">
-        <div class=\"logo-fade\">Baktel Electronics</div>
-        <div class=\"print-title\" style=\"margin-top:4mm\">Kredit Ödəniş cədvəli</div>
-        <table class=\"print-table\" style=\"margin-top:6mm\">
-          <tr><th style=\"width:28%\">Müştəri A.S.A.</th><td>${custName}</td></tr>
-          <tr><th>Ş/V seriya və nömrəsi</th><td>${idSerial}</td></tr>
-          <tr><th>Kreditin verilmə tarixi</th><td>${fmtAzDate(startDate)}</td></tr>
-          <tr><th>Müqavilə nömrəsi</th><td>${contractNo}</td></tr>
-          <tr><th>Nisyə verilən məhsullar</th><td>${prodName} ${imei1?`(${imei1})`:''}</td></tr>
-          <tr><th>Satış qiyməti</th><td>${toNum('price').toFixed(2)}</td></tr>
-          <tr><th>İlkin ödəniş</th><td>${c.down.toFixed(2)}</td></tr>
-          <tr><th>Qalıq borc</th><td>${c.principal.toFixed(2)}</td></tr>
-          <tr><th>Müddət</th><td>${c.months}</td></tr>
-          <tr><th>Filial</th><td>${branch}</td></tr>
-          <tr><th>Valyuta</th><td>${currency}</td></tr>
-        </table>
-        <table class=\"print-table\" style=\"margin-top:8mm\">
-          <thead><tr><th style=\"width:6%\">#</th><th style=\"width:22%\">Aylıq</th><th style=\"width:22%\">Qalıq</th><th>Tarix</th></tr></thead>
-          <tbody>${schedRows}</tbody>
-        </table>
-        <div class=\"sign-cols\"><div class=\"sign\"><div class=\"sigcap\">Satıcı</div><span class=\"sigline\"></span></div><div class=\"sign\"><div class=\"sigcap\">Alıcı</div><span class=\"sigline\"></span></div></div>
-      </div>`;
+     // 4) ÖDƏNİŞ CƏDVƏLİ
+const schedRows = c.schedule.map((r,i)=>`
+  <tr>
+    <td>${i+1}</td>
+    <td>${c.monthly.toFixed(2)} AZN</td>
+    <td>${r.bal.toFixed(2)} AZN</td>
+    <td>${fmtAzLong(r.date)}</td>
+  </tr>`).join('');
+
+const odeme = `
+<div class="print-a4 page-break">
+  <div class="logo-fade">Baktel Electronics</div>
+  <div class="print-title" style="margin-top:4mm">Kredit ödəniş cədvəli</div>
+
+  <table class="print-table" style="margin-top:6mm">
+    <tr><th style="width:28%">Müştəri A.S.A.</th><td>${custName}</td></tr>
+    <tr><th>Ş/V seriya və nömrəsi</th><td>${idSerial}</td></tr>
+    <tr><th>Kreditin verilmə tarixi</th><td>${fmtAzDate(startDate)}</td></tr>
+    <tr><th>Müqavilə nömrəsi</th><td>${contractNo}</td></tr>
+    <tr><th>Məhsul</th><td>${prodName} ${imei1 ? `(${imei1})` : ''}</td></tr>
+    <tr><th>Satış qiyməti</th><td>${toNum('price').toFixed(2)} AZN</td></tr>
+    <tr><th>İlkin ödəniş</th><td>${c.down.toFixed(2)} AZN</td></tr>
+    <tr><th>Qalıq borc</th><td>${c.principal.toFixed(2)} AZN</td></tr>
+    <tr><th>Müddət</th><td>${c.months} ay</td></tr>
+    <tr><th>Filial</th><td>${branch}</td></tr>
+    <tr><th>Valyuta</th><td>${currency}</td></tr>
+  </table>
+
+  <table class="print-table" style="margin-top:8mm">
+    <thead><tr><th style="width:6%">#</th><th style="width:22%">Aylıq</th><th style="width:22%">Qalıq</th><th>Tarix</th></tr></thead>
+    <tbody>${schedRows}</tbody>
+  </table>
+
+  <div class="sign-cols">
+    <div class="sign"><div class="sigcap">Satıcı</div><span class="sigline"></span></div>
+    <div class="sign"><div class="sigcap">Alıcı</div><span class="sigline"></span></div>
+  </div>
+</div>`;
+
 
       // ZƏMANƏT TALONU
-      const zemanet=`<div class=\"print-a4 page-break\">
-        <div class=\"print-title\">ZƏMANƏT TALONU</div>
-        <div class=\"print-block\">Zəmanət şərtləri:</div>
-        <div class=\"print-block kecik\">• Zəmanət blankı əsasında təmir yalnız istehsalçı səhvindən meydana gəlmiş qüsurlara şamil edilir. • Qüsurun istehsalçı tərəfindən baş verib vermədiyini yalnız “Baktel Electronics” MMC və digər rəsmi şirkətlərin texniki servis mütəxəssisləri tərəfindən müəyyənləşdirilə bilər. • Zəmanət müddəti məhsulun satıldığı gündən hesablanır. • Hər hansı xarici zədə almamış məhsul 14 gün ərzində müştərinin istəyi ilə qaytarıla və ya dəyişdirilə bilər. • Əgər məhsulun zəmanət müddəti bitib və ya zəmanət şərtlərində göstərilən qüsurlar təyin edilməyibsə, məhsul ödənişli tariflərlə təmir olunur. • Təmir müddəti 2-14 iş günü ola bilər. • Ehtiyat hissəsi sifarişi səbəbilə müddət uzadıla bilər.</div>
-        <table class=\"print-table\" style=\"margin-top:6mm\">
-          <tr><th style=\"width:28%\">Malın adı</th><td>${prodName}</td></tr>
-          <tr><th>İMEİ və ya SN</th><td>${imei1}${imei2?` / ${imei2}`:''}</td></tr>
-          <tr><th>Zəmanət müddəti</th><td>1 (bir) il</td></tr>
-          <tr><th>Satış tarixi</th><td>${fmtAzDate(startDate)}</td></tr>
-          <tr><th>Alıcının A.S.A</th><td>${custName}</td></tr>
-          <tr><th>Alıcının əlaqə nömrəsi</th><td>${custPhone||'-'}</td></tr>
-        </table>
-        <div class=\"sign-cols\"><div class=\"sign\" style=\"text-align:center\">${custName}<div class=\"sigcap\">Alıcının adı, soyadı və imzası</div><span class=\"sigline\"></span></div><div class=\"sign\" style=\"text-align:center\">${sellerRep||'MY'}<div class=\"sigcap\">Satıcının adı, soyadı və imzası</div><span class=\"sigline\"></span></div></div>
-      </div>`;
+     // 5) ZƏMANƏT TALONU
+const zemanet = `
+<div class="print-a4 page-break">
+  <div class="print-title">Zəmanət talonu</div>
+  <div class="print-block">Zəmanət şərtləri:</div>
+  <div class="print-block kecik">
+    • Zəmanət yalnız istehsalçı qüsurlarına şamil edilir və rəsmi servis tərəfindən müəyyənləşdirilir. <br>
+    • Zəmanət müddəti məhsulun satış tarixindən hesablanır. <br>
+    • Xarici zədəsi olmayan məhsul 14 gün ərzində qaytarıla və ya dəyişdirilə bilər. <br>
+    • Zəmanət şərtlərinə aid olmayan hallarda təmir ödənişlidir. Təmir müddəti 2–14 iş günü ola bilər. <br>
+    • Ehtiyat hissəsinin sifarişi hallarında müddət uzadıla bilər.
+  </div>
 
-      openPrintDocCombined('Sənədlər', contractHTML + elave1 + elave2 + odeme + zemanet);
-    }
+  <table class="print-table" style="margin-top:6mm">
+    <tr><th style="width:28%">Malın adı</th><td>${prodName}</td></tr>
+    <tr><th>İMEİ/SN</th><td>${imei1}${imei2 ? ` / ${imei2}` : ''}</td></tr>
+    <tr><th>Zəmanət müddəti</th><td>12 ay</td></tr>
+    <tr><th>Satış tarixi</th><td>${fmtAzDate(startDate)}</td></tr>
+    <tr><th>Alıcı A.S.A.</th><td>${custName}</td></tr>
+    <tr><th>Əlaqə nömrəsi</th><td>${custPhone || '-'}</td></tr>
+  </table>
 
-    // Expose
-    window.calc=calc; window.resetForm=resetForm; window.exportPrint=exportPrint; window.toggleExtraIncome=toggleExtraIncome; window.onIncomeTypeChange=onIncomeTypeChange; window.toggleFinalize=toggleFinalize; window.finalizeAndPrint=finalizeAndPrint; window.toggleManualDown=toggleManualDown;
-  </script>
-</body>
-</html>
+  <div class="sign-cols">
+    <div class="sign" style="text-align:center">
+      ${custName}
+      <div class="sigcap">Alıcının adı, soyadı və imzası</div>
+      <span class="sigline"></span>
+    </div>
+    <div class="sign" style="text-align:center">
+      ${sellerRep || ' ' }
+      <div class="sigcap">Satıcının adı, soyadı və imzası</div>
+      <span class="sigline"></span>
+    </div>
+  </div>
+</div>`;
+
