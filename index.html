@@ -6,10 +6,13 @@
 <title>BAKFON — Kredit sistemi</title>
 <style>
   :root{
+    /* Daha AÇIQ tonlar */
     --bg:#f7f9fc; --text:#0f172a; --card:#ffffff; --border:#e7eaf0; --muted:#51607a; --primary:#dc2626;
     --ring:#60a5fa; --shadow:0 8px 22px rgba(2,6,23,.06); --radius:14px; --table-border:#cbd5e1;
-    --sidebar:#0b1220; --sidebar-text:#e5e7eb; --sidebar-active-bg:#1e293b;
-    --topbar:#162236; /* sidebar-a uyğun, bir az açıq ton */
+    --sidebar:#e9eef6;           /* açıq sidebar */
+    --sidebar-text:#0f172a;
+    --sidebar-active-bg:#d6deeb; /* seçiləndə bir az tünd, yenə açıq */
+    --topbar:#f0f4fb;            /* başlıq daha açıq */
   }
   *{box-sizing:border-box}
   html,body{height:100%}
@@ -17,17 +20,14 @@
 
   /* Shell */
   .app{display:grid; grid-template-rows:56px 1fr; height:100%}
-  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;background:var(--topbar);color:#fff;border-bottom:1px solid #0f172a40;box-shadow:var(--shadow)}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;background:var(--topbar);color:var(--text);border-bottom:1px solid #0f172a14;box-shadow:var(--shadow)}
   .brand{font-weight:800;letter-spacing:.3px}
-  .top-actions{display:flex;gap:8px;align-items:center}
-  .topbtn{background:#ffffff18;border:1px solid #ffffff30;color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
-  .topbtn:hover{background:#ffffff28}
 
   .shell{display:grid; grid-template-columns:240px 1fr; height:100%}
-  .sidebar{background:var(--sidebar); color:var(--sidebar-text); padding:14px 12px}
-  .navbtn{width:100%; text-align:left; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.06); background:transparent; color:var(--sidebar-text); cursor:pointer; font-weight:600; margin-bottom:8px}
-  .navbtn:hover{background:rgba(255,255,255,.08)}
-  .navbtn.active{background:var(--sidebar-active-bg); color:#fff; border-color:transparent}
+  .sidebar{background:var(--sidebar); color:var(--sidebar-text); padding:14px 12px; border-right:1px solid #cdd6e6}
+  .navbtn{width:100%; text-align:left; padding:10px 12px; border-radius:12px; border:1px solid #cfd7ea; background:#ffffffaa; color:var(--sidebar-text); cursor:pointer; font-weight:700; margin-bottom:8px}
+  .navbtn:hover{background:#fff}
+  .navbtn.active{background:var(--sidebar-active-bg); color:#0b1220; border-color:#b9c7e4}
   .content{padding:16px; overflow:auto}
   .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
   .row{display:grid;gap:14px}
@@ -83,18 +83,17 @@
 </head>
 <body>
 <div class="app">
-  <!-- Topbar -->
+  <!-- Topbar (açıq ton) -->
   <div class="topbar">
     <div class="brand">BAKFON</div>
-    <div class="top-actions">
-      <button class="topbtn" onclick="views.calc()">Ana Səhifə</button>
-    </div>
+    <div></div>
   </div>
 
   <div class="shell">
-    <!-- Sidebar -->
+    <!-- Sidebar (Ana Səhifə ən üstdə) -->
     <aside class="sidebar">
-      <button class="navbtn active" data-view="calc">Kalkulyator</button>
+      <button class="navbtn active" data-view="home">Ana Səhifə</button>
+      <button class="navbtn" data-view="calc">Kalkulyator</button>
       <button class="navbtn" data-view="finalize">Rəsmiləşdir</button>
       <button class="navbtn" data-view="customers">Müştərilər</button>
     </aside>
@@ -102,8 +101,13 @@
     <!-- Content -->
     <main class="content">
 
+      <!-- Ana Səhifə: boş səhifə -->
+      <section id="view-home" class="card" style="min-height:120px;">
+        <!-- boş saxlanılıb; istəsən buraya loqo/yardım yazısı əlavə edərik -->
+      </section>
+
       <!-- Kalkulyator -->
-      <section id="view-calc" class="card">
+      <section id="view-calc" class="card" style="display:none">
         <h3>Kredit kalkulyatoru</h3>
         <div id="calcAlert" class="notice warn" style="display:none"></div>
         <div class="row">
@@ -215,6 +219,18 @@
             </select>
           </div>
 
+          <!-- YENİ: Satış növü -->
+          <div class="col-3">
+            <label>Satış növü</label>
+            <select id="saleType" required>
+              <option value="">— Seçin —</option>
+              <option value="kredit">Kredit</option>
+              <option value="nagd">Nağd</option>
+              <option value="pos">POS</option>
+              <option value="korporativ">Korporativ</option>
+            </select>
+          </div>
+
           <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px">
             <button class="btn primary" onclick="saveCustomerOnly()">Yadda saxla</button>
             <button class="btn danger" onclick="resetFinalize()">Sıfırla</button>
@@ -255,13 +271,17 @@ const MAX_DSR = 0.40;
 
 /* ========= Navigation ========= */
 const views = {
+  home: ()=> { show('view-home'); },
   calc: ()=> { show('view-calc'); },
   finalize: ()=> { show('view-finalize'); ensureStartDateDefault(); },
   customers: ()=> { show('view-customers'); renderCustomers(); }
 };
 function show(id){
-  ['view-calc','view-finalize','view-customers'].forEach(v=> $(v).style.display = (v===id? 'block':'none'));
-  document.querySelectorAll('.navbtn').forEach(b=> b.classList.toggle('active', b.dataset.view === id.split('-')[1]));
+  ['view-home','view-calc','view-finalize','view-customers'].forEach(v=> $(v).style.display = (v===id? 'block':'none'));
+  document.querySelectorAll('.navbtn').forEach(b=> {
+    const target = 'view-' + b.dataset.view;
+    b.classList.toggle('active', target===id);
+  });
 }
 document.querySelectorAll('.navbtn').forEach(btn=>{
   btn.addEventListener('click', ()=> views[btn.dataset.view] && views[btn.dataset.view]());
@@ -270,6 +290,7 @@ document.querySelectorAll('.navbtn').forEach(btn=>{
 /* ========= Defaults ========= */
 window.addEventListener('DOMContentLoaded', ()=>{
   ensureStartDateDefault();
+  views.home(); // açılışda Ana Səhifə boş görünsün
   $('addIncomeChk').addEventListener('change', toggleExtraIncome);
   $('manualDownChk').addEventListener('change', ()=> {
     $('manualDownWrap').style.display = $('manualDownChk').checked ? 'block':'none';
@@ -406,13 +427,14 @@ function ensureStartDateDefault(){ const sd=$('startDate'); if(sd && !sd.value) 
 
 function collectCustomer(){
   const get=(id)=> ($(id)?.value||'').trim();
-  const required=['custName','custPhone','prodName','idSerial','finCode','birthDate','address','imei1','imei2','contractNo','branch','currency','startDate','sellerRep'];
+  const required=['custName','custPhone','prodName','idSerial','finCode','birthDate','address','imei1','imei2','contractNo','branch','currency','startDate','sellerRep','saleType'];
   for(const id of required){ const el=$(id); if(!el || !el.value){ alert('Zəhmət olmasa bütün müştəri məlumatlarını doldurun.'); return null; } }
   const obj = {
     custName:get('custName'), custPhone:get('custPhone'), prodName:get('prodName'),
     idSerial:get('idSerial'), finCode:get('finCode'), address:get('address'), birthDate:get('birthDate'),
     imei1:get('imei1'), imei2:get('imei2'), contractNo:get('contractNo'), branch:get('branch'),
     currency:get('currency'), startDate:get('startDate'), sellerRep:get('sellerRep'),
+    saleType:get('saleType'),
     createdAt: new Date().toISOString(),
     calc: window.__calcSnapshot || null
   };
@@ -421,7 +443,7 @@ function collectCustomer(){
 }
 
 function resetFinalize(){
-  ['custName','custPhone','prodName','idSerial','finCode','birthDate','address','imei1','imei2','contractNo','branch','currency','startDate','sellerRep']
+  ['custName','custPhone','prodName','idSerial','finCode','birthDate','address','imei1','imei2','contractNo','branch','currency','startDate','sellerRep','saleType']
     .forEach(id=>{ if($(id)) $(id).value = (id==='branch'?'Nəsimi':''); });
   ensureStartDateDefault();
 }
@@ -430,9 +452,9 @@ function saveCustomerOnly(){
   const c = collectCustomer(); if(!c) return;
   upsertCustomer(c);
   alert('Müştəri yadda saxlandı.');
-  resetFinalize();           /* 3) yadda saxla sonrası avtomatik sıfırlansın */
+  resetFinalize();           /* yadda saxla sonrası avtomatik sıfırlansın */
   renderCustomers();
-  show('view-customers');    /* siyahıya keçid */
+  views.customers();         /* siyahıya keçid */
 }
 
 /* ========= Print documents ========= */
@@ -603,6 +625,8 @@ function buildAllDocsHTML(c){
       <tr><th>Satış tarixi</th><td>${ddmmyyyy(c.startDate)}</td></tr>
       <tr><th>Alıcının A.S.A</th><td>${c.custName}</td></tr>
       <tr><th>Alıcının əlaqə nömrəsi</th><td>${c.custPhone}</td></tr>
+      <tr><th>Satıcı nümayəndə</th><td>${c.sellerRep}</td></tr>
+      <tr><th>Satış növü</th><td>${(c.saleType||'').toUpperCase()}</td></tr>
     </table>
     <div class="print-block" style="margin-top:6mm;"><strong>Şərtlər ilə tanış oldum və razıyam</strong></div>
     <div class="sign-cols">
@@ -656,7 +680,7 @@ function renderCustomers(){
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <div>
           <div style="font-weight:700">${c.custName}</div>
-          <div class="muted">FIN: ${c.finCode} • ${c.prodName}</div>
+          <div class="muted">FIN: ${c.finCode} • ${c.prodName} • Satış növü: ${(c.saleType||'').toUpperCase()}</div>
         </div>
         <div style="display:flex;gap:8px">
           <button class="btn" onclick='showInfo(${JSON.stringify(c)})'>ℹ️ Info</button>
@@ -671,8 +695,9 @@ function renderCustomers(){
 function showInfo(c){
   const msg = `Müştəri: ${c.custName}
 FIN: ${c.finCode}
+Satış növü: ${(c.saleType||'').toUpperCase()}
 Məhsul: ${c.prodName}
-IMEI: ${[c.imei1,c.imei2].filter(Boolean).join(' / ')}   /* IMEI-lər əlavə olundu */
+IMEI: ${[c.imei1,c.imei2].filter(Boolean).join(' / ')}
 Satış qiyməti: ${(c.calc?.price??0).toFixed(2)} AZN
 İlkin ödəniş: ${(c.calc?.down??0).toFixed(2)} AZN
 Kredit: ${(c.calc?.principal??0).toFixed(2)} AZN
@@ -686,13 +711,13 @@ function reprintCustomer(c){
   openPrintDocCombined('Sənədlər', html);
 }
 function editCustomer(c){
-  show('view-finalize');
+  views.finalize();
   const set=(id,val)=> { if($(id)) $(id).value=val||''; };
   set('custName',c.custName); set('custPhone',c.custPhone); set('prodName',c.prodName);
   set('idSerial',c.idSerial); set('finCode',c.finCode); set('birthDate',c.birthDate);
   set('address',c.address); set('imei1',c.imei1); set('imei2',c.imei2);
   set('contractNo',c.contractNo); set('branch',c.branch); set('currency',c.currency);
-  set('startDate',c.startDate); set('sellerRep',c.sellerRep);
+  set('startDate',c.startDate); set('sellerRep',c.sellerRep); set('saleType',c.saleType);
   window.__calcSnapshot = c.calc;
 }
 </script>
