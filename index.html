@@ -9,14 +9,20 @@
     --bg:#f7f9fc; --text:#0f172a; --card:#ffffff; --border:#e7eaf0; --muted:#51607a; --primary:#dc2626;
     --ring:#60a5fa; --shadow:0 8px 22px rgba(2,6,23,.06); --radius:14px; --table-border:#cbd5e1;
     --sidebar:#0b1220; --sidebar-text:#e5e7eb; --sidebar-active-bg:#1e293b;
+    --topbar:#162236; /* sidebar-a uyğun, bir az açıq ton */
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;font-size:16px;line-height:1.55;font-feature-settings:"tnum" 1}
+
   /* Shell */
   .app{display:grid; grid-template-rows:56px 1fr; height:100%}
-  .topbar{display:flex;align-items:center;gap:12px;padding:0 16px;background:#fff;border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
-  .brand{font-weight:800;letter-spacing:.3px;color:var(--primary)}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 16px;background:var(--topbar);color:#fff;border-bottom:1px solid #0f172a40;box-shadow:var(--shadow)}
+  .brand{font-weight:800;letter-spacing:.3px}
+  .top-actions{display:flex;gap:8px;align-items:center}
+  .topbtn{background:#ffffff18;border:1px solid #ffffff30;color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:600}
+  .topbtn:hover{background:#ffffff28}
+
   .shell{display:grid; grid-template-columns:240px 1fr; height:100%}
   .sidebar{background:var(--sidebar); color:var(--sidebar-text); padding:14px 12px}
   .navbtn{width:100%; text-align:left; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.06); background:transparent; color:var(--sidebar-text); cursor:pointer; font-weight:600; margin-bottom:8px}
@@ -72,13 +78,17 @@
   .logo-fade{opacity:.08; text-align:center; font-size:28pt; font-weight:700}
   .kecik{font-size:10.5pt}
   .page-break{page-break-after:always}
-  @media print{ .btn, .sidebar { display:none } .content{padding:0} }
+  @media print{ .btn, .sidebar, .topbar { display:none } .content{padding:0} }
 </style>
 </head>
 <body>
 <div class="app">
+  <!-- Topbar -->
   <div class="topbar">
     <div class="brand">BAKFON</div>
+    <div class="top-actions">
+      <button class="topbtn" onclick="views.calc()">Ana Səhifə</button>
+    </div>
   </div>
 
   <div class="shell">
@@ -206,7 +216,8 @@
           </div>
 
           <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px">
-            <button class="btn primary" onclick="finalizeAndPrint()">Təsdiqlə və Çap et</button>
+            <button class="btn primary" onclick="saveCustomerOnly()">Yadda saxla</button>
+            <button class="btn danger" onclick="resetFinalize()">Sıfırla</button>
           </div>
         </div>
       </section>
@@ -250,7 +261,6 @@ const views = {
 };
 function show(id){
   ['view-calc','view-finalize','view-customers'].forEach(v=> $(v).style.display = (v===id? 'block':'none'));
-  // sidebar active
   document.querySelectorAll('.navbtn').forEach(b=> b.classList.toggle('active', b.dataset.view === id.split('-')[1]));
 }
 document.querySelectorAll('.navbtn').forEach(btn=>{
@@ -260,7 +270,6 @@ document.querySelectorAll('.navbtn').forEach(btn=>{
 /* ========= Defaults ========= */
 window.addEventListener('DOMContentLoaded', ()=>{
   ensureStartDateDefault();
-  // toggles
   $('addIncomeChk').addEventListener('change', toggleExtraIncome);
   $('manualDownChk').addEventListener('change', ()=> {
     $('manualDownWrap').style.display = $('manualDownChk').checked ? 'block':'none';
@@ -328,7 +337,6 @@ function calc(){
 
   const maxMonthly = Math.max(0, net * MAX_DSR);
   if(monthly > maxMonthly + 1e-9){
-    // auto adjust down
     const requiredPrincipal = Math.max(0, maxMonthly * months);
     const newDownRaw = price - requiredPrincipal;
     down = Math.min(price, Math.max($('manualDownChk').checked? down : MIN_DOWN_AZN, newDownRaw));
@@ -337,7 +345,6 @@ function calc(){
     monthly = months>0 ? principal / months : 0;
   }
 
-  // table
   const rows=[]; let bal=principal;
   const sd = $('startDate')?.value ? new Date($('startDate').value) : new Date();
   const day=sd.getDate();
@@ -365,11 +372,10 @@ function calc(){
     </table>
   `;
 
-  // snapshot to memory (used by finalize)
   window.__calcSnapshot = { price, months, risk, salary, oblig, extra, down, pct, principal, monthly, maxMonthly, schedule: rows };
 }
 function resetCalc(){
-  ['price','months','risk','salary','oblig','addIncomeType','addIncomeAmt','manualDownAmt'].forEach(id=>{ const el=$(id); if(!el) return; el.value = (id==='months'||id==='risk'||id==='addIncomeType')? '' : ''; el.classList.remove('invalid'); });
+  ['price','months','risk','salary','oblig','addIncomeType','addIncomeAmt','manualDownAmt'].forEach(id=>{ const el=$(id); if(!el) return; el.value = ''; el.classList.remove('invalid'); });
   $('addIncomeChk').checked=false; $('manualDownChk').checked=false;
   $('addIncomeTypeWrap').style.display='none'; $('addIncomeAmtWrap').style.display='none'; $('manualDownWrap').style.display='none';
   $('summary').innerHTML=''; $('scheduleWrap').innerHTML=''; $('calcAlert').style.display='none';
@@ -388,9 +394,16 @@ function upsertCustomer(obj){
   if(ix>=0) list[ix]=obj; else list.push(obj);
   saveCustomers(list);
 }
-function deleteCustomer(fin){ const list=loadCustomers().filter(x=>x.finCode!==fin); saveCustomers(list); renderCustomers(); }
+function deleteCustomer(fin){ 
+  if(!confirm('Müştəri silinsin? Bu əməliyyat geri qaytarılmır.')) return; /* xəbərdarlıq */
+  const list=loadCustomers().filter(x=>x.finCode!==fin); 
+  saveCustomers(list); 
+  renderCustomers(); 
+}
 
-/* ========= Finalize & Print ========= */
+/* ========= Finalize ========= */
+function ensureStartDateDefault(){ const sd=$('startDate'); if(sd && !sd.value) sd.value=todayISO(); }
+
 function collectCustomer(){
   const get=(id)=> ($(id)?.value||'').trim();
   const required=['custName','custPhone','prodName','idSerial','finCode','birthDate','address','imei1','imei2','contractNo','branch','currency','startDate','sellerRep'];
@@ -407,21 +420,24 @@ function collectCustomer(){
   return obj;
 }
 
-function finalizeAndPrint(){
-  const c = collectCustomer(); if(!c) return;
-  // save customer
-  upsertCustomer(c);
-  // compose docs & print
-  const html = buildAllDocsHTML(c);
-  openPrintDocCombined('Sənədlər', html);
-  // switch to customers view and refresh
-  renderCustomers(); show('view-customers');
+function resetFinalize(){
+  ['custName','custPhone','prodName','idSerial','finCode','birthDate','address','imei1','imei2','contractNo','branch','currency','startDate','sellerRep']
+    .forEach(id=>{ if($(id)) $(id).value = (id==='branch'?'Nəsimi':''); });
+  ensureStartDateDefault();
 }
 
-/* ========= Print documents (content preserved) ========= */
+function saveCustomerOnly(){
+  const c = collectCustomer(); if(!c) return;
+  upsertCustomer(c);
+  alert('Müştəri yadda saxlandı.');
+  resetFinalize();           /* 3) yadda saxla sonrası avtomatik sıfırlansın */
+  renderCustomers();
+  show('view-customers');    /* siyahıya keçid */
+}
+
+/* ========= Print documents ========= */
 function buildAllDocsHTML(c){
   const comp = c.calc;
-  // 1) Müqavilə (nümayəndə yoxdur)
   const contractHTML = `
   <div class="print-a4 page-break print-root">
     <div class="print-title">MÜDDƏTLİ (NİSYƏ) ALQI-SATQI MÜQAVİLƏSİ № ${c.contractNo}</div>
@@ -484,7 +500,6 @@ function buildAllDocsHTML(c){
     </div>
   </div>`;
 
-  // 2) ƏLAVƏ 1
   const elave1 = `
   <div class="print-a4 page-break print-root">
     <div class="print-title">${ddmmyyyy(c.startDate)} tarixli ${c.contractNo} saylı müqaviləyə</div>
@@ -504,7 +519,6 @@ function buildAllDocsHTML(c){
     <div class="print-subtop"><div>Tarix: ${ddmmyyyy(c.startDate)}</div><div>Əlaqə: ${c.custPhone}</div></div>
   </div>`;
 
-  // 3) ƏLAVƏ 2 — Təhvil-Təslim (sənin mətn quruluşuna uyğun)
   const elave2 = `
   <div class="print-a4 page-break print-root">
     <div class="print-h2">2 SAYLI ƏLAVƏ</div>
@@ -537,7 +551,6 @@ function buildAllDocsHTML(c){
     </div>
   </div>`;
 
-  // 4) Ödəniş cədvəli
   const schedRows = (comp.schedule||[]).map((r,i)=>`<tr><td>${i+1}</td><td>${Number(comp.monthly).toFixed(2)} AZN</td><td>${Number(r.bal).toFixed(2)} AZN</td><td>${ddmmyyyy(r.date)}</td></tr>`).join('');
   const odeme = `
   <div class="print-a4 page-break print-root">
@@ -563,7 +576,6 @@ function buildAllDocsHTML(c){
     <div class="sign-cols"><div class="sign"><div class="sigcap">Satıcı: “Baktel Electronics” MMC</div><span class="sigline"></span></div><div class="sign"><div class="sigcap">Alıcı: ${c.custName}</div><span class="sigline"></span></div></div>
   </div>`;
 
-  // 5) Zəmanət Talonu (nümayəndə burada)
   const zemanet = `
   <div class="print-a4 page-break print-root">
     <div class="print-title">ZƏMANƏT TALONU</div>
@@ -660,6 +672,7 @@ function showInfo(c){
   const msg = `Müştəri: ${c.custName}
 FIN: ${c.finCode}
 Məhsul: ${c.prodName}
+IMEI: ${[c.imei1,c.imei2].filter(Boolean).join(' / ')}   /* IMEI-lər əlavə olundu */
 Satış qiyməti: ${(c.calc?.price??0).toFixed(2)} AZN
 İlkin ödəniş: ${(c.calc?.down??0).toFixed(2)} AZN
 Kredit: ${(c.calc?.principal??0).toFixed(2)} AZN
@@ -669,12 +682,10 @@ Tarix: ${ddmmyyyy(c.startDate)}`;
   alert(msg);
 }
 function reprintCustomer(c){
-  // rebuild docs from stored snapshot
   const html = buildAllDocsHTML(c);
   openPrintDocCombined('Sənədlər', html);
 }
 function editCustomer(c){
-  // Go to finalize view and prefill
   show('view-finalize');
   const set=(id,val)=> { if($(id)) $(id).value=val||''; };
   set('custName',c.custName); set('custPhone',c.custPhone); set('prodName',c.prodName);
@@ -682,11 +693,8 @@ function editCustomer(c){
   set('address',c.address); set('imei1',c.imei1); set('imei2',c.imei2);
   set('contractNo',c.contractNo); set('branch',c.branch); set('currency',c.currency);
   set('startDate',c.startDate); set('sellerRep',c.sellerRep);
-  // restore calc snapshot to window (so reprint uses it if needed)
   window.__calcSnapshot = c.calc;
 }
-
-/* ========= END ========= */
 </script>
 </body>
 </html>
