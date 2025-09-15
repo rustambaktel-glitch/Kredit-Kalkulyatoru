@@ -114,22 +114,29 @@
         </div>
       </section>
 
-     <!-- SIDEBAR-dan RƏSMİLƏŞDİR silinib -->
-<aside class="sidebar">
-  <button class="navbtn active" data-view="home">Ana Səhifə</button>
-  <button class="navbtn" data-view="calc">Kalkulyator</button>
-  <button class="navbtn" data-view="customers">Müştərilər</button>
-  <div style="height:8px"></div>
-  <button class="navbtn" data-view="inventory">Anbar</button>
-  <button class="navbtn" data-view="purchases">Alışlar</button>
-  <button class="navbtn" data-view="sales">Satışlar</button>
-  <button class="navbtn" data-view="reports">Hesabatlar</button>
-  <div style="height:8px"></div>
-  <button class="navbtn" data-view="employees">Əməkdaşlar</button>
-  <button class="navbtn" data-view="users">İstifadəçilər</button>
-  <button class="navbtn" data-view="payroll">Bonus & Əməkhaqqı</button>
-</aside>
-
+      <!-- RƏSMİLƏŞDİR -->
+      <section id="view-finalize" class="card" style="display:none">
+        <h3>Müştəri məlumatları</h3>
+        <div id="finalizeAlert" class="notice warn" style="display:none"></div>
+        <div class="row">
+          <div class="col-4"><label>Müştəri A.S.A.</label><input id="custName" required></div>
+          <div class="col-4"><label>Əlaqə nömrəsi</label><input id="custPhone" required></div>
+          <div class="col-4"><label>Məhsul adı/model</label><input id="prodName" required></div>
+          <div class="col-3"><label>Ş/V seriya və nömrəsi</label><input id="idSerial" required></div>
+          <div class="col-3"><label>FIN kodu</label><input id="finCode" required></div>
+          <div class="col-3"><label>Doğum tarixi</label><input id="birthDate" type="date" required></div>
+          <div class="col-3"><label>Ünvan</label><input id="address" required></div>
+          <div class="col-4"><label>IMEI 1</label><input id="imei1" required></div>
+          <div class="col-4"><label>IMEI 2</label><input id="imei2"></div>
+          <div class="col-4"><label>Müqavilə №</label><input id="contractNo" required></div>
+          <div class="col-3"><label>Filial</label><input id="branch" value="Nəsimi" required></div>
+          <div class="col-3"><label>Valyuta</label><select id="currency"><option>AZN</option></select></div>
+          <div class="col-3"><label>Kreditin verilmə tarixi</label><input id="startDate" type="date" required></div>
+          <div class="col-3"><label>Satıcı nümayəndə (yalnız Zəmanət)</label><select id="sellerRep"><option value="">— Seçin —</option><option>Vəliməmmədov Niyazi Səhhət oğlu</option><option>Abaszadə Mədət Yusif oğlu</option></select></div>
+          <div class="col-3"><label>Satış növü</label><select id="saleType"><option value="">— Seçin —</option><option value="kredit">Kredit</option><option value="nagd">Nağd</option><option value="pos">POS</option><option value="korporativ">Korporativ</option></select></div>
+          <div class="col-12" style="display:flex;gap:10px;flex-wrap:wrap"><button id="btnSaveCustomer" class="btn primary">Yadda saxla</button><button id="btnFinalizeReset" class="btn danger">Sıfırla</button></div>
+        </div>
+      </section>
 
       <!-- MÜŞTƏRİLƏR -->
       <section id="view-customers" class="card" style="display:none">
