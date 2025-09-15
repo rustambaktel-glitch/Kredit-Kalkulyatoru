@@ -6,13 +6,14 @@
 <title>BAKFON — Kredit sistemi</title>
 <style>
   :root{
-    /* Daha AÇIQ tonlar */
-    --bg:#f7f9fc; --text:#0f172a; --card:#ffffff; --border:#e7eaf0; --muted:#51607a; --primary:#dc2626;
+    /* Bir ton TÜND – əvvəlkindən bir az daha kontrast */
+    --bg:#f5f7fb; --text:#0b1220; --card:#ffffff; --border:#e0e5ef; --muted:#51607a; --primary:#dc2626;
     --ring:#60a5fa; --shadow:0 8px 22px rgba(2,6,23,.06); --radius:14px; --table-border:#cbd5e1;
-    --sidebar:#e9eef6;           /* açıq sidebar */
-    --sidebar-text:#0f172a;
-    --sidebar-active-bg:#d6deeb; /* seçiləndə bir az tünd, yenə açıq */
-    --topbar:#f0f4fb;            /* başlıq daha açıq */
+
+    --sidebar:#dbe3f1;            /* əvvəlki e9eef6-dan tünd */
+    --sidebar-text:#0b1220;
+    --sidebar-active-bg:#c8d4ea;  /* əvvəlki d6deeb-dən tünd */
+    --topbar:#e6edf8;             /* əvvəlki f0f4fb-dən tünd */
   }
   *{box-sizing:border-box}
   html,body{height:100%}
@@ -24,10 +25,10 @@
   .brand{font-weight:800;letter-spacing:.3px}
 
   .shell{display:grid; grid-template-columns:240px 1fr; height:100%}
-  .sidebar{background:var(--sidebar); color:var(--sidebar-text); padding:14px 12px; border-right:1px solid #cdd6e6}
-  .navbtn{width:100%; text-align:left; padding:10px 12px; border-radius:12px; border:1px solid #cfd7ea; background:#ffffffaa; color:var(--sidebar-text); cursor:pointer; font-weight:700; margin-bottom:8px}
+  .sidebar{background:var(--sidebar); color:var(--sidebar-text); padding:14px 12px; border-right:1px solid #c5d0e4}
+  .navbtn{width:100%; text-align:left; padding:10px 12px; border-radius:12px; border:1px solid #c3cee4; background:#ffffffc4; color:var(--sidebar-text); cursor:pointer; font-weight:700; margin-bottom:8px}
   .navbtn:hover{background:#fff}
-  .navbtn.active{background:var(--sidebar-active-bg); color:#0b1220; border-color:#b9c7e4}
+  .navbtn.active{background:var(--sidebar-active-bg); color:#0b1220; border-color:#b4c3e1}
   .content{padding:16px; overflow:auto}
   .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;margin-bottom:14px;box-shadow:var(--shadow)}
   .row{display:grid;gap:14px}
@@ -83,14 +84,14 @@
 </head>
 <body>
 <div class="app">
-  <!-- Topbar (açıq ton) -->
+  <!-- Topbar -->
   <div class="topbar">
     <div class="brand">BAKFON</div>
     <div></div>
   </div>
 
   <div class="shell">
-    <!-- Sidebar (Ana Səhifə ən üstdə) -->
+    <!-- Sidebar: Ana Səhifə ən üstdə -->
     <aside class="sidebar">
       <button class="navbtn active" data-view="home">Ana Səhifə</button>
       <button class="navbtn" data-view="calc">Kalkulyator</button>
@@ -101,15 +102,14 @@
     <!-- Content -->
     <main class="content">
 
-      <!-- Ana Səhifə: boş səhifə -->
-      <section id="view-home" class="card" style="min-height:120px;">
-        <!-- boş saxlanılıb; istəsən buraya loqo/yardım yazısı əlavə edərik -->
-      </section>
+      <!-- Ana Səhifə: boş -->
+      <section id="view-home" class="card" style="min-height:120px"></section>
 
       <!-- Kalkulyator -->
       <section id="view-calc" class="card" style="display:none">
         <h3>Kredit kalkulyatoru</h3>
         <div id="calcAlert" class="notice warn" style="display:none"></div>
+
         <div class="row">
           <div class="col-4">
             <label>Məhsul dəyəri (AZN)</label>
@@ -172,8 +172,8 @@
           </div>
 
           <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <button class="btn success" onclick="calc()">Hesabla</button>
-            <button class="btn danger" onclick="resetCalc()">Sıfırla</button>
+            <button id="btnCalc" class="btn success">Hesabla</button>
+            <button id="btnCalcReset" class="btn danger">Sıfırla</button>
           </div>
         </div>
 
@@ -219,7 +219,7 @@
             </select>
           </div>
 
-          <!-- YENİ: Satış növü -->
+          <!-- Satış növü -->
           <div class="col-3">
             <label>Satış növü</label>
             <select id="saleType" required>
@@ -232,20 +232,31 @@
           </div>
 
           <div class="col-12" style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:6px">
-            <button class="btn primary" onclick="saveCustomerOnly()">Yadda saxla</button>
-            <button class="btn danger" onclick="resetFinalize()">Sıfırla</button>
+            <button id="btnSaveCustomer" class="btn primary">Yadda saxla</button>
+            <button id="btnFinalizeReset" class="btn danger">Sıfırla</button>
           </div>
         </div>
       </section>
 
       <!-- MÜŞTƏRİLƏR -->
       <section id="view-customers" class="card" style="display:none">
-        <h3>Müştərilər</h3>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+          <h3 style="margin:0">Müştərilər</h3>
+          <button id="btnAddCustomer" class="btn success">Müştəri əlavə et</button>
+        </div>
 
-        <div class="row card" style="margin:0 0 12px">
+        <div class="row card" style="margin:12px 0">
           <div class="col-4">
-            <label>FIN kod ilə axtar</label>
-            <input id="searchFin" type="text" placeholder="FIN kod" oninput="renderCustomers()" />
+            <label>Ad üzrə axtar</label>
+            <input id="searchName" type="text" placeholder="Müştərinin adı" />
+          </div>
+          <div class="col-4">
+            <label>Mobil nömrə üzrə axtar</label>
+            <input id="searchPhone" type="text" placeholder="050..." />
+          </div>
+          <div class="col-4">
+            <label>FIN kod üzrə axtar</label>
+            <input id="searchFin" type="text" placeholder="FIN kod" />
           </div>
         </div>
 
@@ -258,10 +269,10 @@
 
 <script>
 /* ========= Utils ========= */
+const $ = (id)=> document.getElementById(id);
 const fmtAZN = n=> (new Intl.NumberFormat('az-AZ',{style:'currency',currency:'AZN',maximumFractionDigits:2})).format(n||0);
 const ddmmyyyy = (d)=>{ const dt=new Date(d); const dd=String(dt.getDate()).padStart(2,'0'); const mm=String(dt.getMonth()+1).padStart(2,'0'); const yyyy=dt.getFullYear(); return `${dd}.${mm}.${yyyy}`; };
 const todayISO = ()=> { const t=new Date(); const mm=String(t.getMonth()+1).padStart(2,'0'); const dd=String(t.getDate()).padStart(2,'0'); return `${t.getFullYear()}-${mm}-${dd}`; };
-const $ = (id)=> document.getElementById(id);
 
 /* ========= Policy ========= */
 const POLICY_RISK_ONLY = { low: 0.20, med: 0.30, high: 0.50 };
@@ -270,12 +281,6 @@ const MAX_OBLIG_SHARE = 0.50;
 const MAX_DSR = 0.40;
 
 /* ========= Navigation ========= */
-const views = {
-  home: ()=> { show('view-home'); },
-  calc: ()=> { show('view-calc'); },
-  finalize: ()=> { show('view-finalize'); ensureStartDateDefault(); },
-  customers: ()=> { show('view-customers'); renderCustomers(); }
-};
 function show(id){
   ['view-home','view-calc','view-finalize','view-customers'].forEach(v=> $(v).style.display = (v===id? 'block':'none'));
   document.querySelectorAll('.navbtn').forEach(b=> {
@@ -283,27 +288,57 @@ function show(id){
     b.classList.toggle('active', target===id);
   });
 }
-document.querySelectorAll('.navbtn').forEach(btn=>{
-  btn.addEventListener('click', ()=> views[btn.dataset.view] && views[btn.dataset.view]());
-});
+function gotoHome(){ show('view-home'); }
+function gotoCalc(){ show('view-calc'); }
+function gotoFinalize(){ ensureStartDateDefault(); show('view-finalize'); }
+function gotoCustomers(){ renderCustomers(); show('view-customers'); }
 
-/* ========= Defaults ========= */
+/* ========= DOM Ready ========= */
 window.addEventListener('DOMContentLoaded', ()=>{
-  ensureStartDateDefault();
-  views.home(); // açılışda Ana Səhifə boş görünsün
-  $('addIncomeChk').addEventListener('change', toggleExtraIncome);
-  $('manualDownChk').addEventListener('change', ()=> {
+  // Nav buttons
+  document.querySelectorAll('.navbtn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const v = btn.dataset.view;
+      if(v==='home') gotoHome();
+      if(v==='calc') gotoCalc();
+      if(v==='finalize') gotoFinalize();
+      if(v==='customers') gotoCustomers();
+    });
+  });
+
+  // Default page
+  gotoHome();
+
+  // Calc listeners
+  $('btnCalc')?.addEventListener('click', calc);
+  $('btnCalcReset')?.addEventListener('click', resetCalc);
+  $('addIncomeChk')?.addEventListener('change', toggleExtraIncome);
+  $('addIncomeType')?.addEventListener('change', toggleExtraIncome);
+  $('manualDownChk')?.addEventListener('change', ()=> {
     $('manualDownWrap').style.display = $('manualDownChk').checked ? 'block':'none';
+  });
+
+  // Finalize listeners
+  $('btnSaveCustomer')?.addEventListener('click', saveCustomerOnly);
+  $('btnFinalizeReset')?.addEventListener('click', resetFinalize);
+  ensureStartDateDefault();
+
+  // Customers listeners
+  $('btnAddCustomer')?.addEventListener('click', ()=> { gotoFinalize(); });
+  ['searchName','searchPhone','searchFin'].forEach(id=>{
+    $(id)?.addEventListener('input', renderCustomers);
   });
 });
 
 /* ========= Toggles ========= */
-function ensureStartDateDefault(){ const sd=$('startDate'); if(sd && !sd.value) sd.value=todayISO(); }
+function ensureStartDateDefault(){
+  const sd=$('startDate'); if(sd && !sd.value) sd.value=todayISO();
+}
 function toggleExtraIncome(){
   const on = $('addIncomeChk').checked;
   $('addIncomeTypeWrap').style.display = on? 'block':'none';
-  $('addIncomeAmtWrap').style.display = (on && $('addIncomeType').value)? 'block':'none';
-  $('addIncomeType').onchange = ()=> toggleExtraIncome();
+  const showAmt = on && $('addIncomeType').value;
+  $('addIncomeAmtWrap').style.display = showAmt ? 'block':'none';
 }
 
 /* ========= Calc helpers ========= */
@@ -313,7 +348,11 @@ function getDownPayment(price, riskKey, salary=0, oblig=0){
   const net = Math.max(0, salary - oblig);
   const ratio = salary>0 ? net / salary : 0;
   let mod = 0;
-  if(ratio >= 0.70) mod = -0.10; else if(ratio >= 0.50) mod = -0.05; else if(ratio >= 0.35) mod = 0.00; else if(ratio >= 0.20) mod = +0.10; else mod = +0.20;
+  if(ratio >= 0.70) mod = -0.10;
+  else if(ratio >= 0.50) mod = -0.05;
+  else if(ratio >= 0.35) mod = 0.00;
+  else if(ratio >= 0.20) mod = +0.10;
+  else mod = +0.20;
   if(riskKey==='high') mod *= 0.7;
   const pct = Math.min(0.85, Math.max(0.10, base + mod));
   let down = price * pct;
@@ -322,7 +361,7 @@ function getDownPayment(price, riskKey, salary=0, oblig=0){
   return { down, pct, ratio, net };
 }
 
-/* ========= Calculator Core ========= */
+/* ========= Calculator ========= */
 function calc(){
   ['risk','salary','oblig','addIncomeType','addIncomeAmt','manualDownAmt','months','price'].forEach(id=>$(id)?.classList.remove('invalid'));
   const price = Number($('price').value||0);
@@ -367,7 +406,8 @@ function calc(){
   }
 
   const rows=[]; let bal=principal;
-  const sd = $('startDate')?.value ? new Date($('startDate').value) : new Date();
+  const sdInput = $('startDate')?.value;
+  const sd = sdInput ? new Date(sdInput) : new Date();
   const day=sd.getDate();
   for(let i=1;i<=months;i++){
     const d=new Date(sd); d.setMonth(d.getMonth()+i); d.setDate(day);
@@ -409,52 +449,51 @@ function loadCustomers(){
   try{ return JSON.parse(localStorage.getItem(STORE_KEY)||'[]'); }catch(e){ return []; }
 }
 function saveCustomers(list){ localStorage.setItem(STORE_KEY, JSON.stringify(list)); }
-function upsertCustomer(obj){ 
-  const list=loadCustomers(); 
+function upsertCustomer(obj){
+  const list=loadCustomers();
   const ix = list.findIndex(x=>x.finCode===obj.finCode);
   if(ix>=0) list[ix]=obj; else list.push(obj);
   saveCustomers(list);
 }
-function deleteCustomer(fin){ 
-  if(!confirm('Müştəri silinsin? Bu əməliyyat geri qaytarılmır.')) return; /* xəbərdarlıq */
-  const list=loadCustomers().filter(x=>x.finCode!==fin); 
-  saveCustomers(list); 
-  renderCustomers(); 
+function deleteCustomer(fin){
+  if(!confirm('Müştəri silinsin? Bu əməliyyat geri qaytarılmır.')) return;
+  const list=loadCustomers().filter(x=>x.finCode!==fin);
+  saveCustomers(list);
+  renderCustomers();
 }
 
 /* ========= Finalize ========= */
-function ensureStartDateDefault(){ const sd=$('startDate'); if(sd && !sd.value) sd.value=todayISO(); }
-
 function collectCustomer(){
   const get=(id)=> ($(id)?.value||'').trim();
   const required=['custName','custPhone','prodName','idSerial','finCode','birthDate','address','imei1','imei2','contractNo','branch','currency','startDate','sellerRep','saleType'];
-  for(const id of required){ const el=$(id); if(!el || !el.value){ alert('Zəhmət olmasa bütün müştəri məlumatlarını doldurun.'); return null; } }
-  const obj = {
+  for(const id of required){
+    const el=$(id);
+    if(!el || !el.value){ alert('Zəhmət olmasa bütün müştəri məlumatlarını doldurun.'); return null; }
+  }
+  const calc = window.__calcSnapshot || null;
+  if(!calc){ alert('Zəhmət olmasa əvvəlcə Kalkulyator bölməsində hesablayın.'); return null; }
+
+  return {
     custName:get('custName'), custPhone:get('custPhone'), prodName:get('prodName'),
     idSerial:get('idSerial'), finCode:get('finCode'), address:get('address'), birthDate:get('birthDate'),
-    imei1:get('imei1'), imei2:get('imei2'), contractNo:get('contractNo'), branch:get('branch'),
-    currency:get('currency'), startDate:get('startDate'), sellerRep:get('sellerRep'),
-    saleType:get('saleType'),
-    createdAt: new Date().toISOString(),
-    calc: window.__calcSnapshot || null
+    imei1:get('imei1'), imei2:get('imei2'),
+    contractNo:get('contractNo'), branch:get('branch'), currency:get('currency'),
+    startDate:get('startDate'), sellerRep:get('sellerRep'), saleType:get('saleType'),
+    createdAt:new Date().toISOString(), calc
   };
-  if(!obj.calc){ alert('Zəhmət olmasa əvvəlcə Kalkulyator bölməsində hesablayın.'); return null; }
-  return obj;
 }
-
 function resetFinalize(){
   ['custName','custPhone','prodName','idSerial','finCode','birthDate','address','imei1','imei2','contractNo','branch','currency','startDate','sellerRep','saleType']
     .forEach(id=>{ if($(id)) $(id).value = (id==='branch'?'Nəsimi':''); });
   ensureStartDateDefault();
 }
-
 function saveCustomerOnly(){
   const c = collectCustomer(); if(!c) return;
   upsertCustomer(c);
   alert('Müştəri yadda saxlandı.');
-  resetFinalize();           /* yadda saxla sonrası avtomatik sıfırlansın */
+  resetFinalize();
   renderCustomers();
-  views.customers();         /* siyahıya keçid */
+  gotoCustomers();
 }
 
 /* ========= Print documents ========= */
@@ -667,34 +706,71 @@ function openPrintDocCombined(title, sectionsHtml){
 function renderCustomers(){
   const wrap = $('customersWrap');
   const list = loadCustomers();
-  const query = ($('searchFin')?.value||'').trim().toLowerCase();
-  const view = list.filter(x=> !query || (x.finCode||'').toLowerCase().includes(query));
+
+  const qName = ($('searchName')?.value||'').trim().toLowerCase();
+  const qPhone = ($('searchPhone')?.value||'').trim().toLowerCase();
+  const qFin = ($('searchFin')?.value||'').trim().toLowerCase();
+
+  const view = list.filter(x=>{
+    const n = (x.custName||'').toLowerCase();
+    const p = (x.custPhone||'').toLowerCase();
+    const f = (x.finCode||'').toLowerCase();
+    const okName = !qName || n.includes(qName);
+    const okPhone = !qPhone || p.includes(qPhone);
+    const okFin = !qFin || f.includes(qFin);
+    return okName && okPhone && okFin;
+  });
 
   if(view.length===0){
     wrap.innerHTML = `<div class="card" style="margin:0">Heç bir müştəri tapılmadı.</div>`;
     return;
   }
 
-  wrap.innerHTML = view.map(c => `
+  // HTML qur, sonra düymələrə event-ləri bağla (dataset ilə)
+  wrap.innerHTML = view.map((c,idx)=> `
     <div class="card" style="margin-bottom:10px">
       <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
         <div>
           <div style="font-weight:700">${c.custName}</div>
-          <div class="muted">FIN: ${c.finCode} • ${c.prodName} • Satış növü: ${(c.saleType||'').toUpperCase()}</div>
+          <div class="muted">FIN: ${c.finCode} • ${c.custPhone} • ${c.prodName} • Satış növü: ${(c.saleType||'').toUpperCase()}</div>
         </div>
         <div style="display:flex;gap:8px">
-          <button class="btn" onclick='showInfo(${JSON.stringify(c)})'>ℹ️ Info</button>
-          <button class="btn primary" onclick='reprintCustomer(${JSON.stringify(c)})'>Yenidən Çap</button>
-          <button class="btn" onclick='editCustomer(${JSON.stringify(c)})'>Düzəliş</button>
-          <button class="btn danger" onclick="deleteCustomer('${c.finCode}')">Sil</button>
+          <button class="btn infoBtn" data-fin="${c.finCode}">ℹ️ Info</button>
+          <button class="btn primary reprintBtn" data-fin="${c.finCode}">Yenidən Çap</button>
+          <button class="btn editBtn" data-fin="${c.finCode}">Düzəliş</button>
+          <button class="btn danger deleteBtn" data-fin="${c.finCode}">Sil</button>
         </div>
       </div>
     </div>
   `).join('');
+
+  // Event bağla
+  wrap.querySelectorAll('.infoBtn').forEach(b=> b.addEventListener('click', ()=>{
+    const fin = b.dataset.fin; const c = list.find(x=>x.finCode===fin); if(c) showInfo(c);
+  }));
+  wrap.querySelectorAll('.reprintBtn').forEach(b=> b.addEventListener('click', ()=>{
+    const fin = b.dataset.fin; const c = list.find(x=>x.finCode===fin); if(c) { const html = buildAllDocsHTML(c); openPrintDocCombined('Sənədlər', html); }
+  }));
+  wrap.querySelectorAll('.editBtn').forEach(b=> b.addEventListener('click', ()=>{
+    const fin = b.dataset.fin; const c = list.find(x=>x.finCode===fin); if(!c) return;
+    gotoFinalize();
+    const set=(id,val)=> { if($(id)) $(id).value=val||''; };
+    set('custName',c.custName); set('custPhone',c.custPhone); set('prodName',c.prodName);
+    set('idSerial',c.idSerial); set('finCode',c.finCode); set('birthDate',c.birthDate);
+    set('address',c.address); set('imei1',c.imei1); set('imei2',c.imei2);
+    set('contractNo',c.contractNo); set('branch',c.branch); set('currency',c.currency);
+    set('startDate',c.startDate); set('sellerRep',c.sellerRep); set('saleType',c.saleType);
+    window.__calcSnapshot = c.calc;
+  }));
+  wrap.querySelectorAll('.deleteBtn').forEach(b=> b.addEventListener('click', ()=>{
+    const fin = b.dataset.fin; deleteCustomer(fin);
+  }));
 }
+
 function showInfo(c){
   const msg = `Müştəri: ${c.custName}
 FIN: ${c.finCode}
+Mobil: ${c.custPhone}
 Satış növü: ${(c.saleType||'').toUpperCase()}
 Məhsul: ${c.prodName}
 IMEI: ${[c.imei1,c.imei2].filter(Boolean).join(' / ')}
@@ -705,20 +781,6 @@ Müddət: ${c.calc?.months} ay
 Aylıq: ${(c.calc?.monthly??0).toFixed(2)} AZN
 Tarix: ${ddmmyyyy(c.startDate)}`;
   alert(msg);
-}
-function reprintCustomer(c){
-  const html = buildAllDocsHTML(c);
-  openPrintDocCombined('Sənədlər', html);
-}
-function editCustomer(c){
-  views.finalize();
-  const set=(id,val)=> { if($(id)) $(id).value=val||''; };
-  set('custName',c.custName); set('custPhone',c.custPhone); set('prodName',c.prodName);
-  set('idSerial',c.idSerial); set('finCode',c.finCode); set('birthDate',c.birthDate);
-  set('address',c.address); set('imei1',c.imei1); set('imei2',c.imei2);
-  set('contractNo',c.contractNo); set('branch',c.branch); set('currency',c.currency);
-  set('startDate',c.startDate); set('sellerRep',c.sellerRep); set('saleType',c.saleType);
-  window.__calcSnapshot = c.calc;
 }
 </script>
 </body>
