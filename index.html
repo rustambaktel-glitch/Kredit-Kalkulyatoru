@@ -8,7 +8,7 @@
     :root{ 
       --bg:#f7f9fc; --text:#0f172a; --card:#ffffff; --border:#e7eaf0; --muted:#51607a; --primary:#dc2626;
       --input-border:#cfd5e1; --shadow:0 6px 18px rgba(2,6,23,.06); --radius:14px;
-      --grid:#d1d5db; --print-text:#111; --print-accent:#111; --table-border:#cbd5e1;
+      --grid:#d1d5db; --print-text:#111; --table-border:#cbd5e1;
     }
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;font-size:16px;line-height:1.55}
@@ -46,7 +46,7 @@
     .inline-check{display:flex;align-items:center;gap:6px}
     .inline-check .big-check{width:18px;height:18px;accent-color:#16a34a;transform:scale(1.15)}
 
-    /* ==== PRINT LAYOUT – Corporate (A4) */
+    /* ==== ÇAP SƏNƏDLƏRİ – Times New Roman (A4) ==== */
     .print-root{font-family:"Times New Roman", Times, serif; color:var(--print-text)}
     .print-a4{width:210mm; min-height:297mm; margin:0 auto; padding:20mm 17mm 18mm}
     .print-title{font-size:18pt; font-weight:700; text-align:center; text-transform:uppercase; letter-spacing:.2px}
@@ -57,16 +57,15 @@
     .print-ol > li{margin:2.2mm 0}
     .print-ol li .sub{margin-top:1.8mm}
     .print-table{width:100%; border-collapse:collapse; font-size:11pt}
-    .print-table th,.print-table td{border:1px solid var(--table-border); padding:5px 7px; vertical-align:top}
+    .print-table th,.print-table td{border:1px solid #cbd5e1; padding:5px 7px; vertical-align:top}
     .print-table th{background:#f5f5f5}
-    .hr{height:1px;background:#d1d5db;margin:10px 0}
     .sign-cols{display:flex; justify-content:space-between; gap:16mm; margin-top:12mm}
     .sign{flex:1}
     .sigline{display:block; border-bottom:1px solid #111; height:18px; margin-top:18px}
     .sigcap{font-size:10.5pt; color:#333; margin-top:2mm}
-    .page-break{page-break-after:always}
     .logo-fade{opacity:.08; text-align:center; font-size:28pt; font-weight:700}
     .kecik{font-size:10.5pt}
+    .page-break{page-break-after:always}
 
     @media print{ .btn, #calc { display:none } .wrap{max-width:1000px} header{margin-bottom:0} }
   </style>
@@ -479,7 +478,7 @@
 
         <div class="print-block">
           Bu müqaviləni (bundan sonra “Müqavilə”) bir tərəfdən Azərbaycan Respublikasının qanunvericiliyinə əsasən
-          qeydiyyatdan keçmiş və Nizamnamə əsasında fəaliyyət göstərən Baktel Electronics MMC (VÖEN: 1505350851),
+          qeydiyyatdan keçmiş və Nizamnamə əsasında fəaliyyət göstərən “Baktel Electronics” MMC (VÖEN: 1505350851),
           Direktor Mahmudov İlqar Arif oğlu şəxsində (bundan sonra “Satıcı”), digər tərəfdən isə şəxsiyyət vəsiqəsinin
           seriya və nömrəsi ${idSerial} olan ${custName} (bundan sonra “Alıcı”) birlikdə “Tərəflər” adlandırılmaqla
           aşağıdakı şərtlərlə bağladılar.
@@ -559,7 +558,7 @@
           <tr>
             <td style="vertical-align:top; width:50%">
               <strong>Satıcı:</strong><br>
-              Baktel Electronics MMC<br>
+              “Baktel Electronics” MMC<br>
               VÖEN: 1505350851<br>
               Ünvan: Bakı şəhəri, Nəsimi r., Nizami k., 187<br>
               Nümayəndə: ${sellerRep || '-'}
@@ -590,7 +589,7 @@
 
         <div class="print-block">
           Mən, <strong>${custName}</strong> (Ş/V № ${idSerial}, Fin: ${finCode}, doğum tarixi: ${birthDate || '-'})
-          Baktel Electronics MMC-dən qarşılıqlı razılaşma əsasında hissə-hissə ödənişlə aldığım
+          “Baktel Electronics” MMC-dən qarşılıqlı razılaşma əsasında hissə-hissə ödənişlə aldığım
           <strong>${prodName}</strong> cihazının İMEİ: ${imei1}${imei2 ? `; İMEİ 2: ${imei2}` : ''} nömrəsinin,
           Müqavilə şərtləri pozularsa, hüquqi əsaslar daxilində deaktiv edilməsinə və vahid şəbəkədə riskli müştəri
           siyahısına daxil edilməsinə etiraz etmirəm.
@@ -600,7 +599,7 @@
           <div class="sign">
             <div class="sigcap">Satan</div>
             <span class="sigline"></span>
-            <div class="kecik">Baktel Electronics MMC</div>
+            <div class="kecik">“Baktel Electronics” MMC</div>
           </div>
           <div class="sign" style="text-align:right">
             <div class="sigcap">Alan</div>
@@ -615,13 +614,13 @@
         </div>
       </div>`;
 
-      /* ==== 3) ƏLAVƏ 2 — Təhvil-Təslim ==== */
+      /* ==== 3) ƏLAVƏ 2 — Təhvil-Təslim (seriya nömrəsindən sonra müştərinin adı əlavə olundu) ==== */
       const elave2 = `
       <div class="print-a4 page-break">
         <div class="print-h2">2 saylı əlavə</div>
 
         <div class="print-block" style="text-align:center; font-weight:700">
-          ${contractNo} saylı, ${fmtAzDate(startDate)} tarixli Nisyə alqı-satqı müqaviləsi dair Təhvil-Təslim aktı
+          ${contractNo} saylı, ${fmtAzDate(startDate)} tarixli nisyə alqı-satqı müqaviləsi dair Təhvil-Təslim aktı
         </div>
 
         <div class="print-subtop" style="align-items:flex-start">
@@ -634,15 +633,15 @@
 
         <div class="print-block" style="text-align:justify">
           Hazırkı Təhvil-Təslim Aktı, bir tərəfdən (bundan sonra ayrılıqda Tərəf, birlikdə isə Tərəflər adlanacaq)
-          “Baktel Electronics” MMC, (bundan sonra “Satıcı” adlanacaq) və digər tərəfdən, şəxsiyyət vəsiqəsinin
-          seriya nömrəsi ${idSerial} şəxsində (bundan sonra “Alıcı” adlanacaq) arasında aşağıdakılar barəsində
-          imzalanmışdır:
+          “Baktel Electronics” MMC (bundan sonra “Satıcı” adlanacaq) və digər tərəfdən, şəxsiyyət vəsiqəsinin
+          seriya nömrəsi ${idSerial} olan <strong>${custName}</strong> şəxsində (bundan sonra “Alıcı” adlanacaq)
+          arasında aşağıdakılar barəsində imzalanmışdır:
         </div>
 
         <ol class="print-ol">
           <li>
             1. Tərəflər hazırkı Təhvil-Təslim Aktını tərtib edərək təsdiq edirlər ki, Tərəflər arasında imzalanmış
-            ${contractNo} saylı, ${fmtAzDate(startDate)} tarixli Nisyə alqı-satqı müqaviləsinə (bundan sonra – Müqavilə)
+            ${contractNo} saylı, ${fmtAzDate(startDate)} tarixli nisyə alqı-satqı müqaviləsinə (bundan sonra – Müqavilə)
             əsasən, aşağıdakı cədvəldə göstərilən Mal(lar)ı Müqavilənin şərtlərinə uyğun şəkildə Alıcıya təhvil vermiş,
             Alıcı isə həmin Mal(lar)ı Satıcıdan tam və qüsursuz şəkildə təhvil almışdır:
           </li>
@@ -652,9 +651,9 @@
           <thead>
             <tr>
               <th style="width:6%">№</th>
-              <th>Malların adları və təsviri (IMEI kodu)</th>
+              <th>Malların adları və təsviri (İMEİ kodu)</th>
               <th style="width:10%">Miqdar</th>
-              <th style="width:18%">Məbləğ AZN</th>
+              <th style="width:18%">Məbləğ (AZN)</th>
             </tr>
           </thead>
           <tbody>
@@ -673,13 +672,13 @@
             Satıcı tərəfindən təhvil verilmiş Mallar işlək və qüsursuz vəziyyətdədir.
           </li>
           <li>
-            3. Hazırki Aktın doğruluğunu aşağıda öz imzalarımızla təsdiq edirik:
+            3. Hazırkı Aktın doğruluğunu aşağıda öz imzalarımızla təsdiq edirik:
           </li>
         </ol>
 
         <div class="sign-cols">
           <div class="sign">
-            <div class="sigcap">Satıcı: Baktel Electronics MMC</div>
+            <div class="sigcap">Satıcı: “Baktel Electronics” MMC</div>
             <span class="sigline"></span>
           </div>
           <div class="sign">
@@ -689,7 +688,7 @@
         </div>
       </div>`;
 
-      /* ==== 4) ÖDƏNİŞ CƏDVƏLİ ==== */
+      /* ==== 4) ÖDƏNİŞ CƏDVƏLİ (sonda tərəflərin adları açıq yazılıb) ==== */
       const schedRows = c.schedule.map((r,i)=>`
         <tr>
           <td>${i+1}</td>
@@ -723,39 +722,43 @@
         </table>
 
         <div class="sign-cols">
-          <div class="sign"><div class="sigcap">Satıcı</div><span class="sigline"></span></div>
-          <div class="sign"><div class="sigcap">Alıcı</div><span class="sigline"></span></div>
+          <div class="sign">
+            <div class="sigcap">Satıcı: “Baktel Electronics” MMC</div>
+            <span class="sigline"></span>
+          </div>
+          <div class="sign">
+            <div class="sigcap">Alıcı: ${custName}</div>
+            <span class="sigline"></span>
+          </div>
         </div>
       </div>`;
 
-      /* ==== 5) ZƏMANƏT TALONU (sənin mətni ilə) ==== */
+      /* ==== 5) ZƏMANƏT TALONU ==== */
       const zemanet = `
       <div class="print-a4 page-break">
         <div class="print-title">ZƏMANƏT TALONU</div>
 
         <div class="print-block"><strong>Zəmanət şərtləri:</strong></div>
-
         <div class="print-block kecik">
           • Zəmanət blankı əsasında təmir yalnız istehsalçı səhvindən meydana gəlmiş qüsurlara şamil edilir.<br>
-          • Qüsurun istehsalçı tərəfindən baş verib vermədiyini yalnız “Baktel Electronics” MMC və digər rəsmi şirkətləlrin texniki servis mütəxəssisləri tərəfindən müəyyənləşdirilə bilər.<br>
+          • Qüsurun istehsalçı tərəfindən baş verib vermədiyini yalnız “Baktel Electronics” MMC və digər rəsmi şirkətlərin texniki servis mütəxəssisləri tərəfindən müəyyənləşdirilə bilər.<br>
           • Zəmanət müddəti məhsulun satıldığı gündən hesablanır. • Hər hansı xarici zədə almamış (korpus və ekranda cızıq, batıq, əzik və s.) məhsul 14 gün ərzində müştərinin istəyi ilə qaytarıla və ya dəyişdirilə bilər.<br>
-          • Əgər məhsullun zəmanət müddəti bitib və ya zəmanət şərtlərində göstərilən qüsurlar təyin edilməyibsə, bu zaman məhsul “Baktel Electronics” MMC-nin uyğun, ödənişli tarifləri ilə təmir olunur.<br>
-          • Təmirə təqdim olunmuş məhsul müayinə və təmir məqsədilə 2-14 iş günü ərzində texniki servis mərkəzində saxlanıla bilər.<br>
-          • Təmir üçün lazım olan ehtiyyat hissəsi və ya detal tapılmadıqda, onun sifarişi və gətirilməsi müəyyən vaxt tələb etdiyindən göstərilən müddət tərəflərin razılığı ilə müəyyən qədər uzadıla bilər. Zəmanət müddəti bitməmiş məhsulun texniki baxış və təmir xidməti onun rəsmi nümayəndəliyi tərəfindən daxili təlimatlara uyğun olaraq aparılır
+          • Əgər məhsulun zəmanət müddəti bitib və ya zəmanət şərtlərində göstərilən qüsurlar təyin edilməyibsə, bu zaman məhsul “Baktel Electronics” MMC-nin uyğun, ödənişli tarifləri ilə təmir olunur.<br>
+          • Təmirə təqdim olunmuş məhsul müayinə və təmir məqsədilə 2–14 iş günü ərzində texniki servis mərkəzində saxlanıla bilər.<br>
+          • Təmir üçün lazım olan ehtiyat hissəsi və ya detal tapılmadıqda, onun sifarişi və gətirilməsi müəyyən vaxt tələb etdiyindən göstərilən müddət tərəflərin razılığı ilə müəyyən qədər uzadıla bilər. Zəmanət müddəti bitməmiş məhsulun texniki baxış və təmir xidməti onun rəsmi nümayəndəliyi tərəfindən daxili təlimatlara uyğun olaraq aparılır.
         </div>
 
         <div class="print-block"><strong>Satılmış məhsullar yalnız aşağıdakı şərtlər daxilində təmirə qəbul olunur:</strong></div>
         <div class="print-block kecik">
-          • Təmir üçün müraciət edilmiş məhmsulun yalnız bu blankda adı və soyadı qeyd olunan şəxsin şəxsiyyət vəsiqəsi ilə təqdim olunması:<br>
+          • Təmir üçün müraciət edilmiş məhsulun yalnız bu blankda adı və soyadı qeyd olunan şəxsin şəxsiyyət vəsiqəsi ilə təqdim olunması;<br>
           • Zəmanət müddətinin bitməməsi.
         </div>
 
         <div class="print-block"><strong>Məhsullar bu hallarda zəmanətli təmirə qəbul edilmir:</strong></div>
         <div class="print-block kecik">
-          • Əgər məhsul “Baktel Electronics” MMC və digər rəsmi şirkətlərin servis mütəxəssislərinə təqdim olunmazdan əvvəl hansısa kənar şəxs tərəfindən təmir edilər, təmir haqqında lazımi sənədlər verilməz<br>
-          • və bu təmirin keyfiyyətsizliyi nəticsində cihaz zədələnırsə;<br>
-          • Daxili və xarici zədələnmə cihazın daxilində yad cisim və ya maye düşməsi, yaxud digər xarici zərbə və nəticəsi yaranarsa;<br>
-          • Sıçrayışlar və gərginliyin həddən artıq yuxarı olması nəticəsində cihazda gərginlik və digər qüsurlar əmələ gələrsə.
+          • Əgər məhsul “Baktel Electronics” MMC və digər rəsmi şirkətlərin servis mütəxəssislərinə təqdim olunmazdan əvvəl kənar şəxs tərəfindən təmir edilərsə və təmir haqqında lazımi sənədlər təqdim edilməzsə, eləcə də bu təmirin keyfiyyətsizliyi nəticəsində cihaz zədələnərsə;<br>
+          • Daxili və xarici zədələnmə, cihazın daxilinə yad cisim və ya maye düşməsi, yaxud digər xarici zərbə və nəticəsində yaranmış qüsurlar olduqda;<br>
+          • Gərginlik sıçrayışları və həddən artıq yüksək gərginlik səbəbindən yaranan nasazlıqlar olduqda.
         </div>
 
         <table class="print-table" style="margin-top:6mm">
@@ -763,11 +766,11 @@
           <tr><th>İMEİ və ya SN</th><td>${imei1}${imei2 ? ` / ${imei2}` : ''}</td></tr>
           <tr><th>Zəmanət müddəti</th><td>1 (bir) il</td></tr>
           <tr><th>Satış tarixi</th><td>${fmtAzDate(startDate)}</td></tr>
-          <tr><th>Alıcının A.S.A</th><td>${custName}</td></tr>
+          <tr><th>Alıcının A.S.A.</th><td>${custName}</td></tr>
           <tr><th>Alıcının əlaqə nömrəsi</th><td>${custPhone || '-'}</td></tr>
         </table>
 
-        <div class="print-block" style="margin-top:6mm;"><strong>Şərtlər ilə tanış oldum və razıyam</strong></div>
+        <div class="print-block" style="margin-top:6mm;"><strong>Şərtlərlə tanış oldum və razıyam</strong></div>
 
         <div class="sign-cols">
           <div class="sign" style="text-align:center">
