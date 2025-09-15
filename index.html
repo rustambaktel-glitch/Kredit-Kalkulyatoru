@@ -332,7 +332,7 @@
       const day=sd.getDate();
       for(let i=1;i<=months;i++){ const d=new Date(sd); d.setMonth(d.getMonth()+i); d.setDate(day); bal=Math.max(0,bal-monthly); rows.push({i,date:d.toISOString().slice(0,10),monthly,bal}); }
 
-      const riskCls = risk==='low'?'pill':'pill';
+      const riskCls = 'pill';
       const dti = (salary>0)? (oblig/salary) : (oblig>0? Infinity : 0);
       const dtiWarn = dti > MAX_OBLIG_SHARE;
       const dtiHtml = dtiWarn ? `<div class="notice warn">Diqqət: Öhdəlik/Gəlir ${(dti*100).toFixed(0)}% (hədd ${Math.round(MAX_OBLIG_SHARE*100)}%).</div>` : '';
@@ -468,269 +468,307 @@
 
       let c; try{ c = computeForDocs(); }catch(e){ alert(e.message); return; }
 
-      // CONTRACT (exact style)
-      // 1) MÜQAVİLƏ
-const contractHTML = `
-<div class="print-a4 page-break">
-  <div class="print-title">MÜDDƏTLİ (NİSYƏ) ALQI-SATQI MÜQAVİLƏSİ № ${contractNo}</div>
-  <div class="print-subtop">
-    <div><strong>Bakı şəhəri</strong></div>
-    <div>${fmtAzDate(startDate)} tarixli</div>
-  </div>
+      // ==== 1) MÜQAVİLƏ
+      const contractHTML = `
+      <div class="print-a4 page-break">
+        <div class="print-title">MÜDDƏTLİ (NİSYƏ) ALQI-SATQI MÜQAVİLƏSİ № ${contractNo}</div>
+        <div class="print-subtop">
+          <div><strong>Bakı şəhəri</strong></div>
+          <div>${fmtAzDate(startDate)} tarixli</div>
+        </div>
 
-  <div class="print-block">
-    Bu müqaviləni (bundan sonra “Müqavilə”) bir tərəfdən Azərbaycan Respublikasının qanunvericiliyinə əsasən
-    qeydiyyatdan keçmiş və Nizamnamə əsasında fəaliyyət göstərən Baktel Electronics MMC (VÖEN: 1505350851),
-    Direktor Mahmudov İlqar Arif oğlu şəxsində (bundan sonra “Satıcı”), digər tərəfdən isə şəxsiyyət vəsiqəsinin
-    seriya və nömrəsi ${idSerial} olan ${custName} (bundan sonra “Alıcı”) birlikdə “Tərəflər” adlandırılmaqla
-    aşağıdakı şərtlərlə bağladılar.
-  </div>
+        <div class="print-block">
+          Bu müqaviləni (bundan sonra “Müqavilə”) bir tərəfdən Azərbaycan Respublikasının qanunvericiliyinə əsasən
+          qeydiyyatdan keçmiş və Nizamnamə əsasında fəaliyyət göstərən Baktel Electronics MMC (VÖEN: 1505350851),
+          Direktor Mahmudov İlqar Arif oğlu şəxsində (bundan sonra “Satıcı”), digər tərəfdən isə şəxsiyyət vəsiqəsinin
+          seriya və nömrəsi ${idSerial} olan ${custName} (bundan sonra “Alıcı”) birlikdə “Tərəflər” adlandırılmaqla
+          aşağıdakı şərtlərlə bağladılar.
+        </div>
 
-  <div class="print-h2">1. MÜQAVİLƏNİN PREDMETİ</div>
-  <ol class="print-ol">
-    <li>
-      1.1. Satıcı Alıcıya “Əlavə 1”də göstərilən Mal(lar)ı sənədlər (qaimə, vergi hesab-fakturası və s.) əsasında
-      nisyə satır, Alıcı isə Mal(lar)ı qəbul edib bu Müqavilə ilə müəyyən edilmiş qaydada dəyərini ödəməyi öhdəsinə götürür.
-      <div class="sub">
-        <table class="print-table" style="margin:3mm 0 5mm">
-          <tr><th style="width:35%">Məhsulun adı/modeli</th><td>${prodName} ${imei1 ? `(${imei1})` : ''}</td><td style="width:10%">&nbsp;</td></tr>
-          <tr><th>İlkin ödəniş məbləği</th><td>${c.down.toFixed(2)}</td><td>AZN</td></tr>
-          <tr><th>Kredit məbləği</th><td>${c.principal.toFixed(2)}</td><td>AZN</td></tr>
-          <tr><th>Kredit müddəti</th><td>${c.months}</td><td>ay</td></tr>
-          <tr><th>Aylıq ödəniş</th><td>${c.monthly.toFixed(2)}</td><td>AZN</td></tr>
+        <div class="print-h2">1. MÜQAVİLƏNİN PREDMETİ</div>
+        <ol class="print-ol">
+          <li>
+            1.1. Satıcı Alıcıya “Əlavə 1”də göstərilən Mal(lar)ı sənədlər (qaimə, vergi hesab-fakturası və s.) əsasında
+            nisyə satır, Alıcı isə Mal(lar)ı qəbul edib bu Müqavilə ilə müəyyən edilmiş qaydada dəyərini ödəməyi öhdəsinə götürür.
+            <div class="sub">
+              <table class="print-table" style="margin:3mm 0 5mm">
+                <tr><th style="width:35%">Məhsulun adı/modeli</th><td>${prodName} ${imei1 ? `(${imei1})` : ''}</td><td style="width:10%">&nbsp;</td></tr>
+                <tr><th>İlkin ödəniş məbləği</th><td>${c.down.toFixed(2)}</td><td>AZN</td></tr>
+                <tr><th>Kredit məbləği</th><td>${c.principal.toFixed(2)}</td><td>AZN</td></tr>
+                <tr><th>Kredit müddəti</th><td>${c.months}</td><td>ay</td></tr>
+                <tr><th>Aylıq ödəniş</th><td>${c.monthly.toFixed(2)}</td><td>AZN</td></tr>
+              </table>
+            </div>
+          </li>
+        </ol>
+
+        <div class="print-h2">2. TƏRƏFLƏRİN HÜQUQ VƏ VƏZİFƏLƏRİ</div>
+        <ol class="print-ol">
+          <li>
+            2.1. Satıcının hüquqları:
+            <div class="sub">
+              2.1.1. Müqavilə öhdəliklərinin vaxtında və lazımi qaydada icrasını Alıcıdan tələb etmək; 
+              2.1.2. Alıcı şərtləri pozduqda Müqaviləni vaxtından əvvəl ləğv edib borcun tam ödənilməsini tələb etmək.
+            </div>
+          </li>
+          <li>
+            2.2. Satıcının vəzifələri:
+            <div class="sub">
+              2.2.1. Birdəfəlik tutulmaların düzgün hesablanmasına riayət etmək; 
+              2.2.2. Zəmanət kitabçasının şərtlərinə uyğun məsuliyyət daşımaq.
+            </div>
+          </li>
+          <li>
+            2.3. Alıcının hüquqları:
+            <div class="sub">
+              2.3.1. Satıcıdan Müqavilə öhdəliklərinin vaxtında və düzgün icrasını tələb etmək; 
+              2.3.2. Satıcının razılığı ilə borcu qismən və ya tam şəkildə vaxtından əvvəl ödəmək.
+            </div>
+          </li>
+          <li>
+            2.4. Alıcının vəzifələri:
+            <div class="sub">
+              2.4.1. Mal(lar)ın dəyərini razılaşdırılmış qrafik üzrə ödəmək; 
+              2.4.2. Mal təhvil alındığı andan təsadüfən məhv olma/zədələnmə riskini daşımaq; 
+              2.4.3. Müqavilə öhdəliklərini vaxtında və tam icra etmək.
+            </div>
+          </li>
+        </ol>
+
+        <div class="print-h2">3. MƏSULİYYƏT</div>
+        <ol class="print-ol">
+          <li>3.1. Aylıq ödəniş 5 təqvim günü və daha çox gecikərsə, Satıcı borcun tam həcmdə vaxtından əvvəl ödənilməsini tələb edə bilər.</li>
+          <li>3.2. Ödəniş 30 təqvim günündən artıq gecikərsə və ya 3.1-ə əsasən 2 dəfədən çox gecikmə olarsa, nisyə alınmış cihazın İMEİ nömrəsinin deaktiv edilməsi və digər təsir tədbirləri tətbiq oluna bilər.</li>
+        </ol>
+
+        <div class="print-h2">4. ƏLAVƏ ŞƏRTLƏR</div>
+        <ol class="print-ol">
+          <li>4.1. Borc tam ödənilənədək Mal(lar) Satıcının girovu sayılır və üçüncü şəxslərə verilə bilməz.</li>
+          <li>4.2. Ödəniş şərtləri pozularsa, Mal(lar) Satıcı tərəfindən geri alına bilər.</li>
+        </ol>
+
+        <div class="print-h2">5. YEKUN MÜDDƏALAR</div>
+        <ol class="print-ol">
+          <li>5.1. Müqavilə imzalandığı andan qüvvəyə minir və öhdəliklər tam icra edildikdə qüvvədən düşür.</li>
+          <li>5.2. Mübahisələr Bakı şəhəri Nərimanov Rayon Məhkəməsində həll edilir. 3-cü bölüm üzrə məhkəmə müraciətləri zamanı xərclər Alıcı tərəfindən ödənilir.</li>
+          <li>5.3. Müqavilə Azərbaycan dilində iki (2) nüsxədə tərtib olunur və hər ikisi eyni hüquqi qüvvəyə malikdir.</li>
+        </ol>
+
+        <div class="print-h2">6. TƏRƏFLƏRİN REKVİZİTLƏRİ</div>
+        <table class="print-table">
+          <tr>
+            <td style="vertical-align:top; width:50%">
+              <strong>Satıcı:</strong><br>
+              Baktel Electronics MMC<br>
+              VÖEN: 1505350851<br>
+              Ünvan: Bakı şəhəri, Nəsimi r., Nizami k., 187<br>
+              Nümayəndə: ${sellerRep || '-'}
+            </td>
+            <td style="vertical-align:top; width:50%">
+              <strong>Alıcı:</strong><br>
+              ${custName}<br>
+              Ş/V seriya və nömrəsi: ${idSerial}<br>
+              Fin kodu: ${finCode}<br>
+              Ünvan: ${address || '-'}<br>
+              Telefon: ${custPhone || '-'}
+            </td>
+          </tr>
         </table>
-      </div>
-    </li>
-  </ol>
 
-  <div class="print-h2">2. TƏRƏFLƏRİN HÜQUQ VƏ VƏZİFƏLƏRİ</div>
-  <ol class="print-ol">
-    <li>
-      2.1. Satıcının hüquqları:
-      <div class="sub">
-        2.1.1. Müqavilə öhdəliklərinin vaxtında və lazımi qaydada icrasını Alıcıdan tələb etmək; 
-        2.1.2. Alıcı şərtləri pozduqda Müqaviləni vaxtından əvvəl ləğv edib borcun tam ödənilməsini tələb etmək.
-      </div>
-    </li>
-    <li>
-      2.2. Satıcının vəzifələri:
-      <div class="sub">
-        2.2.1. Birdəfəlik tutulmaların düzgün hesablanmasına riayət etmək; 
-        2.2.2. Zəmanət kitabçasının şərtlərinə uyğun məsuliyyət daşımaq.
-      </div>
-    </li>
-    <li>
-      2.3. Alıcının hüquqları:
-      <div class="sub">
-        2.3.1. Satıcıdan Müqavilə öhdəliklərinin vaxtında və düzgün icrasını tələb etmək; 
-        2.3.2. Satıcının razılığı ilə borcu qismən və ya tam şəkildə vaxtından əvvəl ödəmək.
-      </div>
-    </li>
-    <li>
-      2.4. Alıcının vəzifələri:
-      <div class="sub">
-        2.4.1. Mal(lar)ın dəyərini razılaşdırılmış qrafik üzrə ödəmək; 
-        2.4.2. Mal təhvil alındığı andan təsadüfən məhv olma/zədələnmə riskini daşımaq; 
-        2.4.3. Müqavilə öhdəliklərini vaxtında və tam icra etmək.
-      </div>
-    </li>
-  </ol>
+        <div class="sign-cols">
+          <div class="sign"><div class="sigcap">Satıcı</div><span class="sigline"></span></div>
+          <div class="sign"><div class="sigcap">Alıcı</div><span class="sigline"></span></div>
+        </div>
+      </div>`;
 
-  <div class="print-h2">3. MƏSULİYYƏT</div>
-  <ol class="print-ol">
-    <li>3.1. Aylıq ödəniş 5 təqvim günü və daha çox gecikərsə, Satıcı borcun tam həcmdə vaxtından əvvəl ödənilməsini tələb edə bilər.</li>
-    <li>3.2. Ödəniş 30 təqvim günündən artıq gecikərsə və ya 3.1-ə əsasən 2 dəfədən çox gecikmə olarsa, nisyə alınmış cihazın İMEİ nömrəsinin deaktiv edilməsi və digər təsir tədbirləri tətbiq oluna bilər.</li>
-  </ol>
+      // ==== 2) ƏLAVƏ 1 — İMEİ razılıq
+      const elave1 = `
+      <div class="print-a4 page-break">
+        <div class="print-title">${fmtAzDate(startDate)} tarixli ${contractNo} saylı müqaviləyə</div>
+        <div class="print-h2">1 saylı əlavə</div>
+        <div class="print-block"><strong>Bakı şəhəri</strong></div>
 
-  <div class="print-h2">4. ƏLAVƏ ŞƏRTLƏR</div>
-  <ol class="print-ol">
-    <li>4.1. Borc tam ödənilənədək Mal(lar) Satıcının girovu sayılır və üçüncü şəxslərə verilə bilməz.</li>
-    <li>4.2. Ödəniş şərtləri pozularsa, Mal(lar) Satıcı tərəfindən geri alına bilər.</li>
-  </ol>
+        <div class="print-block">
+          Mən, <strong>${custName}</strong> (Ş/V № ${idSerial}, Fin: ${finCode}, doğum tarixi: ${birthDate || '-'})
+          Baktel Electronics MMC-dən qarşılıqlı razılaşma əsasında hissə-hissə ödənişlə aldığım
+          <strong>${prodName}</strong> cihazının İMEİ: ${imei1}${imei2 ? `; İMEİ 2: ${imei2}` : ''} nömrəsinin,
+          Müqavilə şərtləri pozularsa, hüquqi əsaslar daxilində deaktiv edilməsinə və vahid şəbəkədə riskli müştəri
+          siyahısına daxil edilməsinə etiraz etmirəm.
+        </div>
 
-  <div class="print-h2">5. YEKUN MÜDDƏALAR</div>
-  <ol class="print-ol">
-    <li>5.1. Müqavilə imzalandığı andan qüvvəyə minir və öhdəliklər tam icra edildikdə qüvvədən düşür.</li>
-    <li>5.2. Mübahisələr Bakı şəhəri Nərimanov Rayon Məhkəməsində həll edilir. 3-cü bölüm üzrə məhkəmə müraciətləri zamanı xərclər Alıcı tərəfindən ödənilir.</li>
-    <li>5.3. Müqavilə Azərbaycan dilində iki (2) nüsxədə tərtib olunur və hər ikisi eyni hüquqi qüvvəyə malikdir.</li>
-  </ol>
+        <div class="sign-cols">
+          <div class="sign">
+            <div class="sigcap">Satan</div>
+            <span class="sigline"></span>
+            <div class="kecik">Baktel Electronics MMC</div>
+          </div>
+          <div class="sign" style="text-align:right">
+            <div class="sigcap">Alan</div>
+            <span class="sigline"></span>
+            <div class="kecik">${custName}</div>
+          </div>
+        </div>
 
-  <div class="print-h2">6. TƏRƏFLƏRİN REKVİZİTLƏRİ</div>
-  <table class="print-table">
-    <tr>
-      <td style="vertical-align:top; width:50%">
-        <strong>Satıcı:</strong><br>
-        Baktel Electronics MMC<br>
-        VÖEN: 1505350851<br>
-        Ünvan: Bakı şəhəri, Nəsimi r., Nizami k., 187<br>
-        Nümayəndə: ${sellerRep || '-'}
-      </td>
-      <td style="vertical-align:top; width:50%">
-        <strong>Alıcı:</strong><br>
-        ${custName}<br>
-        Ş/V seriya və nömrəsi: ${idSerial}<br>
-        Fin kodu: ${finCode}<br>
-        Ünvan: ${address || '-'}<br>
-        Telefon: ${custPhone || '-'}
-      </td>
-    </tr>
-  </table>
+        <div class="print-subtop">
+          <div>Tarix: ${fmtAzDate(startDate)}</div>
+          <div>Əlaqə: ${custPhone || '-'}</div>
+        </div>
+      </div>`;
 
-  <div class="sign-cols">
-    <div class="sign"><div class="sigcap">Satıcı</div><span class="sigline"></span></div>
-    <div class="sign"><div class="sigcap">Alıcı</div><span class="sigline"></span></div>
-  </div>
-</div>`;
+      // ==== 3) ƏLAVƏ 2 — Təhvil-Təslim (sənin nümunəsinə uyğun)
+      const elave2 = `
+      <div class="print-a4 page-break">
+        <div class="print-h2">2 saylı əlavə</div>
 
+        <div class="print-block" style="text-align:center; font-weight:700">
+          ${contractNo} saylı, ${fmtAzDate(startDate)} tarixli Nisyə alqı-satqı müqaviləsi dair Təhvil-Təslim aktı
+        </div>
 
-      // ELAVE 1
-      // 2) ƏLAVƏ 1 — İMEİ razılıq
-const elave1 = `
-<div class="print-a4 page-break">
-  <div class="print-title">${fmtAzDate(startDate)} tarixli ${contractNo} saylı müqaviləyə</div>
-  <div class="print-h2">1 saylı əlavə</div>
-  <div class="print-block"><strong>Bakı şəhəri</strong></div>
+        <div class="print-subtop" style="align-items:flex-start">
+          <div><strong>Bakı şəhəri</strong></div>
+          <div>
+            ${fmtAzDate(startDate)}<br>
+            cü il
+          </div>
+        </div>
 
-  <div class="print-block">
-    Mən, <strong>${custName}</strong> (Ş/V № ${idSerial}, Fin: ${finCode}, doğum tarixi: ${birthDate || '-'})
-    Baktel Electronics MMC-dən qarşılıqlı razılaşma əsasında hissə-hissə ödənişlə aldığım
-    <strong>${prodName}</strong> cihazının İMEİ: ${imei1}${imei2 ? `; İMEİ 2: ${imei2}` : ''} nömrəsinin,
-    Müqavilə şərtləri pozularsa, hüquqi əsaslar daxilində deaktiv edilməsinə və vahid şəbəkədə riskli müştəri
-    siyahısına daxil edilməsinə etiraz etmirəm.
-  </div>
+        <div class="print-block" style="text-align:justify">
+          Hazırkı Təhvil-Təslim Aktı, bir tərəfdən (bundan sonra ayrılıqda Tərəf, birlikdə isə Tərəflər adlanacaq)
+          “Baktel Electronics” MMC, (bundan sonra “Satıcı” adlanacaq) və digər tərəfdən, şəxsiyyət vəsiqəsinin
+          seriya nömrəsi ${idSerial} şəxsində (bundan sonra “Alıcı” adlanacaq) arasında aşağıdakılar barəsində
+          imzalanmışdır:
+        </div>
 
-  <div class="sign-cols">
-    <div class="sign">
-      <div class="sigcap">Satan</div>
-      <span class="sigline"></span>
-      <div class="kecik">Baktel Electronics MMC</div>
-    </div>
-    <div class="sign" style="text-align:right">
-      <div class="sigcap">Alan</div>
-      <span class="sigline"></span>
-      <div class="kecik">${custName}</div>
-    </div>
-  </div>
+        <ol class="print-ol">
+          <li>
+            1. Tərəflər hazırkı Təhvil-Təslim Aktını tərtib edərək təsdiq edirlər ki, Tərəflər arasında imzalanmış
+            ${contractNo} saylı, ${fmtAzDate(startDate)} tarixli Nisyə alqı-satqı müqaviləsinə (bundan sonra – Müqavilə)
+            əsasən, aşağıdakı cədvəldə göstərilən Mal(lar)ı Müqavilənin şərtlərinə uyğun şəkildə Alıcıya təhvil vermiş,
+            Alıcı isə həmin Mal(lar)ı Satıcıdan tam və qüsursuz şəkildə təhvil almışdır:
+          </li>
+        </ol>
 
-  <div class="print-subtop">
-    <div>Tarix: ${fmtAzDate(startDate)}</div>
-    <div>Əlaqə: ${custPhone || '-'}</div>
-  </div>
-</div>`;
+        <table class="print-table" style="margin:4mm 0 6mm">
+          <thead>
+            <tr>
+              <th style="width:6%">№</th>
+              <th>Malların adları və təsviri (IMEI kodu)</th>
+              <th style="width:10%">Miqdar</th>
+              <th style="width:18%">Məbləğ AZN</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>${prodName} ${imei1 ? imei1 : ''}</td>
+              <td>1</td>
+              <td>${toNum('price').toFixed(2)}</td>
+            </tr>
+          </tbody>
+        </table>
 
+        <ol class="print-ol">
+          <li>
+            2. Bu Aktın imzalandığı tarixdən etibarən Müqaviləyə uyğun olaraq Alıcı təsdiq və qəbul edir ki,
+            Satıcı tərəfindən təhvil verilmiş Mallar işlək və qüsursuz vəziyyətdədir.
+          </li>
+          <li>
+            3. Hazırki Aktın doğruluğunu aşağıda öz imzalarımızla təsdiq edirik:
+          </li>
+        </ol>
 
-      // ELAVE 2 (Təhvil-Təslim)
-     // 3) ƏLAVƏ 2 — Təhvil-Təslim aktı
-const elave2 = `
-<div class="print-a4 page-break">
-  <div class="print-h2">2 saylı əlavə</div>
-  <div class="print-block" style="text-align:center; font-weight:700">
-    ${contractNo} saylı, ${fmtAzDate(startDate)} tarixli nisyə alqı-satqı müqaviləsinə dair Təhvil-Təslim aktı
-  </div>
-  <div class="print-subtop">
-    <div><strong>Bakı şəhəri</strong></div>
-    <div>${fmtAzDate(startDate)} tarixli</div>
-  </div>
+        <div class="sign-cols">
+          <div class="sign">
+            <div class="sigcap">Satıcı: Baktel Electronics MMC</div>
+            <span class="sigline"></span>
+          </div>
+          <div class="sign">
+            <div class="sigcap">Alıcı: ${custName}</div>
+            <span class="sigline"></span>
+          </div>
+        </div>
+      </div>`;
 
-  <ol class="print-ol">
-    <li>1. Tərəflər təsdiq edirlər ki, aşağıda göstərilən Mal(lar) Müqavilənin şərtlərinə uyğun şəkildə Satıcı tərəfindən təhvil verilmiş, Alıcı tərəfindən tam və qüsursuz qəbul edilmişdir.</li>
-  </ol>
+      // ==== 4) ÖDƏNİŞ CƏDVƏLİ
+      const schedRows = c.schedule.map((r,i)=>`
+        <tr>
+          <td>${i+1}</td>
+          <td>${c.monthly.toFixed(2)} AZN</td>
+          <td>${r.bal.toFixed(2)} AZN</td>
+          <td>${fmtAzLong(r.date)}</td>
+        </tr>`).join('');
 
-  <table class="print-table" style="margin:4mm 0 6mm">
-    <thead>
-      <tr><th style="width:6%">№</th><th>Malların adı və təsviri (İMEİ)</th><th style="width:10%">Miqdar</th><th style="width:18%">Məbləğ, AZN</th></tr>
-    </thead>
-    <tbody>
-      <tr><td>1</td><td>${prodName} ${imei1 ? `(${imei1})` : ''}</td><td>1</td><td>${toNum('price').toFixed(2)}</td></tr>
-    </tbody>
-  </table>
+      const odeme = `
+      <div class="print-a4 page-break">
+        <div class="logo-fade">Baktel Electronics</div>
+        <div class="print-title" style="margin-top:4mm">Kredit ödəniş cədvəli</div>
 
-  <ol class="print-ol">
-    <li>2. Bu Aktın imzalanması ilə Alıcı Malların işlək və tam komplekt olduğunu təsdiq edir.</li>
-  </ol>
+        <table class="print-table" style="margin-top:6mm">
+          <tr><th style="width:28%">Müştəri A.S.A.</th><td>${custName}</td></tr>
+          <tr><th>Ş/V seriya və nömrəsi</th><td>${idSerial}</td></tr>
+          <tr><th>Kreditin verilmə tarixi</th><td>${fmtAzDate(startDate)}</td></tr>
+          <tr><th>Müqavilə nömrəsi</th><td>${contractNo}</td></tr>
+          <tr><th>Məhsul</th><td>${prodName} ${imei1 ? `(${imei1})` : ''}</td></tr>
+          <tr><th>Satış qiyməti</th><td>${toNum('price').toFixed(2)} AZN</td></tr>
+          <tr><th>İlkin ödəniş</th><td>${c.down.toFixed(2)} AZN</td></tr>
+          <tr><th>Qalıq borc</th><td>${c.principal.toFixed(2)} AZN</td></tr>
+          <tr><th>Müddət</th><td>${c.months} ay</td></tr>
+          <tr><th>Filial</th><td>${branch}</td></tr>
+          <tr><th>Valyuta</th><td>${currency}</td></tr>
+        </table>
 
-  <div class="sign-cols">
-    <div class="sign"><div class="sigcap">Satıcı: Baktel Electronics MMC</div><span class="sigline"></span></div>
-    <div class="sign"><div class="sigcap">Alıcı: ${custName}</div><span class="sigline"></span></div>
-  </div>
-</div>`;
+        <table class="print-table" style="margin-top:8mm">
+          <thead><tr><th style="width:6%">#</th><th style="width:22%">Aylıq</th><th style="width:22%">Qalıq</th><th>Tarix</th></tr></thead>
+          <tbody>${schedRows}</tbody>
+        </table>
 
+        <div class="sign-cols">
+          <div class="sign"><div class="sigcap">Satıcı</div><span class="sigline"></span></div>
+          <div class="sign"><div class="sigcap">Alıcı</div><span class="sigline"></span></div>
+        </div>
+      </div>`;
 
-      // ÖDƏNİŞ CƏDVƏLİ
-     // 4) ÖDƏNİŞ CƏDVƏLİ
-const schedRows = c.schedule.map((r,i)=>`
-  <tr>
-    <td>${i+1}</td>
-    <td>${c.monthly.toFixed(2)} AZN</td>
-    <td>${r.bal.toFixed(2)} AZN</td>
-    <td>${fmtAzLong(r.date)}</td>
-  </tr>`).join('');
+      // ==== 5) ZƏMANƏT TALONU
+      const zemanet = `
+      <div class="print-a4 page-break">
+        <div class="print-title">Zəmanət talonu</div>
+        <div class="print-block">Zəmanət şərtləri:</div>
+        <div class="print-block kecik">
+          • Zəmanət yalnız istehsalçı qüsurlarına şamil edilir və rəsmi servis tərəfindən müəyyənləşdirilir. <br>
+          • Zəmanət müddəti məhsulun satış tarixindən hesablanır. <br>
+          • Xarici zədəsi olmayan məhsul 14 gün ərzində qaytarıla və ya dəyişdirilə bilər. <br>
+          • Zəmanət şərtlərinə aid olmayan hallarda təmir ödənişlidir. Təmir müddəti 2–14 iş günü ola bilər. <br>
+          • Ehtiyat hissəsinin sifarişi hallarında müddət uzadıla bilər.
+        </div>
 
-const odeme = `
-<div class="print-a4 page-break">
-  <div class="logo-fade">Baktel Electronics</div>
-  <div class="print-title" style="margin-top:4mm">Kredit ödəniş cədvəli</div>
+        <table class="print-table" style="margin-top:6mm">
+          <tr><th style="width:28%;">Malın adı</th><td>${prodName}</td></tr>
+          <tr><th>İMEİ/SN</th><td>${imei1}${imei2 ? ` / ${imei2}` : ''}</td></tr>
+          <tr><th>Zəmanət müddəti</th><td>12 ay</td></tr>
+          <tr><th>Satış tarixi</th><td>${fmtAzDate(startDate)}</td></tr>
+          <tr><th>Alıcı A.S.A.</th><td>${custName}</td></tr>
+          <tr><th>Əlaqə nömrəsi</th><td>${custPhone || '-'}</td></tr>
+        </table>
 
-  <table class="print-table" style="margin-top:6mm">
-    <tr><th style="width:28%">Müştəri A.S.A.</th><td>${custName}</td></tr>
-    <tr><th>Ş/V seriya və nömrəsi</th><td>${idSerial}</td></tr>
-    <tr><th>Kreditin verilmə tarixi</th><td>${fmtAzDate(startDate)}</td></tr>
-    <tr><th>Müqavilə nömrəsi</th><td>${contractNo}</td></tr>
-    <tr><th>Məhsul</th><td>${prodName} ${imei1 ? `(${imei1})` : ''}</td></tr>
-    <tr><th>Satış qiyməti</th><td>${toNum('price').toFixed(2)} AZN</td></tr>
-    <tr><th>İlkin ödəniş</th><td>${c.down.toFixed(2)} AZN</td></tr>
-    <tr><th>Qalıq borc</th><td>${c.principal.toFixed(2)} AZN</td></tr>
-    <tr><th>Müddət</th><td>${c.months} ay</td></tr>
-    <tr><th>Filial</th><td>${branch}</td></tr>
-    <tr><th>Valyuta</th><td>${currency}</td></tr>
-  </table>
+        <div class="sign-cols">
+          <div class="sign" style="text-align:center">
+            ${custName}
+            <div class="sigcap">Alıcının adı, soyadı və imzası</div>
+            <span class="sigline"></span>
+          </div>
+          <div class="sign" style="text-align:center">
+            ${sellerRep || ' '}
+            <div class="sigcap">Satıcının adı, soyadı və imzası</div>
+            <span class="sigline"></span>
+          </div>
+        </div>
+      </div>`;
 
-  <table class="print-table" style="margin-top:8mm">
-    <thead><tr><th style="width:6%">#</th><th style="width:22%">Aylıq</th><th style="width:22%">Qalıq</th><th>Tarix</th></tr></thead>
-    <tbody>${schedRows}</tbody>
-  </table>
+      openPrintDocCombined('Sənədlər', contractHTML + elave1 + elave2 + odeme + zemanet);
+    }
 
-  <div class="sign-cols">
-    <div class="sign"><div class="sigcap">Satıcı</div><span class="sigline"></span></div>
-    <div class="sign"><div class="sigcap">Alıcı</div><span class="sigline"></span></div>
-  </div>
-</div>`;
-
-
-      // ZƏMANƏT TALONU
-     // 5) ZƏMANƏT TALONU
-const zemanet = `
-<div class="print-a4 page-break">
-  <div class="print-title">Zəmanət talonu</div>
-  <div class="print-block">Zəmanət şərtləri:</div>
-  <div class="print-block kecik">
-    • Zəmanət yalnız istehsalçı qüsurlarına şamil edilir və rəsmi servis tərəfindən müəyyənləşdirilir. <br>
-    • Zəmanət müddəti məhsulun satış tarixindən hesablanır. <br>
-    • Xarici zədəsi olmayan məhsul 14 gün ərzində qaytarıla və ya dəyişdirilə bilər. <br>
-    • Zəmanət şərtlərinə aid olmayan hallarda təmir ödənişlidir. Təmir müddəti 2–14 iş günü ola bilər. <br>
-    • Ehtiyat hissəsinin sifarişi hallarında müddət uzadıla bilər.
-  </div>
-
-  <table class="print-table" style="margin-top:6mm">
-    <tr><th style="width:28%">Malın adı</th><td>${prodName}</td></tr>
-    <tr><th>İMEİ/SN</th><td>${imei1}${imei2 ? ` / ${imei2}` : ''}</td></tr>
-    <tr><th>Zəmanət müddəti</th><td>12 ay</td></tr>
-    <tr><th>Satış tarixi</th><td>${fmtAzDate(startDate)}</td></tr>
-    <tr><th>Alıcı A.S.A.</th><td>${custName}</td></tr>
-    <tr><th>Əlaqə nömrəsi</th><td>${custPhone || '-'}</td></tr>
-  </table>
-
-  <div class="sign-cols">
-    <div class="sign" style="text-align:center">
-      ${custName}
-      <div class="sigcap">Alıcının adı, soyadı və imzası</div>
-      <span class="sigline"></span>
-    </div>
-    <div class="sign" style="text-align:center">
-      ${sellerRep || ' ' }
-      <div class="sigcap">Satıcının adı, soyadı və imzası</div>
-      <span class="sigline"></span>
-    </div>
-  </div>
-</div>`;
-
+    // Expose
+    window.calc=calc; window.resetForm=resetForm; window.exportPrint=exportPrint; window.toggleExtraIncome=toggleExtraIncome; window.onIncomeTypeChange=onIncomeTypeChange; window.toggleFinalize=toggleFinalize; window.finalizeAndPrint=finalizeAndPrint; window.toggleManualDown=toggleManualDown;
+  </script>
+</body>
+</html>
