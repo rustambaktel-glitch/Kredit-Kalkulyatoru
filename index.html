@@ -45,7 +45,7 @@
     .inline-check{display:flex;align-items:center;gap:6px}
     .inline-check .big-check{width:18px;height:18px;accent-color:#16a34a;transform:scale(1.15)}
 
-    /* ==== ÇAP SƏNƏDLƏRİ – Times New Roman (A4) ==== */
+    /* ==== ÇAP – Times New Roman (A4) ==== */
     .print-root{font-family:"Times New Roman", Times, serif; color:var(--print-text)}
     .print-a4{width:210mm; min-height:297mm; margin:0 auto; padding:20mm 17mm 18mm}
     .print-title{font-size:18pt; font-weight:700; text-align:center; text-transform:uppercase; letter-spacing:.2px}
@@ -225,8 +225,8 @@
     function getDownPayment(price, riskKey, salary=0, oblig=0){
       const base = POLICY_RISK_ONLY[riskKey] ?? POLICY_RISK_ONLY.med;
       salary = Number(salary)||0; oblig = Number(oblig)||0;
-      const net = Math.max(0, salary - oblig);             // net gəlir
-      const ratio = salary>0 ? net / salary : 0;           // DTI invert
+      const net = Math.max(0, salary - oblig);
+      const ratio = salary>0 ? net / salary : 0;
       let mod = 0;
       if(ratio >= 0.70) mod = -0.10; else if(ratio >= 0.50) mod = -0.05; else if(ratio >= 0.35) mod = 0.00; else if(ratio >= 0.20) mod = +0.10; else mod = +0.20;
       if(riskKey==='high') mod *= 0.7;
@@ -337,10 +337,9 @@
       let monthly = monthsNum>0 ? principal / monthsNum : 0;
 
       // Maksimum aylıq (DSR 40% * net gəlir)
-      const maxMonthly = Math.max(0, net * MAX_DSR);
+      const maxMonthly = Math.max(0, net * 0.40);
       let autoAdj=false;
       if(monthly > maxMonthly + 1e-9){
-        // uyğunlaşdır
         const requiredPrincipal = Math.max(0, maxMonthly * monthsNum);
         const newDownRaw = price - requiredPrincipal;
         const prevDown = down;
@@ -361,11 +360,11 @@
         rows.push({i,date:d,monthly,bal});
       }
 
-      // DTI xəbərdarlıq (öhdəlik/gəlir)
+      // DTI xəbərdarlıq
       const dti = (salary>0)? (oblig/salary) : (oblig>0? Infinity : 0);
       const dtiWarn = dti > MAX_OBLIG_SHARE;
 
-      // Xülasə (optimallaşdırılıb)
+      // Xülasə
       const statusBadge = monthly <= maxMonthly + 1e-9
         ? `<span class="pill" style="border-color:#86efac;background:#ecfdf5;color:#166534">Uyğundur</span>`
         : `<span class="pill" style="border-color:#fecaca;background:#fff1f2;color:#991b1b">Limitdən yüksək</span>`;
@@ -406,7 +405,7 @@
           </div>
         </div>`;
 
-      // UI Ödəniş cədvəli: tarix dd.mm.yyyy
+      // UI Ödəniş cədvəli
       document.getElementById('scheduleWrap').innerHTML = `
         <table>
           <thead><tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr></thead>
@@ -478,7 +477,7 @@
       if(mdChk && mdChk.checked){ const val = Math.max(0, Math.min(price, Number(mdInp.value||0))); if(!isNaN(val)) { down = val; pct = price>0 ? (down/price) : 0; } }
       let principal = Math.max(0, price - down);
       let monthly = months>0 ? principal / months : 0;
-      const maxMonthly = Math.max(0, net * MAX_DSR);
+      const maxMonthly = Math.max(0, net * 0.40);
       if(monthly>maxMonthly){
         const requiredPrincipal = Math.max(0, maxMonthly * months);
         const newDownRaw = price - requiredPrincipal;
@@ -530,7 +529,7 @@
 
       let c; try{ c = computeForDocs(); }catch(e){ alert(e.message); return; }
 
-      /* ==== 1) MÜQAVİLƏ ==== */
+      /* ==== 1) MÜQAVİLƏ – nümayəndə adı YOXDUR ==== */
       const contractHTML = `
       <div class="print-a4 page-break">
         <div class="print-title">MÜDDƏTLİ (NİSYƏ) ALQI-SATQI MÜQAVİLƏSİ № ${contractNo}</div>
@@ -541,10 +540,9 @@
 
         <div class="print-block">
           Bu müqaviləni (bundan sonra “Müqavilə”) bir tərəfdən Azərbaycan Respublikasının qanunvericiliyinə əsasən
-          qeydiyyatdan keçmiş və Nizamnamə əsasında fəaliyyət göstərən “Baktel Electronics” MMC (VÖEN: 1505350851),
-          ${sellerRep} şəxsində (bundan sonra “Satıcı”), digər tərəfdən isə şəxsiyyət vəsiqəsinin
-          seriya və nömrəsi ${idSerial} olan ${custName} (bundan sonra “Alıcı”) birlikdə “Tərəflər” adlandırılmaqla
-          aşağıdakı şərtlərlə bağladılar.
+          qeydiyyatdan keçmiş və Nizamnamə əsasında fəaliyyət göstərən “Baktel Electronics” MMC (bundan sonra “Satıcı”),
+          digər tərəfdən isə şəxsiyyət vəsiqəsinin seriya və nömrəsi ${idSerial} olan ${custName}
+          (bundan sonra “Alıcı”) birlikdə “Tərəflər” adlandırılmaqla aşağıdakı şərtlərlə bağladılar.
         </div>
 
         <div class="print-h2">1. MÜQAVİLƏNİN PREDMETİ</div>
@@ -623,8 +621,7 @@
               <strong>Satıcı:</strong><br>
               “Baktel Electronics” MMC<br>
               VÖEN: 1505350851<br>
-              Ünvan: Bakı şəhəri, Nəsimi r., Nizami k., 187<br>
-              Nümayəndə: ${sellerRep}
+              Ünvan: Bakı şəhəri, Nəsimi r., Nizami k., 187
             </td>
             <td style="vertical-align:top; width:50%">
               <strong>Alıcı:</strong><br>
@@ -643,7 +640,7 @@
         </div>
       </div>`;
 
-      /* ==== 2) ƏLAVƏ 1 ==== */
+      /* ==== 2) ƏLAVƏ 1 – nümayəndə adı YOXDUR ==== */
       const elave1 = `
       <div class="print-a4 page-break">
         <div class="print-title">${ddmmyyyy(startDate)} tarixli ${contractNo} saylı müqaviləyə</div>
@@ -677,7 +674,7 @@
         </div>
       </div>`;
 
-      /* ==== 3) ƏLAVƏ 2 — Təhvil-Təslim ==== */
+      /* ==== 3) ƏLAVƏ 2 – nümayəndə adı YOXDUR ==== */
       const elave2 = `
       <div class="print-a4 page-break">
         <div class="print-h2">2 SAYLI ƏLAVƏ</div>
@@ -746,7 +743,8 @@
         </div>
       </div>`;
 
-      /* ==== 4) ÖDƏNİŞ CƏDVƏLİ ==== */
+      /* ==== 4) ÖDƏNİŞ CƏDVƏLİ – nümayəndə adı YOXDUR ==== */
+      const c = computeForDocs();
       const schedRows = c.schedule.map((r,i)=>`
         <tr>
           <td>${i+1}</td>
@@ -791,7 +789,7 @@
         </div>
       </div>`;
 
-      /* ==== 5) ZƏMANƏT TALONU ==== */
+      /* ==== 5) ZƏMANƏT TALONU – nümayəndə adı BURADA VAR ==== */
       const zemanet = `
       <div class="print-a4 page-break">
         <div class="print-title">ZƏMANƏT TALONU</div>
@@ -833,11 +831,6 @@
 
       openPrintDocCombined('Sənədlər', contractHTML + elave1 + elave2 + odeme + zemanet);
     }
-
-    // Expose
-    window.calc=calc; window.resetForm=resetForm; window.exportPrint=exportPrint;
-    window.toggleExtraIncome=toggleExtraIncome; window.onIncomeTypeChange=onIncomeTypeChange;
-    window.toggleFinalize=toggleFinalize; window.finalizeAndPrint=finalizeAndPrint; window.toggleManualDown=toggleManualDown;
   </script>
 </body>
 </html>
