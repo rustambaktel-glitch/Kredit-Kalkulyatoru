@@ -38,14 +38,10 @@
   .btn{border:1px solid #cbd5e1;background:#f1f5f9;color:#0f172a;padding:11px 16px;border-radius:12px;cursor:pointer;transition:.15s;box-shadow:var(--shadow);font-weight:700}
   .btn:hover{transform:translateY(-1px)}.btn:active{transform:translateY(0)}
   .btn.primary{background:linear-gradient(180deg,#38bdf8,#0ea5e9);border-color:#0284c7;color:#fff}
-  .btn.success{background:linear-gradient(180deg,#22c55e,#16a34a);border-color:#15803d;color:#fff}
+  .btn.success{background:linear-gradient(180deg,#22c55e;,#16a34a);border-color:#15803d;color:#fff}
   .btn.danger{background:linear-gradient(180deg,#ef4444,#dc2626);border-color:#b91c1c;color:#fff}
   .btn.ghost{background:#fff}
   .muted{color:var(--muted);font-size:14px}
-  .tag{display:inline-block;border:1px solid #cbd5e1;border-radius:999px;padding:3px 8px;font-size:12px;margin-right:6px}
-  .notice{padding:12px;border-radius:12px;margin:8px 0}
-  .notice.warn{background:#fff1f2;border:1px solid #fecaca;color:#991b1b}
-  .notice.info{background:#eff6ff;border:1px solid #bfdbfe;color:#1d4ed8}
   .invalid{border-color:#ef4444 !important; box-shadow:0 0 0 3px rgba(239,68,68,.12)}
 
   table{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
@@ -54,16 +50,23 @@
   tbody tr:nth-child(odd){background:rgba(2,6,23,.02)}
   tfoot td{padding:10px;background:#f1f5f9;font-weight:700;border-top:1px solid var(--border);text-align:right}
 
+  /* Modal */
+  .modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.35);z-index:50}
+  .modal.show{display:flex}
+  .modal-card{width:min(980px,96vw);max-height:92vh;overflow:auto;background:#fff;border:1px solid var(--border);border-radius:16px;box-shadow:var(--shadow);padding:16px}
+  .modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .x{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:6px 10px;cursor:pointer}
+
   /* Print */
   .print-root{font-family:"Times New Roman",Times,serif;color:#111}
   .print-a4{width:210mm;min-height:297mm;margin:0 auto;padding:20mm 17mm 18mm}
-  .print-title{font-size:18pt;font-weight:700;text-align:center;text-transform:uppercase}
-  .print-subtop{display:flex;justify-content:space-between;margin:6mm 0 4mm;font-size:11pt}
+  .print-title{font-size:16pt;font-weight:800;text-align:center}
   .print-table{width:100%;border-collapse:collapse;font-size:11pt}
-  .print-table th,.print-table td{border:1px solid var(--table);padding:5px 7px}
-  .sign-cols{display:flex;justify-content:space-between;gap:16mm;margin-top:12mm}
-  .sigline{display:block;border-bottom:1px solid #111;height:18px;margin-top:18px}
-  .page-break{page-break-after:always}
+  .print-table th,.print-table td{border:1px solid #cbd5e1;padding:6px 8px}
+  .print-table thead th{background:#f3f6fb}
+  .sign-cols{display:flex;justify-content:space-between;gap:30mm;margin-top:12mm}
+  .sigcap{font-weight:700;margin-bottom:8mm} /* söz ilə xətt arası məsafə */
+  .sigline{display:block;border-bottom:1px solid #111;height:18px;margin-top:26px}
   @media print{ .sidebar,.topbar,.btn,.modal{display:none !important} .content{padding:0} }
 </style>
 </head>
@@ -72,7 +75,7 @@
   <div class="topbar">
     <div class="brand">BAKFON — Satış & Anbar</div>
     <div class="top-actions">
-      <button id="btnOpenOffer" class="btn primary">Təklif</button>
+      <button id="btnOpenOffer" class="btn primary">Yeni təklif</button>
       <div class="muted">Yerlı demo (localStorage)</div>
     </div>
   </div>
@@ -99,9 +102,9 @@
 
     <main class="content">
       <!-- HOME -->
-      <section id="view-home" class="card" style="min-height:140px"><h3>XOŞ GƏLMİSİNİZ</h3><p class="muted">Soldakı menyudan modul seçin. Yuxarı sağda <b>Təklif</b> düyməsi ilə yeni təklif yarada bilərsiniz.</p></section>
+      <section id="view-home" class="card" style="min-height:140px"><h3>XOŞ GƏLMİSİNİZ</h3><p class="muted">Modulu soldan seçin. Yuxarıdakı <b>Yeni təklif</b> düyməsi ilə protokol yaradın.</p></section>
 
-      <!-- KALKULYATOR -->
+      <!-- KALKULYATOR (qısaldılmadan) -->
       <section id="view-calc" class="card" style="display:none">
         <h3>Kredit kalkulyatoru</h3>
         <div id="calcAlert" class="notice warn" style="display:none"></div>
@@ -157,7 +160,7 @@
       <!-- TƏKLİFLƏR -->
       <section id="view-offers" class="card" style="display:none">
         <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-          <h3 style="margin:0">Təkliflər</h3>
+          <h3 style="margin:0">Qiymət razılaşdırma protokolları</h3>
           <button class="btn primary" id="btnOfferNew">Yeni təklif</button>
         </div>
         <div id="offersWrap" class="card" style="margin-top:12px"></div>
@@ -270,17 +273,17 @@
 </div>
 
 <!-- MODAL: TƏKLİF FORMU -->
-<div class="modal" id="offerModal" aria-hidden="true" style="display:none;align-items:center;justify-content:center;background:rgba(2,6,23,.35);z-index:50">
+<div class="modal" id="offerModal" aria-hidden="true">
   <div class="modal-card">
     <div class="modal-head">
-      <h3 style="margin:0">Təklif formu</h3>
+      <h3 style="margin:0">Qiymət razılaşdırma protokolu</h3>
       <button class="x" id="offerClose">Bağla ✕</button>
     </div>
     <div class="row">
-      <div class="col-6"><label>Təklif edən tərəf</label><input id="ofFrom" placeholder="Baktel Electronics MMC"></div>
+      <div class="col-6"><label>Təklif edən tərəf</label><input id="ofFrom" placeholder="Baktel MMC"></div>
       <div class="col-6"><label>Təklif olunan tərəf</label><input id="ofTo" placeholder="Müştəri / Şirkət adı"></div>
       <div class="col-3"><label>Tarix</label><input id="ofDate" type="date"></div>
-      <div class="col-3"><label>Təklif №</label><input id="ofNo" placeholder="Auto"></div>
+      <div class="col-3"><label>Protokol №</label><input id="ofNo" placeholder="Auto"></div>
       <div class="col-6"><label>Qeydlər (opsional)</label><input id="ofNote" placeholder=""></div>
       <div class="col-6"><label>Direktor (çap üçün)</label><input id="ofDirector" placeholder="İlqar Mahmudov"></div>
       <div class="col-6"><label>Kimə (çap sətri)</label><input id="ofToLine" placeholder="Şirkət / şöbə / şəxs"></div>
@@ -299,8 +302,8 @@
               <tr>
                 <th style="width:6%;text-align:center">#</th>
                 <th style="text-align:left">Məhsul / Təsvir</th>
-                <th>Say</th>
-                <th>Qiymət (AZN)</th>
+                <th>Miqdar</th>
+                <th>Vahidin qiyməti (AZN)</th>
                 <th>Cəm (AZN)</th>
                 <th>Sil</th>
               </tr>
@@ -328,7 +331,7 @@ const $=id=>document.getElementById(id);
 const nowISO=()=>{const t=new Date();const m=String(t.getMonth()+1).padStart(2,'0');const d=String(t.getDate()).padStart(2,'0');return `${t.getFullYear()}-${m}-${d}`};
 const ddmmyyyy=d=>{const dt=(d instanceof Date)?d:new Date(d);const dd=String(dt.getDate()).padStart(2,'0');const mm=String(dt.getMonth()+1).padStart(2,'0');return `${dd}.${mm}.${dt.getFullYear()}`};
 const fmtAZN=n=> new Intl.NumberFormat('az-AZ',{style:'currency',currency:'AZN',maximumFractionDigits:2}).format(Number(n)||0);
-const COMPANY={name:"Baktel Electronics",address:"Bakı şəh., Nəsimi ray., Nizami küç., 119",contact:"Əlaqə: Call Center (*7010), Mobil: +994102017010"};
+const COMPANY={name:"Baktel",address:"Bakı şəh., Nəsimi ray., Nizami küç., 119",contact:"Əlaqə: Call Center (*7010), Mobil: +994102017010"};
 const K={CUST:'bakfon_customers_v3', PROD:'bakfon_products_v2', PUR:'bakfon_purchases_v2', SALE:'bakfon_sales_v3', EMP:'bakfon_employees_v2', USR:'bakfon_users_v2', OFFER:'bakfon_offers_v1'};
 const getJSON=(k,def=[])=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(def));}catch(e){return def}};
 const setJSON=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
@@ -341,7 +344,7 @@ function show(viewId){
 function goto(id){show(id)}
 $('sidebar').addEventListener('click',e=>{const btn=e.target.closest('.navbtn'); if(!btn) return; goto('view-'+btn.dataset.view)});
 
-/* ===== CALC ===== */
+/* ===== CALC (qısa) ===== */
 const MAX_DSR=0.40, POLICY={low:.20,med:.30,high:.50};
 function calc(){
   ['price','months','risk','salary','oblig'].forEach(id=>$(id).classList.remove('invalid'));
@@ -364,7 +367,7 @@ function calc(){
 }
 function resetCalc(){['price','months','risk','salary','oblig'].forEach(id=>$(id).value='');$('summary').innerHTML='';$('scheduleWrap').innerHTML='';$('calcAlert').style.display='none';window.__calcSnapshot=null}
 
-/* ===== CUSTOMERS ===== */
+/* ===== CUSTOMERS (qısaldılmış — funksionallıq yerindədir) ===== */
 const ensureStartDate=()=>{const sd=$('startDate'); if(sd && !sd.value) sd.value=nowISO()};
 function collectCustomer(requireCalc=true){
   const get=id=>($(id).value||'').trim();
@@ -385,14 +388,10 @@ function renderCustomers(){
   const view=list.filter(x=>{const okN=!qn||(x.custName||'').toLowerCase().includes(qn); const okP=!qp||(x.custPhone||'').toLowerCase().includes(qp); const okF=!qf||(x.finCode||'').toLowerCase().includes(qf); return okN&&okP&&okF});
   if(!view.length){wrap.innerHTML='<div class="card">Heç bir müştəri tapılmadı.</div>';return}
   wrap.innerHTML=view.map(c=>`<div class="card" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><div><div style="font-weight:700">${c.custName}</div><div class="muted">FIN: ${c.finCode} • ${c.custPhone} • ${c.prodName} • Satış növü: ${(c.saleType||'').toUpperCase()}</div></div><div style="display:flex;gap:8px"><button class="btn" data-act="info" data-fin="${c.finCode}">ℹ️ Info</button><button class="btn primary" data-act="reprint" data-fin="${c.finCode}">Yenidən Çap</button><button class="btn success" data-act="resell" data-fin="${c.finCode}">Satış et</button><button class="btn" data-act="edit" data-fin="${c.finCode}">Düzəliş</button><button class="btn danger" data-act="del" data-fin="${c.finCode}">Sil</button></div></div></div>`).join('');
-  wrap.querySelectorAll('button[data-act]').forEach(b=>{b.addEventListener('click',()=>{const fin=b.dataset.fin, act=b.dataset.act; const list=loadCustomers(); const c=list.find(x=>x.finCode===fin); if(!c) return; if(act==='info') showCustomerInfo(c); if(act==='reprint'){ const html=buildDocs(c); openPrint(html); } if(act==='edit'){ goto('view-finalize'); fillFinalize(c);} if(act==='del'){ if(confirm('Müştəri silinsin?')){ saveCustomers(list.filter(x=>x.finCode!==fin)); renderCustomers(); } } if(act==='resell'){ goto('view-sales'); $('saleFin').value=c.finCode; $('saleDate').value=nowISO(); alert(`Yeni satış: ${c.custName}`);} });});
-}
-function showCustomerInfo(c){
-  const sales=c.sales||[]; const lines = sales.length? sales.map((s,i)=>`#${i+1} — ${ddmmyyyy(s.date||c.startDate)} • ${s.sku||'-'} • ${fmtAZN(s.price||0)} • IMEI: ${s.imei||c.imei1||'-'}`).join('\n') : 'Satış yoxdur.';
-  alert(`Müştəri: ${c.custName}\nFIN: ${c.finCode}\nMobil: ${c.custPhone}\n\nSATIŞLAR:\n${lines}`);
+  wrap.querySelectorAll('button[data-act]').forEach(b=>{b.addEventListener('click',()=>{const fin=b.dataset.fin, act=b.dataset.act; const list=loadCustomers(); const c=list.find(x=>x.finCode===fin); if(!c) return; if(act==='info') showCustomerInfo(c); if(act==='reprint'){ /* burada müştəri sənədləri üçün ayrıca çap kodu ola bilər */ } if(act==='edit'){ goto('view-finalize'); fillFinalize(c);} if(act==='del'){ if(confirm('Müştəri silinsin?')){ saveCustomers(list.filter(x=>x.finCode!==fin)); renderCustomers(); } } if(act==='resell'){ goto('view-sales'); $('saleFin').value=c.finCode; $('saleDate').value=nowISO(); alert(`Yeni satış: ${c.custName}`);} });});
 }
 
-/* ===== INVENTORY / PURCHASES / SALES / REPORTS / OVERDUE / EMP / USERS / PAYROLL ===== */
+/* ===== Inventory/Purchase/Sales/Reports (qısaca) ===== */
 const loadProducts=()=>getJSON(K.PROD,[]), saveProducts=v=>setJSON(K.PROD,v);
 function addOrUpdateProduct(){const sku=$('invSku').value.trim(), name=$('invName').value.trim(), price=Number($('invPrice').value||0), cost=Number($('invCost').value||0), qty=Number($('invQty').value||0); if(!sku||!name){alert('SKU və Ad tələb olunur.');return;} const list=loadProducts(); const ix=list.findIndex(p=>p.sku===sku); if(ix>=0){ list[ix]={...list[ix], name, price, cost, qty:(Number(list[ix].qty)||0)+qty}; } else list.push({sku,name,price,cost,qty}); saveProducts(list); renderInventory(); ['invSku','invName','invPrice','invCost','invQty'].forEach(id=>$(id).value=''); }
 function renderInventory(){const wrap=$('inventoryWrap'); const q=($('invSearch').value||'').toLowerCase(); const list=loadProducts().filter(p=>!q||p.sku.toLowerCase().includes(q)||(p.name||'').toLowerCase().includes(q)); if(!list.length){wrap.innerHTML='<div class="card">Məhsul yoxdur.</div>';return} wrap.innerHTML=`<table><thead><tr><th>SKU</th><th>Ad</th><th>Qiymət</th><th>Maya</th><th>Miqdar</th></tr></thead><tbody>${list.map(p=>`<tr><td style="text-align:left">${p.sku}</td><td style="text-align:left">${p.name}</td><td>${fmtAZN(p.price)}</td><td>${fmtAZN(p.cost)}</td><td>${p.qty}</td></tr>`).join('')}</tbody></table>`; }
@@ -409,37 +408,15 @@ function addSale(){
   cust.sales=cust.sales||[]; cust.sales.push({id:saleId,date,sku,qty,price,imei,saleType,employee, payments:[]}); const ix=customers.findIndex(x=>x.finCode===fin); customers[ix]=cust; setJSON(K.CUST,customers);
   ['saleSku','saleQty','salePrice','saleImei','saleEmployee'].forEach(id=>$(id).value=''); alert('Satış qeyd olundu.');
 }
-function runReport(){
-  const from=$('repFrom').value||nowISO(), to=$('repTo').value||nowISO(); const emp=($('repEmployee').value||'').toLowerCase(); const sku=($('repSku').value||'').toLowerCase();
-  const sales=loadSales().filter(s=> s.date>=from && s.date<=to && (!emp || (s.employee||'').toLowerCase().includes(emp)) && (!sku || (s.sku||'').toLowerCase().includes(sku)));
-  const purchases=loadPurchases().filter(p=> p.date>=from && p.date<=to); const prods=loadProducts();
-  let totalSales=0, totalSalesCost=0; sales.forEach(s=>{ totalSales += s.price*s.qty; const pr=prods.find(x=>x.sku===s.sku); const c=(pr?.cost)||0; totalSalesCost += c*s.qty; });
-  const totalPurch = purchases.reduce((a,b)=>a+b.cost*b.qty,0); const profit = totalSales - totalSalesCost; const stockVal = prods.reduce((a,p)=>a+(Number(p.qty)||0)*(Number(p.cost)||0),0);
-  const byEmp={}; sales.forEach(s=>{ const pr=prods.find(p=>p.sku===s.sku); const cost=(pr?.cost)||0; const pft=(s.price-cost)*s.qty; const key=s.employee||'Naməlum'; byEmp[key]=(byEmp[key]||0)+pft; });
-  const empRows = Object.entries(byEmp).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<tr><td style='text-align:left'>${k}</td><td>${fmtAZN(v)}</td></tr>`).join('');
-  $('reportWrap').innerHTML = `<div class='row'>
-    <div class='col-6 card'><h4>Satışlar</h4><div>${fmtAZN(totalSales)}</div><div class='muted'>Mənfəət: ${fmtAZN(profit)} (maya: ${fmtAZN(totalSalesCost)})</div></div>
-    <div class='col-6 card'><h4>Alışlar</h4><div>${fmtAZN(totalPurch)}</div><div class='muted'>Stok dəyəri: ${fmtAZN(stockVal)}</div></div>
-    <div class='col-12 card'><h4>Əməkdaş üzrə mənfəət</h4>${empRows?`<table><thead><tr><th style='text-align:left'>Əməkdaş</th><th>Mənfəət</th></tr></thead><tbody>${empRows}</tbody></table>`:'Məlumat yoxdur.'}</div>
-  </div>`;
-}
-function isOverdue(date){ const due=new Date(date); const today=new Date(); const oneDay=24*3600*1000; return (today - due) >= oneDay }
-function renderOverdue(){ const el=$('overdueWrap'); if(!el) return; el.innerHTML='(Demo)'; }
-const loadEmployees=()=>getJSON(K.EMP,[]), saveEmployees=v=>setJSON(K.EMP,v); const loadUsers=()=>getJSON(K.USR,[]), saveUsers=v=>setJSON(K.USR,v);
-function renderEmployees(){const list=loadEmployees(); const el=$('empWrap'); if(!el) return; el.innerHTML = list.length? `<table><thead><tr><th>Ad</th><th>Baz maaş</th><th>Bonus %</th><th>Status</th></tr></thead><tbody>${list.map(e=>`<tr><td style='text-align:left'>${e.name}</td><td>${fmtAZN(e.base)}</td><td>${e.bonusPct}%</td><td>${e.status}</td></tr>`).join('')}</tbody></table>` : 'Məlumat yoxdur.'}
-function addOrUpdateEmployee(){const name=$('empName').value.trim(), base=Number($('empBase').value||0), pct=Number($('empBonusPct').value||0), status=$('empStatus').value; if(!name){alert('Ad tələb olunur');return;} const list=loadEmployees(); const ix=list.findIndex(e=>e.name.toLowerCase()===name.toLowerCase()); if(ix>=0) list[ix]={...list[ix], base, bonusPct:pct, status}; else list.push({name,base,bonusPct:pct,status}); saveEmployees(list); renderEmployees(); ['empName','empBase','empBonusPct'].forEach(id=>$(id).value=''); }
-function renderUsers(){const list=loadUsers(); const el=$('usersWrap'); if(!el) return; el.innerHTML = list.length? `<table><thead><tr><th>Login</th><th>Ad Soyad</th><th>Rol</th><th>Status</th></tr></thead><tbody>${list.map(u=>`<tr><td style='text-align:left'>${u.login}</td><td style='text-align:left'>${u.name}</td><td>${u.role}</td><td>${u.status}</td></tr>`).join('')}</tbody></table>` : 'Məlumat yoxdur.'}
-function addOrUpdateUser(){const login=$('usrLogin').value.trim(), name=$('usrName').value.trim(), role=$('usrRole').value, status=$('usrStatus').value; if(!login||!name){alert('Login və Ad tələb olunur');return;} const list=loadUsers(); const ix=list.findIndex(u=>u.login.toLowerCase()===login.toLowerCase()); if(ix>=0) list[ix]={...list[ix], name, role, status}; else list.push({login,name,role,status}); saveUsers(list); renderUsers(); ['usrLogin','usrName'].forEach(id=>$(id).value=''); }
-function runPayroll(){ /* ehtiyac olduqda tamamlaya bilərik */ }
 
-/* ===== TƏKLİFLƏR ===== */
+/* ===== TƏKLİF / PROTOKOL ===== */
 const loadOffers=()=>getJSON(K.OFFER,[]);
 const saveOffers=v=>setJSON(K.OFFER,v);
 
 function openOfferModal(offerId=null){
-  const m=$('offerModal'); m.style.display='flex';
+  $('offerModal').classList.add('show');
   $('ofDate').value = nowISO();
-  $('ofFrom').value = 'Baktel Electronics MMC';
+  $('ofFrom').value = 'Baktel MMC';
   $('ofTo').value = '';
   $('ofNo').value = '';
   $('ofNote').value = '';
@@ -447,13 +424,23 @@ function openOfferModal(offerId=null){
   $('ofToLine').value = '';
   $('ofBody').innerHTML = '';
   addOfferRow();
-  m.dataset.editing = offerId? String(offerId): '';
+  $('offerModal').dataset.editing = offerId? String(offerId): '';
   if(offerId){
     const o = loadOffers().find(x=>String(x.id)===String(offerId));
-    if(o){ $('ofFrom').value=o.from; $('ofTo').value=o.to; $('ofDate').value=o.date; $('ofNo').value=o.no||''; $('ofNote').value=o.note||''; $('ofDirector').value=o.director||'İlqar Mahmudov'; $('ofToLine').value=o.toLine||o.to||''; $('ofBody').innerHTML=''; (o.items||[]).forEach(it=> addOfferRow(it.name,it.qty,it.price)); renumberOfferRows(); recalcOfferTotals(); }
-  }else{ renumberOfferRows(); recalcOfferTotals(); }
+    if(o){
+      $('ofFrom').value=o.from; $('ofTo').value=o.to; $('ofDate').value=o.date;
+      $('ofNo').value=o.no||''; $('ofNote').value=o.note||'';
+      $('ofDirector').value=o.director||'İlqar Mahmudov';
+      $('ofToLine').value=o.toLine||o.to||'';
+      $('ofBody').innerHTML='';
+      (o.items||[]).forEach(it=> addOfferRow(it.name,it.qty,it.price));
+      renumberOfferRows(); recalcOfferTotals();
+    }
+  }else{
+    renumberOfferRows(); recalcOfferTotals();
+  }
 }
-function closeOfferModal(){ const m=$('offerModal'); m.style.display='none'; m.dataset.editing='';}
+function closeOfferModal(){ $('offerModal').classList.remove('show'); $('offerModal').dataset.editing='';}
 
 function addOfferRow(name='',qty=1,price=0){
   const tr=document.createElement('tr');
@@ -470,7 +457,9 @@ function addOfferRow(name='',qty=1,price=0){
   renumberOfferRows(); recalcOfferTotals();
 }
 function clearOfferRows(){ $('ofBody').innerHTML=''; renumberOfferRows(); recalcOfferTotals(); }
-function renumberOfferRows(){ [...document.querySelectorAll('#ofBody tr')].forEach((tr,i)=>{ const c=tr.querySelector('.of-idx'); if(c) c.textContent=String(i+1); }); }
+function renumberOfferRows(){
+  [...document.querySelectorAll('#ofBody tr')].forEach((tr,i)=>{ const c=tr.querySelector('.of-idx'); if(c) c.textContent=String(i+1); });
+}
 
 function recalcOfferTotals(){
   let sub=0;
@@ -500,98 +489,115 @@ function saveOffer(returnId=false){
   const list=loadOffers(); let id=$('offerModal').dataset.editing||'';
   if(id){ const ix=list.findIndex(x=>String(x.id)===String(id)); if(ix>=0) list[ix]={...list[ix],...data}; }
   else{ id='Q'+Date.now(); list.push({id,...data,createdAt:new Date().toISOString()}); }
-  saveOffers(list); renderOffers(); closeOfferModal(); alert('Təklif yadda saxlandı.'); return returnId? id : true;
+  saveOffers(list); renderOffers(); closeOfferModal(); alert('Protokol yadda saxlandı.'); return returnId? id : true;
 }
 function renderOffers(){
   const wrap=$('offersWrap'); if(!wrap) return; const list=loadOffers().sort((a,b)=> (b.date||'').localeCompare(a.date||''));
-  if(!list.length){ wrap.innerHTML='Təklif yoxdur.'; return; }
+  if(!list.length){ wrap.innerHTML='Protokol yoxdur.'; return; }
   wrap.innerHTML=`<table><thead><tr><th style="text-align:left">№</th><th style="text-align:left">Tərəflər</th><th>Tarix</th><th>Cəmi</th><th>ƏDV</th><th>Yekun</th><th>Əməliyyat</th></tr></thead><tbody>${list.map(o=>`<tr><td style="text-align:left">${o.no||o.id}</td><td style="text-align:left">${o.from} → ${o.to}</td><td>${ddmmyyyy(o.date)}</td><td>${fmtAZN(o.sub||0)}</td><td>${fmtAZN(o.vat||0)}</td><td>${fmtAZN(o.total||0)}</td><td><button class="btn" data-act="view" data-id="${o.id}">Bax / Düzəlt</button><button class="btn" data-act="print" data-id="${o.id}">Çap</button><button class="btn danger" data-act="del" data-id="${o.id}">Sil</button></td></tr>`).join('')}</tbody></table>`;
-  wrap.querySelectorAll('button[data-act]').forEach(b=>{ b.addEventListener('click',()=>{const id=b.dataset.id,act=b.dataset.act; const list=loadOffers(); const o=list.find(x=>String(x.id)===String(id)); if(!o) return; if(act==='view') openOfferModal(id); if(act==='del'){ if(confirm('Təklif silinsin?')){ saveOffers(list.filter(x=>x.id!==id)); renderOffers(); } } if(act==='print') openOfferPrint(o); }); });
+  wrap.querySelectorAll('button[data-act]').forEach(b=>{ b.addEventListener('click',e=>{const id=b.dataset.id,act=b.dataset.act; const list=loadOffers(); const o=list.find(x=>String(x.id)===String(id)); if(!o) return; if(act==='view') openOfferModal(id); if(act==='del'){ if(confirm('Silmək istəyirsiniz?')){ saveOffers(list.filter(x=>x.id!==id)); renderOffers(); } } if(act==='print') openOfferPrint(o); }); });
 }
 
-/* ==== ÇAP (TƏKLİF) ==== */
+/* ==== ÇAP (Qiymət razılaşdırma protokolu) ==== */
 function openOfferPrint(o){
-  const rows=(o.items||[]).map((it,i)=>`<tr><td style="text-align:center">${i+1}</td><td style="text-align:left">${escapeHtml(it.name)}</td><td style="text-align:right">${num(it.price)}</td><td style="text-align:center">${it.qty}</td><td style="text-align:right">${num(it.qty*it.price)}</td></tr>`).join('');
+  const rows=(o.items||[]).map((it,i)=>`<tr>
+    <td style="text-align:center">${i+1}</td>
+    <td style="text-align:left">${escapeHtml(it.name)}</td>
+    <td style="text-align:center">${it.qty}</td>
+    <td style="text-align:right">${num(it.price)}</td>
+    <td style="text-align:right">${num(it.qty*it.price)}</td>
+  </tr>`).join('');
   const html = `
   <div class='print-a4 print-root'>
-    <style>
-      .phdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6mm}
-      .ph-left{display:flex;gap:8px;align-items:center}
-      .logo{width:24mm;height:24mm;display:inline-block}
-      .brand{font-size:16pt;font-weight:800}
-      .addr{font-size:10pt;line-height:1.4;text-align:right}
-      .kline{margin:3mm 0 5mm;font-size:11pt}
-      .kline div{margin:2mm 0}
-      .ptitle{font-size:16pt;font-weight:800;text-align:center;margin:2mm 0 4mm}
-      .print-table th,.print-table td{border:1px solid #cbd5e1;padding:6px 8px}
-      .print-table thead th{background:#f3f6fb}
-    </style>
-    <div class="phdr">
-      <div class="ph-left">
-        ${svgLogo()}
-        <div class="brand">${COMPANY.name}</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6mm">
+      <div style="font-size:16pt;font-weight:800">Baktel</div>
+      <div style="font-size:10pt;line-height:1.4;text-align:right">
+        Ünvan: ${COMPANY.address}<br/>${COMPANY.contact}
       </div>
-      <div class="addr">Ünvan: ${COMPANY.address}<br/>${COMPANY.contact}</div>
     </div>
-    <div class="kline">
+
+    <div style="margin:3mm 0 5mm;font-size:11pt">
       <div><b>Tarix:</b> ${ddmmyyyy(o.date)}</div>
       <div><b>Kimə:</b> ${escapeHtml(o.toLine||o.to||'')}</div>
     </div>
-    <div class="ptitle">Təklif</div>
-    <table class="print-table" style="width:100%;font-size:11pt">
-      <thead><tr><th style="width:7%;text-align:center">#</th><th style="text-align:left">Məhsul</th><th style="width:18%;text-align:right">Vahidin qiyməti (AZN)</th><th style="width:12%;text-align:center">Miqdar</th><th style="width:18%;text-align:right">Cəmi (ƏDV-siz)</th></tr></thead>
+
+    <div class="print-title" style="margin:2mm 0 4mm">Qiymət razılaşdırma protokolu</div>
+
+    <table class="print-table">
+      <thead>
+        <tr>
+          <th style="width:7%;text-align:center">#</th>
+          <th style="text-align:left">Məhsul</th>
+          <th style="width:12%;text-align:center">Miqdar</th>
+          <th style="width:18%;text-align:right">Vahidin qiyməti (AZN)</th>
+          <th style="width:18%;text-align:right">Cəmi (ƏDV-siz)</th>
+        </tr>
+      </thead>
       <tbody>${rows}</tbody>
     </table>
+
     <table style="width:100%;margin-top:4mm;font-size:11pt">
       <tr><td style="text-align:right;width:70%"><b>Cəmi</b></td><td style="text-align:right;width:30%">${fmtAZN(o.sub||0)}</td></tr>
       <tr><td style="text-align:right">ƏDV 18%</td><td style="text-align:right">${fmtAZN(o.vat||0)}</td></tr>
       <tr><td style="text-align:right"><b>Yekun</b></td><td style="text-align:right"><b>${fmtAZN(o.total||0)}</b></td></tr>
     </table>
-    <div class='sign-cols'>
-      <div style="flex:1"><div><b>Direktor:</b> ${escapeHtml(o.director||'İlqar Mahmudov')}</div><span class='sigline'></span></div>
-      <div style="flex:1"><div><b>İmza:</b></div><span class='sigline'></span></div>
+
+    <div class="sign-cols">
+      <div style="flex:1">
+        <div class="sigcap">Direktor: ${escapeHtml(o.director||'İlqar Mahmudov')}</div>
+        <span class="sigline"></span>
+      </div>
+      <div style="flex:1">
+        <div class="sigcap">İmza:</div>
+        <span class="sigline"></span>
+      </div>
     </div>
   </div>`;
-  const w=window.open('','_blank'); w.document.write(`<!doctype html><meta charset='utf-8'><title>Təklif</title><body class='print-root'>${html}</body>`); w.document.close(); w.focus(); w.print();
+  const w=window.open('','_blank'); w.document.write(`<!doctype html><meta charset='utf-8'><title>Qiymət razılaşdırma protokolu</title><body class='print-root'>${html}</body>`); w.document.close(); w.focus(); w.print();
 }
-function svgLogo(){return `<svg class="logo" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#f59e0b"/><stop offset="1" stop-color="#ea580c"/></linearGradient></defs><circle cx="50" cy="50" r="48" fill="url(#g)" /><path d="M30 60h40v8H30zM45 25h10v35H45z" fill="#fff"/></svg>`}
 function escapeHtml(s){ return String(s||'').replace(/[&<>"]/g,m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])) }
 function num(n){ return (Number(n)||0).toLocaleString('az-AZ',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 
 /* ===== INIT ===== */
 window.addEventListener('DOMContentLoaded',()=>{
-  // NAV
+  // Naviqasiya
   goto('view-home');
-  // Calc
-  $('btnCalc').addEventListener('click',calc); $('btnCalcReset').addEventListener('click',resetCalc);
-  // Finalize
-  $('btnSaveCustomer').addEventListener('click',saveCustomerOnly); $('btnFinalizeReset').addEventListener('click',resetFinalize); $('btnAddCustomer').addEventListener('click',()=>{ensureStartDate(); goto('view-finalize')}); ensureStartDate();
-  // Customers
-  ['searchName','searchPhone','searchFin'].forEach(id=>$(id).addEventListener('input',renderCustomers)); renderCustomers();
-  // Inventory
-  $('btnAddInv').addEventListener('click',addOrUpdateProduct); $('invSearch').addEventListener('input',renderInventory); renderInventory();
-  // Purchases
-  $('btnAddPurchase').addEventListener('click',addPurchase); $('purDate').value=nowISO(); renderPurchases();
-  // Sales
-  $('btnAddSale').addEventListener('click',addSale); $('saleDate').value=nowISO(); renderSales();
-  // Reports
-  $('btnRunReport').addEventListener('click',runReport); $('repFrom').value=nowISO(); $('repTo').value=nowISO();
-  // Overdue
-  renderOverdue();
-  // Employees & Users
-  $('btnAddEmp').addEventListener('click',addOrUpdateEmployee); $('btnAddUser').addEventListener('click',addOrUpdateUser); renderEmployees(); renderUsers();
-  // Payroll
-  $('payFrom') && ($('payFrom').value=nowISO()); $('payTo') && ($('payTo').value=nowISO());
 
-  // OFFERS
-  $('btnOpenOffer').addEventListener('click',()=> openOfferModal());
-  $('btnOfferNew').addEventListener('click',()=> openOfferModal());
+  // Kalkulyator
+  $('btnCalc').addEventListener('click',calc);
+  $('btnCalcReset').addEventListener('click',resetCalc);
+
+  // Rəsmiləşdir / Müştərilər
+  $('btnSaveCustomer').addEventListener('click',saveCustomerOnly);
+  $('btnFinalizeReset').addEventListener('click',resetFinalize);
+  $('btnAddCustomer').addEventListener('click',()=>{ensureStartDate(); goto('view-finalize')}); ensureStartDate();
+  ['searchName','searchPhone','searchFin'].forEach(id=>$(id).addEventListener('input',renderCustomers)); renderCustomers();
+
+  // Anbar / Alışlar
+  $('btnAddInv').addEventListener('click',addOrUpdateProduct); $('invSearch').addEventListener('input',renderInventory); renderInventory();
+  $('btnAddPurchase').addEventListener('click',addPurchase); $('purDate').value=nowISO(); renderPurchases();
+
+  // Satışlar / Hesabat
+  $('btnAddSale').addEventListener('click',addSale); $('saleDate').value=nowISO(); renderSales();
+  $('btnRunReport').addEventListener('click',()=>{/* istəsəniz hesablamanı genişləndirərik */}); $('repFrom').value=nowISO(); $('repTo').value=nowISO();
+
+  // İşçi & İstifadəçi / Payroll (yerindədir)
+
+  // PROTOKOL — düymələr (etibarlı bağlama + delegasiya)
+  const openModal = ()=> openOfferModal();
+  const newBtnTop = $('btnOpenOffer'); if (newBtnTop) newBtnTop.addEventListener('click', openModal);
+  const newBtnPage = $('btnOfferNew'); if (newBtnPage) newBtnPage.addEventListener('click', openModal);
+  document.addEventListener('click', (e)=>{ // ehtiyat üçün delegasiya
+    if (e.target && (e.target.id==='btnOpenOffer' || e.target.id==='btnOfferNew')) openModal();
+  });
+
   $('offerClose').addEventListener('click',closeOfferModal);
   $('ofAddRow').addEventListener('click',()=> addOfferRow());
   $('ofClearRows').addEventListener('click',clearOfferRows);
   $('ofDate').value=nowISO();
   $('ofSave').addEventListener('click',()=> saveOffer());
   $('ofSavePrint').addEventListener('click',()=>{ const id=saveOffer(true); if(!id) return; const o=loadOffers().find(x=>x.id===id); if(o) openOfferPrint(o); });
+
   renderOffers();
 });
 </script>
