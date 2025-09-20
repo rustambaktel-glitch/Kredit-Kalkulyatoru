@@ -476,13 +476,47 @@
     <div id="editSupplierModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Təchizatçını Redaktə Et</h2><form id="editSupplierForm"><input type="hidden" id="editSupplierId"><div class="form-group"><label for="editSupplierName">Təchizatçı Adı</label><input type="text" id="editSupplierName" required></div><div class="form-group"><label for="editSupplierPhone">Telefon</label><input type="text" id="editSupplierPhone"></div><div class="form-actions"><button type="submit" class="btn btn-primary">Dəyişikliyi Saxla</button></div></form></div></div>
     <div id="saleDetailsModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Satış Detalları</h2><div id="saleDetailsContent" style="margin-top: 20px;"></div></div></div>
     <div id="acceptPaymentModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Müştəri Ödənişi Qəbul Et</h2><form id="acceptPaymentForm"><div class="form-group"><label>Müştəri</label><select id="paymentCustomerSelect" required></select></div><div class="form-group"><label>Ödənilən Məbləğ (₼)</label><input type="number" id="paymentAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-success">Ödənişi Qəbul Et</button></div></form></div></div>
-    <div id="addExpenseModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Xərc Əlavə Et</h2><form id="addExpenseForm"><div class="form-group"><label>Xərcin Təsviri</label><textarea id="expenseDescription" rows="3" required></textarea></div><div class="form-group"><label>Məbləğ (₼)</label><input type="number" id="expenseAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-danger">Xərci Əlavə Et</button></div></form></div></div>
+    <div id="addExpenseModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Xərc Əlavə Et</h2><form id="addExpenseForm"><div class="form-group"><label for="expenseType">Xərc Növü</label><select id="expenseType" required><option value="">-- Seçin --</option><option value="Ofis xərcləri">Ofis xərcləri</option><option value="Reklam xərcləri">Reklam xərcləri</option><option value="Daşınma xərcləri">Daşınma xərcləri</option><option value="Rabitə xərcləri">Rabitə xərcləri</option><option value="Digər xərclər">Digər xərclər</option></select></div><div class="form-group"><label>Məbləğ (₼)</label><input type="number" id="expenseAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-danger">Xərci Əlavə Et</button></div></form></div></div>
     <div id="paySupplierModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Təchizatçıya Ödəniş</h2><form id="paySupplierForm"><div class="form-group"><label>Təchizatçı</label><select id="paymentSupplierSelect" required></select></div><div class="form-group"><label>Ödənilən Məbləğ (₼)</label><input type="number" id="supplierPaymentAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-warning">Ödənişi Et</button></div></form></div></div>
     <div id="customerSalesHistoryModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 id="customer-history-title">Müştəri Satış Tarixçəsi</h2><div id="customerSalesHistoryContent" style="margin-top: 20px;"></div></div></div>
     <div id="purchaseDetailsModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Alış Detalları</h2><div id="purchaseDetailsContent" style="margin-top: 20px;"></div></div></div>
     <div id="productsInSaleModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Satışdakı Məhsullar</h2><div id="productsInSaleContent"></div></div></div>
 
-    <template id="finance-page-template"><div class="page-container"><div class="page-header"><h1>Maliyyə</h1><button id="btnBackupData" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Məlumatları Yüklə (Backup)</span></button></div><div class="summary-cards"><div class="card"><h3>Cari Kassa Balansı</h3><p id="current-cash-balance">0.00 ₼</p></div><div class="card"><h3>Müştəri Borcları</h3><p id="total-receivables" class="positive">0.00 ₼</p></div><div class="card"><h3>Təchizatçı Borcları</h3><p id="total-payables" class="negative">0.00 ₼</p></div></div><div class="content-area"><div class="page-header" style="margin-bottom: 1rem; padding: 0;"><h2>Son Əməliyyatlar</h2><div class="finance-actions" style="display: flex; gap: 0.5rem;"><button id="btnAcceptPayment" class="btn btn-success"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 4v4m0 4v2m-6-2h12a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> Ödəniş Qəbul Et</span></button><button id="btnAddExpense" class="btn btn-danger"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> Xərc Əlavə Et</span></button><button id="btnPaySupplier" class="btn btn-warning"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 21h10a2 2 0 002-2V8a2 2 0 00-2-2H7a2 2 0 00-2 2v11a2 2 0 002 2z"></path></svg> Təchizatçıya Ödə</span></button></div></div><table class="data-table"><thead><tr><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th></tr></thead><tbody id="transactionsTableBody"></tbody></table></div></div></template>
+    <template id="finance-page-template">
+        <div class="page-container">
+            <div class="page-header">
+                <h1>Maliyyə</h1>
+                <button id="btnBackupData" class="btn btn-primary">
+                    <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Məlumatları Yüklə (Backup)</span>
+                </button>
+            </div>
+            <div class="summary-cards">
+                <div class="card"><h3>Cari Kassa Balansı</h3><p id="current-cash-balance">0.00 ₼</p></div>
+                <div class="card"><h3>Müştəri Borcları</h3><p id="total-receivables" class="positive">0.00 ₼</p></div>
+                <div class="card"><h3>Təchizatçı Borcları</h3><p id="total-payables" class="negative">0.00 ₼</p></div>
+            </div>
+            <div class="content-area">
+                <div class="page-header" style="margin-bottom: 1rem; padding: 0;">
+                    <h2>Son Əməliyyatlar</h2>
+                    <div class="finance-actions" style="display: flex; gap: 0.5rem;">
+                        <button id="btnIncome" class="btn btn-success">
+                            <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path></svg> Mədaxil</span>
+                        </button>
+                        <button id="btnExpense" class="btn btn-danger">
+                            <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19.5v-15m-7.5 7.5h15"></path></svg> Məxaric</span>
+                        </button>
+                    </div>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th></tr>
+                    </thead>
+                    <tbody id="transactionsTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </template>
+
     <template id="reports-page-template"><div class="page-container"><div class="page-header"><h1>Hesabatlar</h1></div><div class="content-area"><div class="report-actions" id="report-tabs"><button class="btn btn-primary active" data-report="sales">Satışlar</button><button class="btn btn-primary" data-report="purchases">Alışlar</button><button class="btn btn-primary" data-report="financial">Maliyyə</button></div><div id="sales-report-view" class="report-view"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Müştəri</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="salesHistoryTableBody"></tbody></table></div><div id="purchases-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Təchizatçı</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="purchasesHistoryTableBody"></tbody></table></div><div id="financial-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="financialReportSearch" class="search-input" placeholder="Növ və ya açıqlamaya görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th></tr></thead><tbody id="financialHistoryTableBody"></tbody></table></div></div></div></template>
     <template id="sales-page-template"><div class="page-container"><div class="page-header"><h1>Satış Etmək</h1></div><form id="saleForm"><div class="sale-container"><div class="content-area"><h4>Müştəri və Məhsul seçimi</h4><div class="form-group"><label for="saleCustomer">Müştəri Seçin</label><select id="saleCustomer" required></select></div><div class="form-group"><label for="saleProduct">Məhsul Əlavə Et</label><select id="saleProduct"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th></th></tr></thead><tbody id="cartTableBody"></tbody></table></div><div class="content-area"><h4>Satışı Yekunlaşdır</h4><div class="form-group"><label>Satış Növünü Seçin</label><div class="sale-type-buttons" style="display:flex; gap: 0.5rem;"><button type="button" class="btn sale-type-btn active" data-type="Nağd">Nağd</button><button type="button" class="btn sale-type-btn" data-type="POS Terminal">POS</button><button type="button" class="btn sale-type-btn" data-type="Kredit">Kredit</button><button type="button" class="btn sale-type-btn" data-type="Korporativ">Korporativ</button></div></div><div class="form-group" id="initialPaymentGroup" style="display:none;"><label for="initialPayment">İlkin Ödəniş (₼)</label><input type="number" id="initialPayment" value="0" step="0.01"></div><div class="summary-row"><span>Yekun Məbləğ:</span><span id="summaryTotal">0.00 ₼</span></div><div class="summary-row" id="debt-row" style="display:none;"><span>Borc qalığı:</span><span id="debt-total">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;"><span>Satışı Tamamla</span></button></div></div></div></form></div></template>
     <template id="purchases-page-template"><div class="page-container"><div class="page-header"><h1>Yeni Mal Alışı</h1></div><form id="purchaseForm"><div class="sale-container"><div class="content-area"><h4>Təchizatçı və Məhsul seçimi</h4><div class="form-group"><label>Təchizatçı Seçin</label><select id="purchaseSupplierSelect" required></select></div><div class="form-group"><label>Məhsul Əlavə Et</label><select id="purchaseProductSelect"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Alış Qiyməti</th><th>Toplam</th><th></th></tr></thead><tbody id="purchaseCartTableBody"></tbody></table></div><div class="content-area"><h4>Alışı Yekunlaşdır</h4><div class="summary-row total" style="margin-top: 1.5rem;"><span>Yekun Məbləğ:</span><span id="purchaseTotal">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;"><span>Alışı Tamamla</span></button></div></div></div></form></div></template>
@@ -495,6 +529,9 @@
         const appContainer = document.getElementById('app-container');
         const sidebarNav = document.getElementById('sidebar-nav');
         const allModals = document.querySelectorAll('.modal');
+        const productsInSaleModal = document.getElementById('productsInSaleModal');
+        const saleDetailsModal = document.getElementById('saleDetailsModal');
+        const customerSalesHistoryModal = document.getElementById('customerSalesHistoryModal');
 
         const getFromStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
         const saveToStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
@@ -650,7 +687,7 @@
             const addCustomerForm = document.getElementById('addCustomerForm');
             const editCustomerForm = document.getElementById('editCustomerForm');
             const customerSalesHistoryModal = document.getElementById('customerSalesHistoryModal');
-            const saleDetailsModal = document.getElementById('saleDetailsModal');
+            const productsInSaleModal = document.getElementById('productsInSaleModal');
 
             const renderCustomers = () => {
                 const query = customerSearch.value.toLowerCase();
@@ -700,18 +737,21 @@
                     historyTitle.textContent = `${customer.name} - Satış Tarixçəsi`;
                     let historyHtml = `<table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Məbləğ</th><th></th></tr></thead><tbody>`;
                     
-                    sales.reverse().forEach(sale => {
-                        historyHtml += `<tr>
-                            <td>${sale.id}</td>
-                            <td>${sale.date}</td>
-                            <td>${sale.type}</td>
-                            <td>${sale.totalAmount.toFixed(2)} ₼</td>
-                            <td class="actions-cell"><button class="btn-details view-sale-details-from-customer" data-id="${sale.id}">Məhsullar</button></td>
-                        </tr>`;
-                    });
+                    if (sales.length === 0) {
+                        historyHtml += '<tr><td colspan="5" style="text-align:center;">Bu müştərinin satış tarixçəsi yoxdur.</td></tr>';
+                    } else {
+                        sales.reverse().forEach(sale => {
+                            historyHtml += `<tr>
+                                <td>${sale.id}</td>
+                                <td>${sale.date}</td>
+                                <td>${sale.type}</td>
+                                <td>${sale.totalAmount.toFixed(2)} ₼</td>
+                                <td class="actions-cell"><button class="btn-details view-sale-details" data-id="${sale.id}">Məhsullar</button></td>
+                            </tr>`;
+                        });
+                    }
                     historyHtml += `</tbody></table>`;
                     historyContent.innerHTML = historyHtml;
-                    
                     openModal(customerSalesHistoryModal);
                     return;
                 }
@@ -753,30 +793,19 @@
             
             customerSalesHistoryModal.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
-                if (btn && btn.classList.contains('view-sale-details-from-customer')) {
+                if (btn && btn.classList.contains('view-sale-details')) {
                     const saleId = parseInt(btn.dataset.id);
                     const sale = getSales().find(s => s.id === saleId);
                     if (!sale) return;
-
-                    let detailsHtml = `
-                        <p><strong>Satış ID:</strong> ${sale.id}</p>
-                        <p><strong>Müştəri:</strong> ${sale.customerName}</p>
-                        <p><strong>Satış Növü:</strong> ${sale.type}</p>
-                        <p><strong>Yekun Məbləğ:</strong> ${sale.totalAmount.toFixed(2)} ₼</p>
-                        <p><strong>Ödənilmiş Məbləğ:</strong> ${sale.initialPayment.toFixed(2)} ₼</p>
-                        <p><strong>Borc:</strong> ${(sale.totalAmount - sale.initialPayment).toFixed(2)} ₼</p>
-                        <hr style="border-color:var(--border-color); margin: 15px 0;">
-                        <h4 style="margin-bottom:10px;">Satılan Məhsullar</h4>
-                        <table class="data-table" style="width:100%;">
-                            <thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead>
-                            <tbody>
-                    `;
-                    sale.items.forEach(i => {
-                        detailsHtml += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.salePrice.toFixed(2)} ₼</td><td>${(i.quantity * i.salePrice).toFixed(2)} ₼</td></tr>`;
+                    
+                    let productsHtml = `<table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead><tbody>`;
+                    sale.items.forEach(item => {
+                        productsHtml += `<tr><td>${item.name}</td><td>${item.quantity}</td><td>${item.salePrice.toFixed(2)} ₼</td><td>${(item.quantity * item.salePrice).toFixed(2)} ₼</td></tr>`;
                     });
-                    detailsHtml += '</tbody></table>';
-                    document.getElementById('saleDetailsContent').innerHTML = detailsHtml;
-                    openModal(saleDetailsModal);
+                    productsHtml += `</tbody></table>`;
+                    
+                    document.getElementById('productsInSaleContent').innerHTML = productsHtml;
+                    openModal(productsInSaleModal);
                 }
             });
 
@@ -1339,9 +1368,8 @@
             const totalReceivablesEl = appContainer.querySelector('#total-receivables');
             const totalPayablesEl = appContainer.querySelector('#total-payables');
             const transactionsTableBody = appContainer.querySelector('#transactionsTableBody');
-            const btnAcceptPayment = appContainer.querySelector('#btnAcceptPayment');
-            const btnAddExpense = appContainer.querySelector('#btnAddExpense');
-            const btnPaySupplier = appContainer.querySelector('#btnPaySupplier');
+            const btnIncome = appContainer.querySelector('#btnIncome');
+            const btnExpense = appContainer.querySelector('#btnExpense');
             const btnBackupData = appContainer.querySelector('#btnBackupData');
             const acceptPaymentModal = document.getElementById('acceptPaymentModal');
             const addExpenseModal = document.getElementById('addExpenseModal');
@@ -1349,7 +1377,10 @@
             const acceptPaymentForm = document.getElementById('acceptPaymentForm');
             const addExpenseForm = document.getElementById('addExpenseForm');
             const paySupplierForm = document.getElementById('paySupplierForm');
-            
+            const incomeTypeModal = document.getElementById('incomeTypeModal');
+            const expenseTypeModal = document.getElementById('expenseTypeModal');
+            const expenseTypeSelect = document.getElementById('expenseType');
+
             const renderFinancePage = () => {
                 const transactions = getTransactions();
                 const customers = getCustomers();
@@ -1384,8 +1415,8 @@
                 a.click();
                 document.body.removeChild(a);
             });
-
-            btnAcceptPayment.addEventListener('click', () => {
+            
+            btnIncome.addEventListener('click', () => {
                 const cDebt = getCustomers().filter(c => c.debt > 0);
                 const select = document.getElementById('paymentCustomerSelect');
                 select.innerHTML = '<option value="">-- Müştəri Seçin --</option>';
@@ -1393,8 +1424,12 @@
                 acceptPaymentForm.reset();
                 openModal(acceptPaymentModal);
             });
+            
+            btnExpense.addEventListener('click', () => {
+                addExpenseForm.reset();
+                openModal(addExpenseModal);
+            });
 
-            btnAddExpense.addEventListener('click', () => { addExpenseForm.reset(); openModal(addExpenseModal); });
 
             btnPaySupplier.addEventListener('click', () => {
                 const sBal = getSuppliers().filter(s => (s.balance || 0) > 0);
@@ -1425,10 +1460,10 @@
 
             addExpenseForm.addEventListener('submit', e => {
                 e.preventDefault();
-                const desc = document.getElementById('expenseDescription').value;
+                const expenseType = expenseTypeSelect.value;
                 const amount = parseFloat(document.getElementById('expenseAmount').value);
                 if(amount <= 0) { alert("Məbləğ müsbət olmalıdır."); return; }
-                addTransaction('Xərc', desc, -amount);
+                addTransaction(expenseType, `Xərc: ${expenseType}`, -amount);
                 renderFinancePage();
                 closeModal(addExpenseModal);
             });
