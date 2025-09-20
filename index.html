@@ -487,7 +487,7 @@
     <div id="paySupplierModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Təchizatçıya Ödəniş</h2><form id="paySupplierForm"><div class="form-group"><label>Təchizatçı</label><select id="paymentSupplierSelect" required></select></div><div class="form-group"><label>Ödənilən Məbləğ (₼)</label><input type="number" id="supplierPaymentAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-warning">Ödənişi Et</button></div></form></div></div>
     <div id="customerSalesHistoryModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 id="customer-history-title">Müştəri Satış Tarixçəsi</h2><div id="customerSalesHistoryContent" style="margin-top: 20px;"></div></div></div>
     <div id="purchaseDetailsModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Alış Detalları</h2><div id="purchaseDetailsContent" style="margin-top: 20px;"></div></div></div>
-
+    <div id="productsInSaleModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Satışdakı Məhsullar</h2><div id="productsInSaleContent"></div></div></div>
 
     <template id="finance-page-template"><div class="page-container"><div class="page-header"><h1>Maliyyə</h1><button id="btnBackupData" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Məlumatları Yüklə (Backup)</span></button></div><div class="summary-cards"><div class="card"><h3>Cari Kassa Balansı</h3><p id="current-cash-balance">0.00 ₼</p></div><div class="card"><h3>Müştəri Borcları</h3><p id="total-receivables" class="positive">0.00 ₼</p></div><div class="card"><h3>Təchizatçı Borcları</h3><p id="total-payables" class="negative">0.00 ₼</p></div></div><div class="content-area"><div class="page-header" style="margin-bottom: 1rem; padding: 0;"><h2>Son Əməliyyatlar</h2><div class="finance-actions" style="display: flex; gap: 0.5rem;"><button id="btnAcceptPayment" class="btn btn-success"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 4v4m0 4v2m-6-2h12a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> Ödəniş Qəbul Et</span></button><button id="btnAddExpense" class="btn btn-danger"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> Xərc Əlavə Et</span></button><button id="btnPaySupplier" class="btn btn-warning"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 21h10a2 2 0 002-2V8a2 2 0 00-2-2H7a2 2 0 00-2 2v11a2 2 0 002 2z"></path></svg> Təchizatçıya Ödə</span></button></div></div><table class="data-table"><thead><tr><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th></tr></thead><tbody id="transactionsTableBody"></tbody></table></div></div></template>
     <template id="reports-page-template"><div class="page-container"><div class="page-header"><h1>Hesabatlar</h1></div><div class="content-area"><div class="report-actions" id="report-tabs"><button class="btn btn-primary active" data-report="sales">Satışlar</button><button class="btn btn-primary" data-report="purchases">Alışlar</button><button class="btn btn-primary" data-report="financial">Maliyyə</button></div><div id="sales-report-view" class="report-view"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Müştəri</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="salesHistoryTableBody"></tbody></table></div><div id="purchases-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Təchizatçı</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="purchasesHistoryTableBody"></tbody></table></div><div id="financial-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="financialReportSearch" class="search-input" placeholder="Növ və ya açıqlamaya görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th></tr></thead><tbody id="financialHistoryTableBody"></tbody></table></div></div></div></template>
@@ -790,7 +790,6 @@
             const editSupplierModal = document.getElementById('editSupplierModal');
             const addSupplierForm = document.getElementById('addSupplierForm');
             const editSupplierForm = document.getElementById('editSupplierForm');
-            const purchaseDetailsModal = document.getElementById('purchaseDetailsModal');
 
             const renderSuppliers = () => {
                 const query = supplierSearch.value.toLowerCase();
@@ -1064,10 +1063,9 @@
             const purchaseForm = appContainer.querySelector('#purchaseForm');
             const purchaseSupplierSelect = appContainer.querySelector('#purchaseSupplierSelect');
             const purchaseProductSelect = appContainer.querySelector('#purchaseProductSelect');
-            const purchaseCartTableBody = appContainer.querySelector('#purchaseCartTableBody');
+            const cartTableBody = appContainer.querySelector('#purchaseCartTableBody');
             const purchaseTotalEl = appContainer.querySelector('#purchaseTotal');
             let currentPurchaseCart = [];
-            const purchaseDetailsModal = document.getElementById('purchaseDetailsModal');
 
             const initializePurchasePage = () => {
                 const suppliers = getSuppliers();
@@ -1088,13 +1086,13 @@
             };
 
             const renderPurchaseCart = () => {
-                purchaseCartTableBody.innerHTML = '';
+                cartTableBody.innerHTML = '';
                 if (currentPurchaseCart.length === 0) {
-                    purchaseCartTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Siyahı boşdur</td></tr>';
+                    cartTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Siyahı boşdur</td></tr>';
                 } else {
                     currentPurchaseCart.forEach(item => {
                         const itemTotal = item.quantity * item.purchasePrice;
-                        purchaseCartTableBody.innerHTML += `<tr><td>${item.name}</td><td><input type="number" value="${item.quantity}" class="purchase-quantity-input" data-id="${item.id}" min="1"></td><td><input type="number" value="${item.purchasePrice.toFixed(2)}" class="purchase-price-input" data-id="${item.id}" step="0.01" min="0"></td><td>${itemTotal.toFixed(2)} ₼</td><td class="actions-cell"><button type="button" class="btn-delete purchase-remove-btn" data-id="${item.id}">🗑️</button></td></tr>`;
+                        cartTableBody.innerHTML += `<tr><td>${item.name}</td><td><input type="number" value="${item.quantity}" class="purchase-quantity-input" data-id="${item.id}" min="1"></td><td><input type="number" value="${item.purchasePrice.toFixed(2)}" class="purchase-price-input" data-id="${item.id}" step="0.01" min="0"></td><td>${itemTotal.toFixed(2)} ₼</td><td class="actions-cell"><button type="button" class="btn-delete purchase-remove-btn" data-id="${item.id}">🗑️</button></td></tr>`;
                     });
                 }
                 calculatePurchaseTotal();
