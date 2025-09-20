@@ -3,59 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İdarəetmə Paneli - Final Versiya</title>
+    <title>Biznes Panel v2.0</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
-        :root { --primary-color: #2980b9; --danger-color: #c0392b; --warning-color: #f39c12; --success-color: #27ae60; --details-color: #8e44ad; --light-bg-color: #f4f7fa; --white-color: #ffffff; --border-color: #e0e0e0; }
-        body { font-family: 'Poppins', sans-serif; margin: 0; background-color: var(--light-bg-color); display: flex; font-size: 14px; }
-        .sidebar { width: 240px; background-color: var(--white-color); height: 100vh; position: fixed; box-shadow: 2px 0 5px rgba(0,0,0,0.05); z-index: 100; }
-        .sidebar .logo { text-align: center; padding: 20px 0; font-size: 24px; font-weight: 600; }
-        .sidebar nav ul { list-style: none; padding: 0; }
-        .sidebar nav li a { display: block; padding: 15px 25px; text-decoration: none; color: #555; cursor: pointer; }
-        .sidebar nav li a.active, .sidebar nav li a:hover { background-color: #eef2f7; color: var(--primary-color); border-right: 3px solid var(--primary-color); }
-        .main-content { margin-left: 240px; width: calc(100% - 240px); padding: 20px; }
-        header { padding: 15px 30px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.05); }
-        header h1 { margin: 0; font-size: 22px; }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary-color: #4a90e2;
+            --success-color: #50e3c2;
+            --danger-color: #e35050;
+            --warning-color: #e3b350;
+            --details-color: #904ae2;
+            --text-primary: #e0e0e0;
+            --text-secondary: #b0b0b0;
+            --bg-glass: rgba(22, 28, 49, 0.6);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #111827;
+            color: var(--text-primary);
+            display: flex;
+            font-size: 14px;
+            overflow: hidden;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            background: var(--bg-glass);
+            backdrop-filter: blur(15px);
+            border-right: 1px solid var(--border-color);
+            padding: 20px 0;
+            transition: width 0.3s ease;
+            z-index: 100;
+        }
+        .sidebar .logo { text-align: center; padding-bottom: 30px; font-size: 26px; font-weight: 600; letter-spacing: 1px;}
+        .sidebar nav ul { list-style: none; }
+        .sidebar nav li a {
+            display: flex; align-items: center; gap: 15px; padding: 16px 25px;
+            text-decoration: none; color: var(--text-secondary); font-weight: 500;
+            cursor: pointer; border-left: 4px solid transparent; transition: all 0.3s ease;
+        }
+        .sidebar nav li a:hover { background: rgba(74, 144, 226, 0.1); color: var(--text-primary); }
+        .sidebar nav li a.active {
+            background: rgba(74, 144, 226, 0.2);
+            color: white; font-weight: 600;
+            border-left: 4px solid var(--primary-color);
+        }
+        .sidebar nav li a svg { width: 22px; height: 22px; stroke-width: 2; }
+        
+        .main-content { margin-left: 250px; width: calc(100% - 250px); padding: 25px; height: 100vh; overflow-y: auto;}
+        header { padding: 15px 30px; background: var(--bg-glass); backdrop-filter: blur(10px); border: 1px solid var(--border-color); border-radius: 12px; margin-bottom: 25px;}
+        header h1 { margin: 0; font-size: 24px; font-weight: 600;}
+        
         .page { display: none; } .page.active { display: block; }
-        .content-area { margin-top: 25px; background-color: var(--white-color); padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; text-decoration: none; color: white; }
-        .btn-primary { background-color: var(--primary-color); } .btn-success { background-color: var(--success-color); }
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
-        .data-table th { background-color: #f8f9fa; font-weight: 600; }
-        .btn-edit, .btn-delete, .btn-details { padding: 6px 12px; font-size: 13px; color:white; border:none; border-radius: 4px; cursor: pointer; margin-right: 5px;}
-        .btn-edit { background-color: var(--warning-color); } .btn-delete { background-color: var(--danger-color); } .btn-details { background-color: var(--details-color); }
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
-        .modal-content { background-color: var(--white-color); padding: 30px; border-radius: 8px; width: 600px; position: relative; max-height: 80vh; overflow-y: auto; }
-        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #aaa; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; }
-        .form-group input, .form-group select { width: calc(100% - 22px); padding: 10px; border-radius: 5px; border: 1px solid var(--border-color); }
+        
+        .content-area {
+            background: var(--bg-glass); backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            padding: 30px; border-radius: 12px;
+        }
+        
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .page-header h2 { font-size: 22px; font-weight: 500;}
+        
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            padding: 10px 20px; border: none; border-radius: 8px; cursor: pointer;
+            font-size: 14px; font-weight: 500; text-decoration: none;
+            color: white; transition: all 0.3s ease;
+        }
+        .btn svg { width: 18px; height: 18px; }
+        .btn-primary { background-color: var(--primary-color); } .btn-primary:hover { background-color: #6a9eda; }
+        .btn-success { background-color: var(--success-color); } .btn-success:hover { background-color: #6de8d2; }
+        
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; margin-top: 10px; }
+        .data-table th, .data-table td { padding: 15px 20px; text-align: left; }
+        .data-table th { color: var(--text-secondary); font-weight: 500; text-transform: uppercase; font-size: 12px; }
+        .data-table tbody tr { background: rgba(39, 49, 75, 0.5); border-radius: 8px; }
+        .data-table td:first-child { border-top-left-radius: 8px; border-bottom-left-radius: 8px; }
+        .data-table td:last-child { border-top-right-radius: 8px; border-bottom-right-radius: 8px; text-align: right; }
+        
+        .actions-cell button { padding: 8px; margin-left: 5px; color: white; border: none; border-radius: 6px; cursor: pointer; display: inline-flex; }
+        .btn-edit { background-color: var(--warning-color); }
+        .btn-delete { background-color: var(--danger-color); }
+        .btn-details { background-color: var(--details-color); }
+
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); justify-content: center; align-items: center; }
+        .modal-content {
+            background: var(--bg-glass); backdrop-filter: blur(15px); border: 1px solid var(--border-color);
+            padding: 35px; border-radius: 12px; width: 600px; position: relative;
+            max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .modal-close { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: var(--text-secondary); }
+        
+        .form-group label { display: block; margin-bottom: 8px; color: var(--text-secondary); font-weight: 500; }
+        .form-group input, .form-group select {
+            width: 100%; padding: 12px; border-radius: 8px; border: 1px solid var(--border-color);
+            background: rgba(39, 49, 75, 0.7); color: var(--text-primary); font-size: 14px;
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.3); }
+        .form-actions { text-align: right; margin-top: 30px; }
+        
         .sale-container { display: grid; grid-template-columns: 1.5fr 1fr; gap: 30px; }
-        .sale-summary { background-color: #f8f9fa; padding: 20px; border-radius: 8px; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 16px; }
-        .summary-row.total { font-weight: bold; font-size: 20px; border-top: 1px solid #ccc; padding-top: 10px; margin-top:10px;}
+        .sale-summary { background: rgba(39, 49, 75, 0.5); padding: 25px; border-radius: 12px; }
+        .summary-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 16px; }
+        .summary-row.total { font-weight: bold; font-size: 22px; border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px;}
         #initialPaymentGroup { display: none; }
-        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 20px;}
-        .card { background: #f8f9fa; padding: 20px; border-radius: 8px; text-align: center; border: 1px solid #e0e0e0;}
-        .card h3 { margin: 0 0 10px 0; font-size: 16px; color: #555; }
-        .card p { margin: 0; font-size: 24px; font-weight: 600; color: var(--primary-color); }
+        
+        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px;}
+        .card { background: var(--bg-glass); backdrop-filter: blur(10px); padding: 25px; border-radius: 12px; text-align: center; border: 1px solid var(--border-color);}
+        .card h3 { margin: 0 0 10px 0; font-size: 16px; color: var(--text-secondary); font-weight: 500; }
+        .card p { margin: 0; font-size: 28px; font-weight: 600; color: white; }
     </style>
 </head>
 <body>
     <div class="sidebar">
-        <div class="logo">Biznes Panel</div>
-        <nav id="sidebar-nav"><ul><li><a data-target="reports-page" class="active">📋 Hesabatlar</a></li><li><a data-target="sales-page">🛒 Satış Etmək</a></li><li><a data-target="products-page">📦 Məhsullar</a></li><li><a data-target="customers-page">👥 Müştərilər</a></li></ul></nav>
+        <div class="logo">BİZNES PANEL</div>
+        <nav id="sidebar-nav">
+            <ul>
+                <li><a data-target="reports-page" class="active"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0h6m-6-10h6m-6 4h6m0 0v6a2 2 0 002 2h2a2 2 0 002-2v-6a2 2 0 00-2-2h-2a2 2 0 00-2 2z"></path></svg> <span>Hesabatlar</span></a></li>
+                <li><a data-target="sales-page"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> <span>Satış Etmək</span></a></li>
+                <li><a data-target="products-page"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg> <span>Məhsullar</span></a></li>
+                <li><a data-target="customers-page"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-1-3.794M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span>Müştərilər</span></a></li>
+            </ul>
+        </nav>
     </div>
 
     <div class="main-content">
         <header><h1 id="page-title">Hesabatlar</h1></header>
         
-        <div id="products-page" class="page"><div class="content-area"><div class="page-header"><h2>Məhsul Siyahısı</h2><button id="addProductBtn" class="btn btn-primary">➕ Yeni Məhsul</button></div><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th>Əməliyyatlar</th></tr></thead><tbody id="productTableBody"></tbody></table></div></div>
-        <div id="customers-page" class="page"><div class="content-area"><div class="page-header"><h2>Müştəri Siyahısı</h2><button id="addCustomerBtn" class="btn btn-primary">➕ Yeni Müştəri</button></div><table class="data-table"><thead><tr><th>#ID</th><th>Tam Adı</th><th>Telefon</th><th>Borc</th><th>Əməliyyatlar</th></tr></thead><tbody id="customerTableBody"></tbody></table></div></div>
-        <div id="sales-page" class="page"><form id="saleForm"><div class="content-area sale-container"><div><h4>1. Müştəri və Məhsul seçimi</h4><div class="form-group"><label for="saleCustomer">Müştəri Seçin</label><select id="saleCustomer" required></select></div><div class="form-group"><label for="saleProduct">Məhsul Əlavə Et</label><select id="saleProduct"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th>Sil</th></tr></thead><tbody id="cartTableBody"></tbody></table></div><div class="sale-summary"><h4>2. Satışı Yekunlaşdır</h4><div class="form-group"><label>Satış Növü</label><input type="radio" id="typeCash" name="saleType" value="cash" checked> <label for="typeCash">Nağd</label> <input type="radio" id="typeCredit" name="saleType" value="credit"> <label for="typeCredit">Kredit</label></div><div class="form-group" id="initialPaymentGroup"><label for="initialPayment">İlkin Ödəniş (₼)</label><input type="number" id="initialPayment" value="0" step="0.01"></div><hr><div class="summary-row"><span>Ümumi Məbləğ:</span><span id="summarySubtotal">0.00 ₼</span></div><div class="summary-row total"><span>Yekun Məbləğ:</span><span id="summaryTotal">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 15px; font-size: 18px;">✅ Satışı Tamamla</button></div></div></div></form></div>
-        <div id="reports-page" class="page active"><div class="content-area"><div class="page-header"><h2>Ümumi Hesabat</h2></div><div class="summary-cards"><div class="card"><h3 >Ümumi Satış Sayı</h3><p id="total-sales-count">0</p></div><div class="card"><h3 >Ümumi Dövriyyə</h3><p id="total-sales-revenue">0.00 ₼</p></div><div class="card"><h3 >Müştəri Borcları</h3><p id="total-customer-debt">0.00 ₼</p></div></div><hr style="margin: 30px 0;"><div class="page-header"><h2>Satışların Tarixçəsi</h2></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Müştəri</th><th>Növ</th><th>Yekun Məbləğ</th><th>Əməliyyatlar</th></tr></thead><tbody id="salesHistoryTableBody"></tbody></table></div></div>
+        <div id="reports-page" class="page active"><div class="content-area"><div class="page-header"><h2>Ümumi Baxış</h2></div><div class="summary-cards"><div class="card"><h3>Ümumi Satış Sayı</h3><p id="total-sales-count">0</p></div><div class="card"><h3>Ümumi Dövriyyə</h3><p id="total-sales-revenue">0.00 ₼</p></div><div class="card"><h3>Müştəri Borcları</h3><p id="total-customer-debt">0.00 ₼</p></div></div><hr style="margin: 30px 0; border-color: var(--border-color);"><div class="page-header"><h2>Satışların Tarixçəsi</h2></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Müştəri</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="salesHistoryTableBody"></tbody></table></div></div>
+        <div id="sales-page" class="page"><form id="saleForm"><div class="content-area sale-container"><div><h4>1. Müştəri və Məhsul seçimi</h4><div class="form-group"><label for="saleCustomer">Müştəri Seçin</label><select id="saleCustomer" required></select></div><div class="form-group"><label for="saleProduct">Məhsul Əlavə Et</label><select id="saleProduct"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th></th></tr></thead><tbody id="cartTableBody"></tbody></table></div><div class="sale-summary"><h4>2. Satışı Yekunlaşdır</h4><div class="form-group"><label>Satış Növü</label><div style="display:flex; gap:15px;"><input type="radio" id="typeCash" name="saleType" value="cash" checked> <label for="typeCash">Nağd</label> <input type="radio" id="typeCredit" name="saleType" value="credit"> <label for="typeCredit">Kredit</label></div></div><div class="form-group" id="initialPaymentGroup"><label for="initialPayment">İlkin Ödəniş (₼)</label><input type="number" id="initialPayment" value="0" step="0.01"></div><hr style="border-color:var(--border-color); margin: 20px 0;"><div class="summary-row"><span>Ümumi Məbləğ:</span><span id="summarySubtotal">0.00 ₼</span></div><div class="summary-row total"><span>Yekun Məbləğ:</span><span id="summaryTotal">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 15px; font-size: 16px;"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg><span>Satışı Tamamla</span></button></div></div></div></form></div>
+        <div id="products-page" class="page"><div class="content-area"><div class="page-header"><h2>Məhsul Siyahısı</h2><button id="addProductBtn" class="btn btn-primary"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg><span>Yeni Məhsul</span></button></div><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th></th></tr></thead><tbody id="productTableBody"></tbody></table></div></div>
+        <div id="customers-page" class="page"><div class="content-area"><div class="page-header"><h2>Müştəri Siyahısı</h2><button id="addCustomerBtn" class="btn btn-primary"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"></path></svg><span>Yeni Müştəri</span></button></div><table class="data-table"><thead><tr><th>#ID</th><th>Tam Adı</th><th>Telefon</th><th>Borc</th><th></th></tr></thead><tbody id="customerTableBody"></tbody></table></div></div>
     </div>
 
     <div id="addProductModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Yeni Məhsul</h2><form id="addProductForm"><div class="form-group"><label for="productName">Məhsul Adı</label><input type="text" id="productName" required></div><div class="form-group"><label for="purchasePrice">Alış Qiyməti (₼)</label><input type="number" id="purchasePrice" step="0.01" required></div><div class="form-group"><label for="salePrice">Satış Qiyməti (₼)</label><input type="number" id="salePrice" step="0.01" required></div><div class="form-group"><label for="stockQuantity">Anbar Sayı</label><input type="number" id="stockQuantity" required></div><div class="form-actions"><button type="submit" class="btn btn-primary">Yadda Saxla</button></div></form></div></div>
@@ -79,13 +168,15 @@
         const saveToStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
 
         sidebarNav.addEventListener('click', (e) => {
-            if (e.target.tagName === 'A') {
-                const targetPageId = e.target.getAttribute('data-target');
+            const link = e.target.closest('a');
+            if (link) {
+                e.preventDefault();
+                const targetPageId = link.getAttribute('data-target');
                 pages.forEach(p => p.classList.remove('active'));
                 sidebarNav.querySelectorAll('a').forEach(l => l.classList.remove('active'));
                 document.getElementById(targetPageId).classList.add('active');
-                e.target.classList.add('active');
-                pageTitle.textContent = e.target.textContent.trim().substring(2);
+                link.classList.add('active');
+                pageTitle.textContent = link.querySelector('span').textContent;
                 if (targetPageId === 'sales-page') initializeSalePage();
                 if (targetPageId === 'reports-page') renderReports();
             }
@@ -99,22 +190,22 @@
         const renderProducts = () => {
             const products = getProducts(); productTableBody.innerHTML = '';
             if (products.length === 0) { productTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Məhsul yoxdur.</td></tr>'; return; }
-            products.forEach(p => { productTableBody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.purchasePrice.toFixed(2)} ₼</td><td>${p.salePrice.toFixed(2)} ₼</td><td>${p.stock} ədəd</td><td><button class="btn-edit" data-id="${p.id}">✏️</button><button class="btn-delete" data-id="${p.id}">🗑️</button></td></tr>`; });
+            products.forEach(p => { productTableBody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.purchasePrice.toFixed(2)} ₼</td><td>${p.salePrice.toFixed(2)} ₼</td><td>${p.stock} ədəd</td><td class="actions-cell"><button class="btn-edit" data-id="${p.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z"></path></svg></button><button class="btn-delete" data-id="${p.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td></tr>`; });
         };
         addProductBtn.addEventListener('click', () => openModal(addProductModal));
         addProductForm.addEventListener('submit', (e) => { e.preventDefault(); const p = getProducts(); p.push({ id: Date.now(), name: productName.value, purchasePrice: parseFloat(purchasePrice.value), salePrice: parseFloat(salePrice.value), stock: parseInt(stockQuantity.value) }); saveProducts(p); renderProducts(); addProductForm.reset(); closeModal(addProductModal); });
-        productTableBody.addEventListener('click', (e) => { const id = parseInt(e.target.dataset.id); if (e.target.classList.contains('btn-delete')) { if (confirm('Məhsulu silməyə əminsiniz?')) { saveProducts(getProducts().filter(p => p.id !== id)); renderProducts(); } } if (e.target.classList.contains('btn-edit')) { const p = getProducts().find(p => p.id === id); editProductId.value = p.id; editProductName.value = p.name; editPurchasePrice.value = p.purchasePrice; editSalePrice.value = p.salePrice; editStockQuantity.value = p.stock; openModal(editProductModal); } });
+        productTableBody.addEventListener('click', (e) => { const btn = e.target.closest('button'); if (!btn) return; const id = parseInt(btn.dataset.id); if (btn.classList.contains('btn-delete')) { if (confirm('Məhsulu silməyə əminsiniz?')) { saveProducts(getProducts().filter(p => p.id !== id)); renderProducts(); } } if (btn.classList.contains('btn-edit')) { const p = getProducts().find(p => p.id === id); editProductId.value = p.id; editProductName.value = p.name; editPurchasePrice.value = p.purchasePrice; editSalePrice.value = p.salePrice; editStockQuantity.value = p.stock; openModal(editProductModal); } });
         editProductForm.addEventListener('submit', (e) => { e.preventDefault(); const id = parseInt(editProductId.value); const uP = getProducts().map(p => p.id === id ? { id, name: editProductName.value, purchasePrice: parseFloat(editPurchasePrice.value), salePrice: parseFloat(editSalePrice.value), stock: parseInt(editStockQuantity.value) } : p); saveProducts(uP); renderProducts(); closeModal(editProductModal); });
 
         const getCustomers = () => getFromStorage('customers'); const saveCustomers = (c) => saveToStorage('customers', c);
         const renderCustomers = () => {
             const customers = getCustomers(); customerTableBody.innerHTML = '';
             if (customers.length === 0) { customerTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Müştəri yoxdur.</td></tr>'; return; }
-            customers.forEach(c => { customerTableBody.innerHTML += `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.phone}</td><td>${c.debt.toFixed(2)} ₼</td><td><button class="btn-edit" data-id="${c.id}">✏️</button><button class="btn-delete" data-id="${c.id}">🗑️</button></td></tr>`; });
+            customers.forEach(c => { customerTableBody.innerHTML += `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.phone}</td><td>${c.debt.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-edit" data-id="${c.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z"></path></svg></button><button class="btn-delete" data-id="${c.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td></tr>`; });
         };
         addCustomerBtn.addEventListener('click', () => openModal(addCustomerModal));
         addCustomerForm.addEventListener('submit', (e) => { e.preventDefault(); const c = getCustomers(); c.push({ id: Date.now(), name: customerName.value, phone: customerPhone.value, debt: 0 }); saveCustomers(c); renderCustomers(); addCustomerForm.reset(); closeModal(addCustomerModal); });
-        customerTableBody.addEventListener('click', (e) => { const id = parseInt(e.target.dataset.id); if (e.target.classList.contains('btn-delete')) { if (confirm('Müştərini silməyə əminsiniz?')) { saveCustomers(getCustomers().filter(c => c.id !== id)); renderCustomers(); } } if (e.target.classList.contains('btn-edit')) { const c = getCustomers().find(c => c.id === id); editCustomerId.value = c.id; editCustomerName.value = c.name; editCustomerPhone.value = c.phone; openModal(editCustomerModal); } });
+        customerTableBody.addEventListener('click', (e) => { const btn = e.target.closest('button'); if (!btn) return; const id = parseInt(btn.dataset.id); if (btn.classList.contains('btn-delete')) { if (confirm('Müştərini silməyə əminsiniz?')) { saveCustomers(getCustomers().filter(c => c.id !== id)); renderCustomers(); } } if (btn.classList.contains('btn-edit')) { const c = getCustomers().find(c => c.id === id); editCustomerId.value = c.id; editCustomerName.value = c.name; editCustomerPhone.value = c.phone; openModal(editCustomerModal); } });
         editCustomerForm.addEventListener('submit', (e) => { e.preventDefault(); const id = parseInt(editCustomerId.value); const uC = getCustomers().map(c => c.id === id ? { ...c, name: editCustomerName.value, phone: editCustomerPhone.value } : c); saveCustomers(uC); renderCustomers(); closeModal(editCustomerModal); });
 
         const getSales = () => getFromStorage('sales');
@@ -123,27 +214,20 @@
             const p = getProducts(); saleProductSelect.innerHTML = '<option value="">-- Məhsul Seçin --</option>'; p.forEach(p => { if (p.stock > 0) { saleProductSelect.innerHTML += `<option value="${p.id}">${p.name} (Stok: ${p.stock})</option>`; }});
             currentCart = []; renderCart(); saleForm.reset(); initialPaymentGroup.style.display = 'none';
         };
-        const renderCart = () => { cartTableBody.innerHTML = ''; let s = 0; if (currentCart.length === 0) { cartTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Səbət boşdur</td></tr>'; } else { currentCart.forEach(i => { const t = i.quantity * i.salePrice; s += t; cartTableBody.innerHTML += `<tr><td>${i.name}</td><td><input type="number" class="cart-quantity-input" data-id="${i.id}" value="${i.quantity}" min="1" max="${i.stock}"></td><td>${i.salePrice.toFixed(2)} ₼</td><td>${t.toFixed(2)} ₼</td><td><button type="button" class="btn-delete cart-remove-btn" data-id="${i.id}">🗑️</button></td></tr>`; }); } summarySubtotal.textContent = `${s.toFixed(2)} ₼`; summaryTotal.textContent = `${s.toFixed(2)} ₼`; };
+        const renderCart = () => { cartTableBody.innerHTML = ''; let s = 0; if (currentCart.length === 0) { cartTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Səbət boşdur</td></tr>'; } else { currentCart.forEach(i => { const t = i.quantity * i.salePrice; s += t; cartTableBody.innerHTML += `<tr><td>${i.name}</td><td><input type="number" class="cart-quantity-input" data-id="${i.id}" value="${i.quantity}" min="1" max="${i.stock}"></td><td>${i.salePrice.toFixed(2)} ₼</td><td>${t.toFixed(2)} ₼</td><td class="actions-cell"><button type="button" class="btn-delete cart-remove-btn" data-id="${i.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td></tr>`; }); } summarySubtotal.textContent = `${s.toFixed(2)} ₼`; summaryTotal.textContent = `${s.toFixed(2)} ₼`; };
         saleProductSelect.addEventListener('change', () => { const pId = parseInt(saleProductSelect.value); if (!pId) return; const p = getProducts().find(p => p.id === pId); const eI = currentCart.find(i => i.id === pId); if (eI) { if (eI.quantity < p.stock) { eI.quantity++; } else { alert('Anbarda kifayət qədər məhsul yoxdur!'); } } else { currentCart.push({ ...p, quantity: 1 }); } renderCart(); saleProductSelect.value = ''; });
         cartTableBody.addEventListener('change', (e) => { if (e.target.classList.contains('cart-quantity-input')) { const pId = parseInt(e.target.dataset.id); let nQ = parseInt(e.target.value); const i = currentCart.find(i => i.id === pId); if (nQ > i.stock) { alert(`Anbarda yalnız ${i.stock} ədəd var!`); nQ = i.stock; e.target.value = nQ; } i.quantity = nQ < 1 ? 1 : nQ; renderCart(); } });
-        cartTableBody.addEventListener('click', (e) => { if (e.target.classList.contains('cart-remove-btn')) { currentCart = currentCart.filter(i => i.id !== parseInt(e.target.dataset.id)); renderCart(); }});
+        cartTableBody.addEventListener('click', (e) => { const btn = e.target.closest('button'); if(btn && btn.classList.contains('cart-remove-btn')) { currentCart = currentCart.filter(i => i.id !== parseInt(btn.dataset.id)); renderCart(); }});
         saleTypeRadios.forEach(r => { r.addEventListener('change', () => { initialPaymentGroup.style.display = document.getElementById('typeCredit').checked ? 'block' : 'none'; }); });
         saleForm.addEventListener('submit', (e) => { e.preventDefault(); if (currentCart.length === 0 || !saleCustomerSelect.value) { alert('Müştəri seçin və səbətə məhsul əlavə edin!'); return; } const t = currentCart.reduce((s, i) => s + (i.quantity * i.salePrice), 0); const iC = document.getElementById('typeCredit').checked; const cId = parseInt(saleCustomerSelect.value); const p = iC ? parseFloat(initialPaymentInput.value) : t; if (iC && cId === 0) { alert('Kredit satışı üçün "Nağd Alıcı" seçilə bilməz!'); return; } if (iC && p >= t) { alert('İlkin ödəniş ümumi məbləğdən az olmalıdır!'); return; } let prods = getProducts(); currentCart.forEach(item => { let p = prods.find(prod => prod.id === item.id); if (p) p.stock -= item.quantity; }); saveProducts(prods); if (iC) { let custs = getCustomers(); let c = custs.find(cust => cust.id === cId); if (c) c.debt += (t - p); saveCustomers(custs); } let sales = getSales(); sales.push({ id: Date.now(), customerId: cId, customerName: cId === 0 ? "Nağd Alıcı" : getCustomers().find(c => c.id === cId).name, items: currentCart, totalAmount: t, type: iC ? 'Kredit' : 'Nağd', initialPayment: p, date: new Date().toLocaleString('az-AZ') }); saveToStorage('sales', sales); alert('Satış uğurla tamamlandı!'); initializeSalePage(); });
 
         const renderReports = () => {
             const sales = getSales().reverse(); const customers = getCustomers(); salesHistoryTableBody.innerHTML = '';
             if (sales.length === 0) { salesHistoryTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Heç bir satış qeydə alınmayıb.</td></tr>'; }
-            else { sales.forEach(sale => { salesHistoryTableBody.innerHTML += `<tr><td>${sale.id}</td><td>${sale.date}</td><td>${sale.customerName}</td><td><span style="background:${sale.type === 'Kredit' ? '#f39c12' : '#27ae60'}; color:white; padding: 3px 8px; border-radius:4px;">${sale.type}</span></td><td>${sale.totalAmount.toFixed(2)} ₼</td><td><button class="btn-details" data-id="${sale.id}">Detallar</button></td></tr>`; }); }
+            else { sales.forEach(sale => { salesHistoryTableBody.innerHTML += `<tr><td>${sale.id}</td><td>${sale.date}</td><td>${sale.customerName}</td><td><span style="background:${sale.type === 'Kredit' ? 'var(--warning-color)' : 'var(--success-color)'}; color:white; padding: 4px 10px; border-radius:6px; font-size:12px;">${sale.type}</span></td><td>${sale.totalAmount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-details" data-id="${sale.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></button></td></tr>`; }); }
             totalSalesCount.textContent = sales.length; totalSalesRevenue.textContent = `${sales.reduce((s, sale) => s + sale.totalAmount, 0).toFixed(2)} ₼`; totalCustomerDebt.textContent = `${customers.reduce((s, c) => s + c.debt, 0).toFixed(2)} ₼`;
         };
-        salesHistoryTableBody.addEventListener('click', (e) => {
-            if (e.target.classList.contains('btn-details')) {
-                const sale = getSales().find(s => s.id === parseInt(e.target.dataset.id));
-                let d = `<p><strong>Satış ID:</strong> ${sale.id}</p><p><strong>Müştəri:</strong> ${sale.customerName}</p><p><strong>Yekun Məbləğ:</strong> ${sale.totalAmount.toFixed(2)} ₼</p><hr><h4>Satılan Məhsullar</h4><table class="data-table" style="width:100%;"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead><tbody>`;
-                sale.items.forEach(i => { d += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.salePrice.toFixed(2)} ₼</td><td>${(i.quantity * i.salePrice).toFixed(2)} ₼</td></tr>`; });
-                d += '</tbody></table>'; document.getElementById('saleDetailsContent').innerHTML = d; openModal(saleDetailsModal);
-            }
-        });
+        salesHistoryTableBody.addEventListener('click', (e) => { const btn = e.target.closest('button'); if (btn && btn.classList.contains('btn-details')) { const sale = getSales().find(s => s.id === parseInt(btn.dataset.id)); let d = `<p><strong>Satış ID:</strong> ${sale.id}</p><p><strong>Müştəri:</strong> ${sale.customerName}</p><p><strong>Yekun Məbləğ:</strong> ${sale.totalAmount.toFixed(2)} ₼</p><hr style="border-color:var(--border-color); margin: 15px 0;"><h4 style="margin-bottom:10px;">Satılan Məhsullar</h4><table class="data-table" style="width:100%;"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead><tbody>`; sale.items.forEach(i => { d += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.salePrice.toFixed(2)} ₼</td><td>${(i.quantity * i.salePrice).toFixed(2)} ₼</td></tr>`; }); d += '</tbody></table>'; document.getElementById('saleDetailsContent').innerHTML = d; openModal(saleDetailsModal); } });
         
         renderProducts(); renderCustomers(); renderReports();
     });
