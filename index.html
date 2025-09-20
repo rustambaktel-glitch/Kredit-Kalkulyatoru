@@ -403,13 +403,6 @@
             border-bottom: none;
         }
         
-        .customer-name-link {
-            cursor: pointer;
-            color: var(--primary-color);
-            font-weight: 500;
-            text-decoration: underline;
-        }
-        
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -704,7 +697,7 @@
                             <td>${sale.date}</td>
                             <td>${sale.type}</td>
                             <td>${sale.totalAmount.toFixed(2)} ₼</td>
-                            <td class="actions-cell"><button class="btn-details view-sale-details" data-id="${sale.id}">Məhsullar</button></td>
+                            <td class="actions-cell"><button class="btn-details view-sale-details-from-customer" data-id="${sale.id}">Məhsullar</button></td>
                         </tr>`;
                     });
                     historyHtml += `</tbody></table>`;
@@ -748,10 +741,10 @@
                 renderCustomers();
                 closeModal(editCustomerModal);
             });
-
+            
             customerSalesHistoryModal.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
-                if (btn && btn.classList.contains('view-sale-details')) {
+                if (btn && btn.classList.contains('view-sale-details-from-customer')) {
                     const saleId = parseInt(btn.dataset.id);
                     const sale = getSales().find(s => s.id === saleId);
                     if (!sale) return;
@@ -777,6 +770,7 @@
                     openModal(saleDetailsModal);
                 }
             });
+
 
             customerSearch.addEventListener('input', renderCustomers);
             renderCustomers();
@@ -1066,6 +1060,7 @@
             const cartTableBody = appContainer.querySelector('#purchaseCartTableBody');
             const purchaseTotalEl = appContainer.querySelector('#purchaseTotal');
             let currentPurchaseCart = [];
+            const purchaseDetailsModal = document.getElementById('purchaseDetailsModal');
 
             const initializePurchasePage = () => {
                 const suppliers = getSuppliers();
@@ -1113,7 +1108,7 @@
                 purchaseProductSelect.value = '';
             });
 
-            purchaseCartTableBody.addEventListener('input', (e) => {
+            cartTableBody.addEventListener('input', (e) => {
                 const id = parseInt(e.target.dataset.id);
                 const item = currentPurchaseCart.find(i => i.id === id);
                 if(!item) return;
@@ -1126,7 +1121,7 @@
                 renderPurchaseCart();
             });
 
-            purchaseCartTableBody.addEventListener('click', (e) => {
+            cartTableBody.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
                 if(btn && btn.classList.contains('purchase-remove-btn')) {
                     currentPurchaseCart = currentPurchaseCart.filter(i => i.id !== parseInt(btn.dataset.id));
