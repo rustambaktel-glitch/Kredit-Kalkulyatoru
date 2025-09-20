@@ -14,11 +14,12 @@
         html,body{height:100%}
         body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:16px;line-height:1.55}
 
-        .app{display:grid;grid-template-rows:56px 1fr;height:100%}
+        .app{display:grid;grid-template-rows:56px 1fr;height:100%;}
         .topbar{display:flex;align-items:center;justify-content:space-between;padding:0 16px;background:linear-gradient(to right, #6366f1, #4f46e5);color:#eef2ff;border-bottom:1px solid rgba(0,0,0,.1);box-shadow:var(--shadow)}
         .brand{font-weight:800;font-size:1.2rem}
         .top-actions{display:flex;gap:8px;align-items:center}
         .muted-light{color:rgba(255,255,255,.6);font-size:14px}
+        .brand-logo{height:40px;margin-right:10px}
 
         .shell{display:grid;grid-template-columns:270px 1fr;height:100%}
         .sidebar{background:#f1f5f9;padding:14px 12px;border-right:1px solid var(--border);box-shadow:inset -2px 0 4px -2px rgba(0,0,0,.05)}
@@ -64,6 +65,16 @@
 
         /* Print root for invoice-style */
         .print-invoice-root{font-family:Arial,Helvetica,system-ui,sans-serif;color:#111;padding:2rem}
+        .print-invoice-root table{width:100%;border-collapse:collapse;margin-top:20px;font-size:14px}
+        .print-invoice-root th,.print-invoice-root td{border:1px solid #ddd;padding:8px;text-align:left}
+        .print-invoice-root th{background-color:#f2f2f2;font-weight:bold}
+        .print-invoice-root .header{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #333;padding-bottom:12px;margin-bottom:20px}
+        .print-invoice-root .footer{display:flex;justify-content:space-between;align-items:flex-end;margin-top:50px}
+        .print-invoice-root .signature{text-align:center;width:45%;line-height:1.2rem}
+        .print-invoice-root .company-info{text-align:right}
+        .print-invoice-root .totals{float:right;width:300px;margin-top:20px}
+        .print-invoice-root .totals table{border:none}
+        .print-invoice-root .totals td{border:none;padding:5px 0}
         @media print{
             .sidebar,.topbar,.btn,.modal{display:none !important}
             .content{padding:0}
@@ -73,12 +84,27 @@
     </style>
 </head>
 <body>
-<div class="app">
+<div id="login-page" style="display:flex;justify-content:center;align-items:center;height:100vh;background-color:#f1f5f9;">
+    <div style="width:100%; max-width:400px; padding:2rem; background-color:#fff; border-radius:16px; box-shadow:0 10px 25px -5px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05); text-align:center; border:1px solid #e2e8f0;">
+        <img src="https://i.ibb.co/6P01x6N/Screenshot-2025-09-13-at-15-07-28.png" alt="BAKFON Logo" style="width:180px; margin-bottom:1.5rem;">
+        <h2 style="margin-bottom:1rem;color:#111827">Giriş</h2>
+        <div id="login-error" class="notice warn" style="display:none;margin-top:10px;"></div>
+        <div class="row">
+            <div class="col-12"><label style="text-align:left;display:block">İstifadəçi adı</label><input id="login-username" type="text" placeholder="İstifadəçi adı"></div>
+            <div class="col-12"><label style="text-align:left;display:block">Şifrə</label><input id="login-password" type="password" placeholder="Şifrə"></div>
+            <div class="col-12"><button id="login-btn" class="btn primary" style="width:100%;margin-top:10px;">Daxil ol</button></div>
+        </div>
+        <p style="font-size:12px;color:#94a3b8;margin-top:20px;">Demo: admin / 123456</p>
+    </div>
+</div>
+
+<div class="app" id="main-app" style="display:none">
     <div class="topbar">
-        <div class="brand">BAKFON — Satış & Anbar</div>
+        <div class="brand"><img src="https://i.ibb.co/6P01x6N/Screenshot-2025-09-13-at-15-07-28.png" alt="BAKFON Logo" class="brand-logo"></div>
         <div class="top-actions">
             <button id="btnOpenOffer" class="btn primary">Yeni təklif</button>
-            <div class="muted-light">Lokal demo</div>
+            <div class="muted-light" id="user-info"></div>
+            <button id="logout-btn" class="btn" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:white;font-weight:400">Çıxış</button>
         </div>
     </div>
 
@@ -319,6 +345,69 @@
 <div class="print-invoice-root" id="printRoot" style="display:none"></div>
 
 <script>
+    /* ===== LOGIN ===== */
+    const loginPage = document.getElementById('login-page');
+    const mainApp = document.getElementById('main-app');
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const loginUsername = document.getElementById('login-username');
+    const loginPassword = document.getElementById('login-password');
+    const loginError = document.getElementById('login-error');
+    const userInfo = document.getElementById('user-info');
+
+    const users = {
+        'admin': '123456',
+        'ali': '123',
+        'satishci': '456'
+    };
+    
+    function login() {
+        const username = loginUsername.value.trim();
+        const password = loginPassword.value.trim();
+        if (users[username] && users[username] === password) {
+            localStorage.setItem('currentUser', username);
+            loginPage.style.display = 'none';
+            mainApp.style.display = 'grid';
+            userInfo.textContent = `İstifadəçi: ${username}`;
+            hideMessage('login-error');
+            goto('view-home');
+        } else {
+            showMessage('login-error', 'İstifadəçi adı və ya şifrə yanlışdır.');
+        }
+    }
+    
+    function logout() {
+        localStorage.removeItem('currentUser');
+        mainApp.style.display = 'none';
+        loginPage.style.display = 'flex';
+        loginPassword.value = '';
+        hideMessage('login-error');
+    }
+    
+    loginBtn.addEventListener('click', login);
+    logoutBtn.addEventListener('click', logout);
+    loginPassword.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            login();
+        }
+    });
+    
+    function checkLogin() {
+        const currentUser = localStorage.getItem('currentUser');
+        if (currentUser) {
+            loginPage.style.display = 'none';
+            mainApp.style.display = 'grid';
+            userInfo.textContent = `İstifadəçi: ${currentUser}`;
+            goto('view-home');
+        } else {
+            loginPage.style.display = 'flex';
+            mainApp.style.display = 'none';
+        }
+    }
+    
+    document.addEventListener('DOMContentLoaded', checkLogin);
+    
+
     /* ===== UTIL ===== */
     const $=id=>document.getElementById(id);
     const nowISO=()=>{const t=new Date();const m=String(t.getMonth()+1).padStart(2,'0');const d=String(t.getDate()).padStart(2,'0');return `${t.getFullYear()}-${m}-${d}`};
@@ -403,7 +492,7 @@
     function renderCustomers(){
         const wrap=$('customersWrap'); const list=loadCustomers();
         const qn=($('searchName').value||'').toLowerCase(), qp=($('searchPhone').value||'').toLowerCase(), qf=($('searchFin').value||'').toLowerCase();
-        const view=list.filter(x=>{const okN=!qn||(x.custName||'').toLowerCase().includes(qn); const okP=!qp||(x.custPhone||'').toLowerCase().includes(qp); const okF=!qf||(x.finCode||'').toLowerCase().includes(qf); return okN&&okP&&okF});
+        const view=list.filter(x=>{const okN=!qn||(x.custName||'').toLowerCase().includes(qn); const okP=!qp||(x.custPhone||'').toLowerCase().includes(qp); const okF=!qf||(x.finCode||'').toLowerCase().includes(qf); return okN&&okP&&qf});
         if(!view.length){wrap.innerHTML='<div class="card">Heç bir müştəri tapılmadı.</div>';return}
         wrap.innerHTML=view.map(c=>`<div class="card" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><div><div style="font-weight:700">${c.custName}</div><div class="muted">FIN: ${c.finCode} • ${c.custPhone} • ${c.prodName} • Satış növü: ${(c.saleType||'').toUpperCase()}</div></div><div style="display:flex;gap:8px"><button class="btn" data-act="info" data-fin="${c.finCode}">ℹ️ Info</button><button class="btn primary" data-act="reprint" data-fin="${c.finCode}">Yenidən Çap</button><button class="btn success" data-act="resell" data-fin="${c.finCode}">Satış et</button><button class="btn" data-act="edit" data-fin="${c.finCode}">Düzəliş</button><button class="btn danger" data-act="del" data-fin="${c.finCode}">Sil</button></div></div></div>`).join('');
         wrap.querySelectorAll('button[data-act]').forEach(b=>{b.addEventListener('click',()=>{const fin=b.dataset.fin, act=b.dataset.act; const list=loadCustomers(); const c=list.find(x=>x.finCode===fin); if(!c) return;
@@ -422,44 +511,59 @@
         const {calc} = c;
         let scheduleHTML = '';
         if(calc && calc.schedule){
-            scheduleHTML = `<h4 style="margin-top:20px">Ödəniş Cədvəli</h4><table><thead><tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr></thead><tbody>
-                ${calc.schedule.map(r=>`<tr><td>${r.i}</td><td>${ddmmyyyy(r.date)}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join('')}
-            </tbody></table>`;
+            scheduleHTML = `<h4 style="margin-top:20px; text-align:center">Ödəniş Cədvəli</h4>
+            <table>
+                <thead>
+                    <tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr>
+                </thead>
+                <tbody>
+                    ${calc.schedule.map(r=>`<tr><td>${r.i}</td><td>${ddmmyyyy(r.date)}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join('')}
+                </tbody>
+            </table>`;
         }
         return `
             <div style="max-width:800px;margin:0 auto">
-                <div style="text-align:center;padding-bottom:12px;border-bottom:2px solid #333">
-                    <h3>${COMPANY.name}</h3>
-                    <p style="font-size:14px;margin:4px 0">${COMPANY.address}</p>
-                    <p style="font-size:14px;margin:4px 0">${COMPANY.contact}</p>
+                <div class="header">
+                    <h2 style="margin:0">${COMPANY.name}</h2>
+                    <div class="company-info">
+                        <p style="margin:0;font-size:14px">${COMPANY.address}</p>
+                        <p style="margin:4px 0 0;font-size:14px">${COMPANY.contact}</p>
+                    </div>
                 </div>
-                <h2 style="text-align:center;margin:24px 0">Müştəri Müqaviləsi</h2>
-                <p><strong>Müştəri:</strong> ${c.custName}</p>
-                <p><strong>FIN Kod:</strong> ${c.finCode}</p>
-                <p><strong>Məhsul:</strong> ${c.prodName}</p>
-                <p><strong>Müqavilə №:</strong> ${c.contractNo}</p>
-                <p><strong>Satış Növü:</strong> ${c.saleType}</p>
+                <h2 style="text-align:center;margin:30px 0">Müştəri Müqaviləsi</h2>
+                <p><strong>Müqavilə №:</strong> ${c.contractNo} | <strong>Tarix:</strong> ${ddmmyyyy(c.startDate)}</p>
+                <div style="background-color:#f8f9fa;padding:15px;border-radius:8px">
+                    <p style="margin:0"><strong>Müştəri:</strong> ${c.custName}</p>
+                    <p style="margin:5px 0"><strong>FIN:</strong> ${c.finCode} | <strong>Doğum tarixi:</strong> ${c.birthDate}</p>
+                    <p style="margin:5px 0"><strong>Ünvan:</strong> ${c.address} | <strong>Ş/V:</strong> ${c.idSerial}</p>
+                    <p style="margin:5px 0 0"><strong>Əlaqə:</strong> ${c.custPhone}</p>
+                </div>
+                <div style="margin-top:20px;padding:15px;border-radius:8px;border:1px dashed #ccc">
+                    <p style="margin:0"><strong>Məhsul:</strong> ${c.prodName}</p>
+                    <p style="margin:5px 0 0"><strong>IMEI 1:</strong> ${c.imei1} | <strong>IMEI 2:</strong> ${c.imei2}</p>
+                </div>
                 ${calc ? `
-                    <h4 style="margin-top:20px">Kredit Şərtləri</h4>
-                    <p><strong>Məhsul Dəyəri:</strong> ${fmtAZN(calc.price)}</p>
-                    <p><strong>İlkin Ödəniş:</strong> ${fmtAZN(calc.down)}</p>
-                    <p><strong>Kredit Məbləği:</strong> ${fmtAZN(calc.principal)}</p>
-                    <p><strong>Aylıq Ödəniş:</strong> ${fmtAZN(calc.monthly)}</p>
-                    <p><strong>Müddət:</strong> ${calc.months} ay</p>
+                    <div style="margin-top:20px;padding:15px;border-radius:8px;background-color:#f0f8ff">
+                        <h4 style="margin:0 0 10px;text-align:center">Kredit Şərtləri</h4>
+                        <p style="margin:0"><strong>Satış Növü:</strong> ${c.saleType}</p>
+                        <p style="margin:5px 0"><strong>Məhsul Dəyəri:</strong> ${fmtAZN(calc.price)}</p>
+                        <p style="margin:5px 0"><strong>İlkin Ödəniş:</strong> ${fmtAZN(calc.down)}</p>
+                        <p style="margin:5px 0"><strong>Kredit Məbləği:</strong> ${fmtAZN(calc.principal)}</p>
+                        <p style="margin:5px 0"><strong>Müddət:</strong> ${calc.months} ay | <strong>Aylıq Ödəniş:</strong> ${fmtAZN(calc.monthly)}</p>
+                    </div>
                 ` : ''}
                 ${scheduleHTML}
-                <div style="margin-top:40px;text-align:right;font-size:14px">
-                    <p>_________________________</p>
-                    <p>${c.sellerRep}</p>
-                    <p>Satıcı Nümayəndə</p>
-                </div>
-                <div style="margin-top:-60px;text-align:left;font-size:14px">
-                    <p>_________________________</p>
-                    <p>${c.custName}</p>
-                    <p>Müştəri İmzası</p>
-                </div>
-                <div style="text-align:center;font-size:12px;margin-top:20px">
-                    <p>Sənəd ${new Date().toISOString().substring(0,10)} tarixində sistemdən çap edilib.</p>
+                <div class="footer">
+                    <div class="signature">
+                        <p>_________________________</p>
+                        <p>${c.custName}</p>
+                        <p>Müştəri İmzası</p>
+                    </div>
+                    <div class="signature">
+                        <p>_________________________</p>
+                        <p>${c.sellerRep}</p>
+                        <p>Satıcı Nümayəndə</p>
+                    </div>
                 </div>
             </div>
         `;
@@ -660,57 +764,59 @@
         const printRoot=$('printRoot');
         printRoot.innerHTML=`
             <div style="max-width:800px;margin:0 auto">
-                <div style="display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #333;padding-bottom:12px">
+                <div class="header">
                     <h2 style="margin:0">${COMPANY.name}</h2>
-                    <div>
-                        <p style="margin:0;font-size:14px;text-align:right">${COMPANY.address}</p>
-                        <p style="margin:0;font-size:14px;text-align:right">${COMPANY.contact}</p>
+                    <div class="company-info">
+                        <p style="margin:0;font-size:14px">${COMPANY.address}</p>
+                        <p style="margin:4px 0 0;font-size:14px">${COMPANY.contact}</p>
                     </div>
                 </div>
                 <div style="text-align:center;margin:24px 0 16px">
                     <h3 style="margin:0">QİYMƏT RAZILAŞDIRMA PROTOKOLU</h3>
                     <p style="margin:4px 0;font-size:14px">Protokol №: ${offer.ofNo} • Tarix: ${ddmmyyyy(offer.ofDate)}</p>
                 </div>
-                <div style="font-size:14px;margin-bottom:20px">
-                    <p><strong>Təklif edən tərəf:</strong> ${offer.ofFrom}</p>
-                    <p><strong>Təklif olunan tərəf:</strong> ${offer.ofTo}</p>
-                    <p><strong>Kimə:</strong> ${offer.ofToLine}</p>
+                <div style="font-size:14px;margin-bottom:20px;line-height:1.6">
+                    <p style="margin:0"><strong>Təklif edən tərəf:</strong> ${offer.ofFrom}</p>
+                    <p style="margin:0"><strong>Təklif olunan tərəf:</strong> ${offer.ofTo}</p>
+                    <p style="margin:0"><strong>Kimə:</strong> ${offer.ofToLine}</p>
                 </div>
                 <table>
                     <thead>
                         <tr>
-                            <th class="text-center">#</th>
-                            <th class="text-left">Məhsul / Təsvir</th>
-                            <th>Miqdar</th>
-                            <th>Vahidin qiyməti (AZN)</th>
-                            <th>Cəm (AZN)</th>
+                            <th style="width:5%">#</th>
+                            <th>Məhsul / Təsvir</th>
+                            <th style="width:15%">Miqdar</th>
+                            <th style="width:20%">Vahidin qiyməti (AZN)</th>
+                            <th style="width:20%">Cəm (AZN)</th>
                         </tr>
                     </thead>
                     <tbody>
                         ${offer.rows.map((r,ix)=>`
                             <tr>
-                                <td class="text-center">${ix+1}</td>
-                                <td class="text-left">${r.name}</td>
+                                <td>${ix+1}</td>
+                                <td>${r.name}</td>
                                 <td>${fmtNum(r.qty)}</td>
                                 <td>${fmtAZN(r.price)}</td>
                                 <td>${fmtAZN(r.qty*r.price)}</td>
                             </tr>
                         `).join('')}
                     </tbody>
-                    <tfoot>
-                        <tr><td colspan="4" class="text-right">Cəmi</td><td>${fmtAZN(subtotal)}</td></tr>
-                        <tr><td colspan="4" class="text-right">ƏDV (18%)</td><td>${fmtAZN(vat)}</td></tr>
-                        <tr><td colspan="4" class="text-right">Yekun məbləğ</td><td>${fmtAZN(grandTotal)}</td></tr>
-                    </tfoot>
                 </table>
-                ${offer.ofNote?`<p style="margin-top:20px;font-size:14px"><strong>Qeydlər:</strong> ${offer.ofNote}</p>`:''}
-                <div style="display:flex;justify-content:space-between;margin-top:40px;font-size:14px">
-                    <div>
+                <div class="totals">
+                    <table>
+                        <tr><td>Cəmi:</td><td>${fmtAZN(subtotal)}</td></tr>
+                        <tr><td>ƏDV (18%):</td><td>${fmtAZN(vat)}</td></tr>
+                        <tr><td style="font-size:1.1rem">Yekun:</td><td style="font-size:1.1rem;font-weight:bold">${fmtAZN(grandTotal)}</td></tr>
+                    </table>
+                </div>
+                ${offer.ofNote?`<div style="clear:both;margin-top:20px;font-size:14px"><strong>Qeydlər:</strong> ${offer.ofNote}</div>`:''}
+                <div class="footer">
+                    <div class="signature">
                         <p>_________________________</p>
                         <p>${offer.ofDirector}</p>
                         <p>Direktor</p>
                     </div>
-                    <div>
+                    <div class="signature">
                         <p>_________________________</p>
                         <p>${offer.ofTo}</p>
                         <p>İmza</p>
