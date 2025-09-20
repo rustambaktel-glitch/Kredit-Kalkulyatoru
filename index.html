@@ -648,6 +648,7 @@
             const addCustomerForm = document.getElementById('addCustomerForm');
             const editCustomerForm = document.getElementById('editCustomerForm');
             const customerSalesHistoryModal = document.getElementById('customerSalesHistoryModal');
+            const saleDetailsModal = document.getElementById('saleDetailsModal');
 
             const renderCustomers = () => {
                 const query = customerSearch.value.toLowerCase();
@@ -661,7 +662,7 @@
                     return;
                 }
                 customers.forEach(c => {
-                    customerTableBody.innerHTML += `<tr><td>${c.id}</td><td><a href="#" class="customer-name-link" data-id="${c.id}">${c.name}</a></td><td>${c.phone}</td><td>${c.debt.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-edit" data-id="${c.id}">✏️</button><button class="btn-delete" data-id="${c.id}">🗑️</button></td></tr>`;
+                    customerTableBody.innerHTML += `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.phone}</td><td>${c.debt.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-details customer-details-btn" data-id="${c.id}">Detallar</button><button class="btn-edit" data-id="${c.id}">✏️</button><button class="btn-delete" data-id="${c.id}">🗑️</button></td></tr>`;
                 });
             };
             
@@ -684,12 +685,12 @@
 
             customerTableBody.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
-                const link = e.target.closest('.customer-name-link');
-                if (link) {
-                    e.preventDefault();
-                    const customerId = parseInt(link.dataset.id);
-                    const sales = getSales().filter(s => s.customerId === customerId);
-                    const customer = getCustomers().find(c => c.id === customerId);
+                if (!btn) return;
+                const id = parseInt(btn.dataset.id);
+
+                if (btn.classList.contains('customer-details-btn')) {
+                    const sales = getSales().filter(s => s.customerId === id);
+                    const customer = getCustomers().find(c => c.id === id);
                     
                     const historyTitle = document.getElementById('customer-history-title');
                     const historyContent = document.getElementById('customerSalesHistoryContent');
@@ -703,7 +704,7 @@
                             <td>${sale.date}</td>
                             <td>${sale.type}</td>
                             <td>${sale.totalAmount.toFixed(2)} ₼</td>
-                            <td class="actions-cell"><button class="btn-details" data-id="${sale.id}">Məhsullar</button></td>
+                            <td class="actions-cell"><button class="btn-details view-sale-details" data-id="${sale.id}">Məhsullar</button></td>
                         </tr>`;
                     });
                     historyHtml += `</tbody></table>`;
@@ -712,9 +713,6 @@
                     openModal(customerSalesHistoryModal);
                     return;
                 }
-
-                if (!btn) return;
-                const id = parseInt(btn.dataset.id);
 
                 if (btn.classList.contains('btn-delete')) {
                     const customer = getCustomers().find(c => c.id === id);
@@ -751,6 +749,35 @@
                 closeModal(editCustomerModal);
             });
 
+            customerSalesHistoryModal.addEventListener('click', (e) => {
+                const btn = e.target.closest('button');
+                if (btn && btn.classList.contains('view-sale-details')) {
+                    const saleId = parseInt(btn.dataset.id);
+                    const sale = getSales().find(s => s.id === saleId);
+                    if (!sale) return;
+
+                    let detailsHtml = `
+                        <p><strong>Satış ID:</strong> ${sale.id}</p>
+                        <p><strong>Müştəri:</strong> ${sale.customerName}</p>
+                        <p><strong>Satış Növü:</strong> ${sale.type}</p>
+                        <p><strong>Yekun Məbləğ:</strong> ${sale.totalAmount.toFixed(2)} ₼</p>
+                        <p><strong>Ödənilmiş Məbləğ:</strong> ${sale.initialPayment.toFixed(2)} ₼</p>
+                        <p><strong>Borc:</strong> ${(sale.totalAmount - sale.initialPayment).toFixed(2)} ₼</p>
+                        <hr style="border-color:var(--border-color); margin: 15px 0;">
+                        <h4 style="margin-bottom:10px;">Satılan Məhsullar</h4>
+                        <table class="data-table" style="width:100%;">
+                            <thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead>
+                            <tbody>
+                    `;
+                    sale.items.forEach(i => {
+                        detailsHtml += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.salePrice.toFixed(2)} ₼</td><td>${(i.quantity * i.salePrice).toFixed(2)} ₼</td></tr>`;
+                    });
+                    detailsHtml += '</tbody></table>';
+                    document.getElementById('saleDetailsContent').innerHTML = detailsHtml;
+                    openModal(saleDetailsModal);
+                }
+            });
+
             customerSearch.addEventListener('input', renderCustomers);
             renderCustomers();
         }
@@ -763,6 +790,7 @@
             const editSupplierModal = document.getElementById('editSupplierModal');
             const addSupplierForm = document.getElementById('addSupplierForm');
             const editSupplierForm = document.getElementById('editSupplierForm');
+            const purchaseDetailsModal = document.getElementById('purchaseDetailsModal');
 
             const renderSuppliers = () => {
                 const query = supplierSearch.value.toLowerCase();
@@ -1039,6 +1067,7 @@
             const purchaseCartTableBody = appContainer.querySelector('#purchaseCartTableBody');
             const purchaseTotalEl = appContainer.querySelector('#purchaseTotal');
             let currentPurchaseCart = [];
+            const purchaseDetailsModal = document.getElementById('purchaseDetailsModal');
 
             const initializePurchasePage = () => {
                 const suppliers = getSuppliers();
@@ -1170,7 +1199,6 @@
             const saleDetailsModal = document.getElementById('saleDetailsModal');
             const purchaseDetailsModal = document.getElementById('purchaseDetailsModal');
             
-
             const renderAllSales = () => {
                 const query = salesReportSearch.value.toLowerCase();
                 let sales = getSales().reverse();
@@ -1268,9 +1296,7 @@
                             <hr style="border-color:var(--border-color); margin: 15px 0;">
                             <h4 style="margin-bottom:10px;">Satılan Məhsullar</h4>
                             <table class="data-table" style="width:100%;">
-                                <thead>
-                                    <tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr>
-                                </thead>
+                                <thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead>
                                 <tbody>
                         `;
                         sale.items.forEach(i => {
@@ -1289,9 +1315,7 @@
                             <hr style="border-color:var(--border-color); margin: 15px 0;">
                             <h4 style="margin-bottom:10px;">Alınan Məhsullar</h4>
                             <table class="data-table" style="width:100%;">
-                                <thead>
-                                    <tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr>
-                                </thead>
+                                <thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead>
                                 <tbody>
                         `;
                         purchase.items.forEach(i => {
