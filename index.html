@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>BAKFON — Satış & Anbar Sistemi + Protokol</title>
+    <title>BAKFON — Satış & Anbar Sistemi</title>
     <style>
         :root{
             --bg:#f8fafc; --text:#0f172a; --card:#ffffff; --border:#e2e8f0; --muted:#64748b; --primary:#4f46e5;
@@ -102,7 +102,6 @@
     <div class="topbar">
         <div class="brand"><img src="https://i.ibb.co/6P01x6N/Screenshot-2025-09-13-at-15-07-28.png" alt="BAKFON Logo" class="brand-logo"></div>
         <div class="top-actions">
-            <button id="btnOpenOffer" class="btn primary">Yeni təklif</button>
             <div class="muted-light" id="user-info"></div>
             <button id="logout-btn" class="btn" style="background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.2);color:white;font-weight:400">Çıxış</button>
         </div>
@@ -110,90 +109,30 @@
 
     <div class="shell">
         <aside class="sidebar" id="sidebar">
-            <div class="navgroup">Naviqasiya</div>
-            <button class="navbtn active" data-view="home">Ana Səhifə</button>
-            <button class="navbtn" data-view="calc">Kredit Kalkulyator</button>
-            <button class="navbtn" data-view="finalize">Müştəri Rəsmiləşdir</button>
-            <button class="navbtn" data-view="customers">Müştərilər</button>
-            <button class="navbtn" data-view="offers">Təkliflər</button>
-            <div class="navgroup">Əməliyyat</div>
+            <div class="navgroup">Əsas</div>
+            <button class="navbtn active" data-view="dashboard">Ana Səhifə</button>
             <button class="navbtn" data-view="inventory">Anbar</button>
-            <button class="navbtn" data-view="purchases">Alışlar</button>
             <button class="navbtn" data-view="sales">Satışlar</button>
-            <div class="navgroup">Hesabat & Kadr</div>
+            <button class="navbtn" data-view="customers">Müştərilər</button>
+            <div class="navgroup">Əlavə</div>
             <button class="navbtn" data-view="reports">Hesabatlar</button>
-            <button class="navbtn" data-view="overdue">Gecikmələr</button>
-            <button class="navbtn" data-view="employees">Əməkdaşlar</button>
-            <button class="navbtn" data-view="users">İstifadəçilər</button>
-            <button class="navbtn" data-view="payroll">Bonus & Əməkhaqqı</button>
+            <button class="navbtn" data-view="calculator">Kredit Kalkulyator</button>
+            <button class="navbtn" data-view="settings">Ayarlar</button>
         </aside>
 
         <main class="content">
-            <section id="view-home" class="card" style="min-height:120px">
-                <h3>XOŞ GƏLMİSİNİZ</h3>
-                <p class="muted">Bütün modullar sol menyudadır. Yeni protokol üçün yuxarıdakı **Yeni təklif** düyməsinə klikləyin.</p>
-            </section>
-
-            <section id="view-calc" class="card" style="display:none">
-                <h3>Kredit kalkulyatoru</h3>
-                <div id="calcAlert" class="notice warn" style="display:none"></div>
+            <section id="view-dashboard" class="card" style="min-height:120px">
+                <h3>Dashboard</h3>
                 <div class="row">
-                    <div class="col-4"><label>Məhsul dəyəri (AZN)</label><input id="price" type="number" min="0" step="0.01"/></div>
-                    <div class="col-3"><label>Müddət (ay)</label><select id="months"><option value="">— Seçin —</option><option>3</option><option>6</option><option>9</option><option>12</option><option>15</option><option>18</option></select></div>
-                    <div class="col-3"><label>Risk qrupu</label><select id="risk"><option value="">— Seçin —</option><option value="low">Aşağı</option><option value="med">Orta</option><option value="high">Yüksək</option></select></div>
-                    <div class="col-3"><label>Aylıq əmək haqqı</label><input id="salary" type="number" min="1" step="1"/></div>
-                    <div class="col-3"><label>Digər öhdəliklər</label><input id="oblig" type="number" min="0" step="1" value="0"/></div>
-                    <div class="col-12" style="display:flex;gap:10px;flex-wrap:wrap"><button id="btnCalc" class="btn success">Hesabla</button><button id="btnCalcReset" class="btn danger">Sıfırla</button></div>
+                    <div class="col-4 card"><h4 style="margin:0">Bugünkü Satış</h4><p style="font-size:1.5rem;font-weight:700;margin:0" id="todaySales">0.00 ₼</p></div>
+                    <div class="col-4 card"><h4 style="margin:0">Ayın Mənfəəti</h4><p style="font-size:1.5rem;font-weight:700;margin:0" id="monthProfit">0.00 ₼</p></div>
+                    <div class="col-4 card"><h4 style="margin:0">Anbardakı məhsul sayı</h4><p style="font-size:1.5rem;font-weight:700;margin:0" id="invCount">0 ədəd</p></div>
                 </div>
-                <div class="row">
-                    <div class="col-6 card"><h3>Xülasə</h3><div id="summary"></div></div>
-                    <div class="col-6 card"><h3>Ödəniş cədvəli</h3><div id="scheduleWrap" style="max-height:360px;overflow:auto"></div></div>
-                </div>
-            </section>
-
-            <section id="view-finalize" class="card" style="display:none">
-                <h3>Müştəri məlumatları</h3>
-                <div id="finalizeAlert" class="notice warn" style="display:none"></div>
-                <div class="row">
-                    <div class="col-4"><label>Müştəri A.S.A.</label><input id="custName"></div>
-                    <div class="col-4"><label>Əlaqə nömrəsi</label><input id="custPhone"></div>
-                    <div class="col-4"><label>Məhsul adı/model</label><input id="prodName"></div>
-                    <div class="col-3"><label>Ş/V seriya və nömrəsi</label><input id="idSerial"></div>
-                    <div class="col-3"><label>FIN kodu</label><input id="finCode"></div>
-                    <div class="col-3"><label>Doğum tarixi</label><input id="birthDate" type="date"></div>
-                    <div class="col-3"><label>Ünvan</label><input id="address"></div>
-                    <div class="col-4"><label>IMEI 1</label><input id="imei1"></div>
-                    <div class="col-4"><label>IMEI 2</label><input id="imei2"></div>
-                    <div class="col-4"><label>Müqavilə №</label><input id="contractNo"></div>
-                    <div class="col-3"><label>Filial</label><input id="branch" value="Nəsimi"></div>
-                    <div class="col-3"><label>Valyuta</label><select id="currency"><option>AZN</option></select></div>
-                    <div class="col-3"><label>Kreditin verilmə tarixi</label><input id="startDate" type="date"></div>
-                    <div class="col-3"><label>Satıcı nümayəndə</label><select id="sellerRep"><option value="">— Seçin —</option><option>Vəliməmmədov Niyazi S.</option><option>Abaszadə Mədət Y.</option></select></div>
-                    <div class="col-3"><label>Satış növü</label><select id="saleType"><option value="">— Seçin —</option><option value="kredit">Kredit</option><option value="nagd">Nağd</option><option value="pos">POS</option><option value="korporativ">Korporativ</option></select></div>
-                    <div class="col-12" style="display:flex;gap:10px;flex-wrap:wrap"><button id="btnSaveCustomer" class="btn primary">Yadda saxla</button><button id="btnFinalizeReset" class="btn danger">Sıfırla</button></div>
-                </div>
-            </section>
-
-            <section id="view-customers" class="card" style="display:none">
-                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><h3 style="margin:0">Müştərilər</h3><button id="btnAddCustomer" class="btn success">Müştəri əlavə et</button></div>
-                <div class="row card" style="margin:12px 0">
-                    <div class="col-4"><label>Ad üzrə axtar</label><input id="searchName"></div>
-                    <div class="col-4"><label>Mobil nömrə üzrə axtar</label><input id="searchPhone"></div>
-                    <div class="col-4"><label>FIN kod üzrə axtar</label><input id="searchFin"></div>
-                </div>
-                <div id="customersWrap"></div>
-            </section>
-
-            <section id="view-offers" class="card" style="display:none">
-                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
-                    <h3 style="margin:0">Qiymət razılaşdırma protokolları</h3>
-                    <button class="btn primary" id="btnOfferNew">Yeni təklif</button>
-                </div>
-                <div id="offersWrap" class="card" style="margin-top:12px"></div>
             </section>
 
             <section id="view-inventory" class="card" style="display:none">
-                <h3>Anbar</h3>
+                <h3>Anbar İdarəetməsi</h3>
+                <div id="inv-alert" class="notice warn" style="display:none"></div>
                 <div class="row">
                     <div class="col-3"><label>SKU</label><input id="invSku"></div>
                     <div class="col-3"><label>Ad</label><input id="invName"></div>
@@ -202,839 +141,443 @@
                     <div class="col-3"><label>Miqdar</label><input id="invQty" type="number" step="1"></div>
                     <div class="col-12"><button id="btnAddInv" class="btn primary">Məhsul əlavə/yenilə</button></div>
                 </div>
-                <div class="row card" style="margin:12px 0"><div class="col-4"><label>Axtarış</label><input id="invSearch" placeholder="SKU / Ad"></div></div>
-                <div id="inventoryWrap"></div>
-            </section>
-
-            <section id="view-purchases" class="card" style="display:none">
-                <h3>Alışlar</h3>
-                <div class="row">
-                    <div class="col-3"><label>Tarix</label><input id="purDate" type="date"></div>
-                    <div class="col-3"><label>SKU</label><input id="purSku"></div>
-                    <div class="col-3"><label>Miqdar</label><input id="purQty" type="number"></div>
-                    <div class="col-3"><label>Maya (AZN)</label><input id="purCost" type="number" step="0.01"></div>
-                    <div class="col-12"><button id="btnAddPurchase" class="btn primary">Alış əlavə et</button></div>
+                <div class="row card" style="margin:12px 0">
+                    <div class="col-12"><label>Axtarış</label><input id="invSearch" placeholder="SKU / Ad"></div>
                 </div>
-                <div id="purchaseWrap" class="card"></div>
+                <div id="inventoryTable"></div>
             </section>
 
             <section id="view-sales" class="card" style="display:none">
-                <h3>Satışlar</h3>
+                <h3>Yeni Satış</h3>
+                <div id="sale-alert" class="notice warn" style="display:none"></div>
                 <div class="row">
-                    <div class="col-3"><label>Tarix</label><input id="saleDate" type="date"></div>
-                    <div class="col-3"><label>Müştəri FIN</label><input id="saleFin" placeholder="FIN"></div>
-                    <div class="col-3"><label>SKU</label><input id="saleSku"></div>
-                    <div class="col-3"><label>Miqdar</label><input id="saleQty" type="number" value="1"></div>
+                    <div class="col-3"><label>Müştəri FIN</label><input id="saleFin" placeholder="Müştəri FIN kodunu daxil edin"></div>
+                    <div class="col-3"><label>Məhsul SKU</label><input id="saleSku" placeholder="Məhsul SKU daxil edin"></div>
+                    <div class="col-3"><label>Miqdar</label><input id="saleQty" type="number" value="1" min="1"></div>
+                    <div class="col-3"><label>Satış növü</label><select id="saleType"><option value="cash">Nağd</option><option value="credit">Kredit</option><option value="pos">POS</option></select></div>
                     <div class="col-3"><label>Satış qiyməti (AZN)</label><input id="salePrice" type="number" step="0.01"></div>
-                    <div class="col-3"><label>İMEİ</label><input id="saleImei"></div>
-                    <div class="col-3"><label>Satış növü</label><select id="saleTypeSel"><option value="kredit">Kredit</option><option value="nagd">Nağd</option><option value="pos">POS</option><option value="korporativ">Korporativ</option></select></div>
-                    <div class="col-3"><label>Əməkdaş</label><input id="saleEmployee" placeholder="Satışçı adı"></div>
-                    <div class="col-12"><button id="btnAddSale" class="btn success">Satışı qeyd et</button></div>
+                    <div class="col-3"><label>IMEI (opsional)</label><input id="saleImei"></div>
+                    <div class="col-12"><button id="btnMakeSale" class="btn success">Satışı tamamla</button></div>
                 </div>
-                <div id="salesWrap" class="card"></div>
+                <div id="salesTable" class="card" style="margin-top:12px"></div>
+            </section>
+
+            <section id="view-customers" class="card" style="display:none">
+                <h3>Müştərilər</h3>
+                <div id="customer-alert" class="notice warn" style="display:none"></div>
+                <div class="row">
+                    <div class="col-4"><label>Ad Soyad</label><input id="custName"></div>
+                    <div class="col-4"><label>FIN Kodu</label><input id="custFin"></div>
+                    <div class="col-4"><label>Telefon</label><input id="custPhone"></div>
+                    <div class="col-12"><button id="btnAddCustomer" class="btn primary">Müştəri əlavə et</button></div>
+                </div>
+                <div id="customerSearch" class="card" style="margin-top:12px">
+                    <label>Müştəri axtar</label><input id="searchCustomer" placeholder="Ad, FIN və ya telefon nömrəsi">
+                </div>
+                <div id="customersTable" class="card" style="margin-top:12px"></div>
             </section>
 
             <section id="view-reports" class="card" style="display:none">
                 <h3>Hesabatlar</h3>
                 <div class="row">
-                    <div class="col-3"><label>Başlanğıc</label><input id="repFrom" type="date"></div>
-                    <div class="col-3"><label>Bitiş</label><input id="repTo" type="date"></div>
-                    <div class="col-3"><label>Əməkdaş</label><input id="repEmployee" placeholder="(opsional)"></div>
-                    <div class="col-3"><label>SKU</label><input id="repSku" placeholder="(opsional)"></div>
+                    <div class="col-4"><label>Başlanğıc tarixi</label><input id="repFrom" type="date"></div>
+                    <div class="col-4"><label>Bitiş tarixi</label><input id="repTo" type="date"></div>
                     <div class="col-12"><button id="btnRunReport" class="btn primary">Hesabatı hazırla</button></div>
                 </div>
-                <div id="reportWrap" class="card"></div>
+                <div id="reportSummary" class="card" style="margin-top:12px"></div>
+                <div id="reportTable" class="card"></div>
             </section>
 
-            <section id="view-overdue" class="card" style="display:none">
-                <h3>Gecikmələr</h3>
-                <p class="muted">Ödəniş tarixindən ≥1 gün keçmiş və ödənməmiş taksitlər.</p>
-                <div id="overdueWrap" class="card"></div>
-            </section>
-
-            <section id="view-employees" class="card" style="display:none">
-                <h3>Əməkdaşlar</h3>
+            <section id="view-calculator" class="card" style="display:none">
+                <h3>Kredit Kalkulyatoru</h3>
+                <div id="calc-alert" class="notice warn" style="display:none"></div>
                 <div class="row">
-                    <div class="col-3"><label>Ad Soyad</label><input id="empName"></div>
-                    <div class="col-3"><label>Baz maaş (AZN)</label><input id="empBase" type="number" step="0.01"></div>
-                    <div class="col-3"><label>Bonus %</label><input id="empBonusPct" type="number" step="0.01" placeholder="məs: 10"></div>
-                    <div class="col-3"><label>Status</label><select id="empStatus"><option value="aktiv">Aktiv</option><option value="passiv">Passiv</option></select></div>
-                    <div class="col-12"><button id="btnAddEmp" class="btn primary">Əlavə / Yenilə</button></div>
+                    <div class="col-4"><label>Məhsul dəyəri (AZN)</label><input id="calcPrice" type="number" min="0" step="0.01"></div>
+                    <div class="col-3"><label>Müddət (ay)</label><select id="calcMonths"><option value="">— Seçin —</option><option>3</option><option>6</option><option>9</option><option>12</option></select></div>
+                    <div class="col-12"><button id="btnCalc" class="btn success">Hesabla</button></div>
                 </div>
-                <div id="empWrap" class="card"></div>
+                <div id="calcResult" class="card" style="margin-top:12px;display:none"></div>
             </section>
 
-            <section id="view-users" class="card" style="display:none">
-                <h3>İstifadəçilər</h3>
+            <section id="view-settings" class="card" style="display:none">
+                <h3>Ayarlar</h3>
+                <p>Burada şirkət məlumatları, istifadəçilər və digər parametrlər idarə oluna bilər.</p>
                 <div class="row">
-                    <div class="col-3"><label>Login</label><input id="usrLogin"></div>
-                    <div class="col-3"><label>Ad Soyad</label><input id="usrName"></div>
-                    <div class="col-3"><label>Rol</label><select id="usrRole"><option>Admin</option><option>Kassir</option><option>Satış</option></select></div>
-                    <div class="col-3"><label>Status</label><select id="usrStatus"><option value="aktiv">Aktiv</option><option value="passiv">Passiv</option></select></div>
-                    <div class="col-12"><button id="btnAddUser" class="btn primary">Əlavə / Yenilə</button></div>
+                    <div class="col-12"><label>Şirkət Adı</label><input id="companyName"></div>
+                    <div class="col-12"><button id="btnSaveSettings" class="btn primary">Yadda saxla</button></div>
                 </div>
-                <div id="usersWrap" class="card"></div>
             </section>
-
-            <section id="view-payroll" class="card" style="display:none">
-                <h3>Bonus & Əməkhaqqı (aylıq)</h3>
-                <div class="row">
-                    <div class="col-3"><label>Başlanğıc</label><input id="payFrom" type="date"></div>
-                    <div class="col-3"><label>Bitiş</label><input id="payTo" type="date"></div>
-                    <div class="col-12"><button id="btnRunPayroll" class="btn primary">Hesabla</button></div>
-                </div>
-                <div id="payrollWrap" class="card"></div>
-            </section>
-
         </main>
     </div>
 </div>
 
-<div class="modal" id="offerModal" aria-hidden="true">
-    <div class="modal-card">
-        <div class="modal-head">
-            <h3 style="margin:0">Qiymət razılaşdırma protokolu</h3>
-            <button class="x" id="offerClose">Bağla ✕</button>
-        </div>
-        <div class="row">
-            <div class="col-6"><label>Təklif edən tərəf</label><input id="ofFrom" placeholder="Baktel Electronics MMC" value="Baktel Electronics MMC"></div>
-            <div class="col-6"><label>Təklif olunan tərəf</label><input id="ofTo" placeholder="Müştəri / Şirkət adı"></div>
-            <div class="col-3"><label>Tarix</label><input id="ofDate" type="date"></div>
-            <div class="col-3"><label>Protokol №</label><input id="ofNo" placeholder="Auto" disabled></div>
-            <div class="col-6"><label>Qeydlər (opsional)</label><input id="ofNote"></div>
-            <div class="col-6"><label>Direktor (çap üçün)</label><input id="ofDirector" placeholder="İlqar Mahmudov" value="İlqar Mahmudov"></div>
-            <div class="col-6"><label>Kimə (çap sətri)</label><input id="ofToLine" placeholder="Şirkət / şöbə / şəxs"></div>
-
-            <div class="col-12 card" style="margin-top:6px">
-                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;flex-wrap:wrap">
-                    <strong style="font-size:1.1rem">Məhsullar</strong>
-                    <div style="display:flex;gap:8px;flex-wrap:wrap">
-                        <button class="btn" id="ofAddRow">Sətir əlavə et</button>
-                        <button class="btn danger" id="ofClearRows">Hamısını sil</button>
-                    </div>
-                </div>
-                <div style="overflow:auto">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style="width:6%;text-align:center">#</th>
-                                <th style="text-align:left">Məhsul / Təsvir</th>
-                                <th>Miqdar</th>
-                                <th>Vahidin qiyməti (AZN)</th>
-                                <th>Cəm (AZN)</th>
-                                <th>Sil</th>
-                            </tr>
-                        </thead>
-                        <tbody id="ofBody"></tbody>
-                        <tfoot>
-                            <tr><td colspan="4" style="text-align:right">Cəmi</td><td id="ofSub" style="font-weight:800">0.00 ₼</td><td></td></tr>
-                            <tr><td colspan="4" style="text-align:right">ƏDV (18%)</td><td id="ofVat">0.00 ₼</td><td></td></tr>
-                            <tr><td colspan="4" style="text-align:right">Yekun məbləğ</td><td id="ofGrand" style="font-weight:900">0.00 ₼</td><td></td></tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-            <div class="col-12" style="display:flex;gap:10px;flex-wrap:wrap">
-                <button class="btn success" id="ofSave">Yadda saxla</button>
-                <button class="btn" id="ofSavePrint">Yadda saxla & Çap</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="print-invoice-root" id="printRoot" style="display:none"></div>
-
 <script>
-    /* ===== LOGIN ===== */
-    const loginPage = document.getElementById('login-page');
-    const mainApp = document.getElementById('main-app');
-    const loginBtn = document.getElementById('login-btn');
-    const logoutBtn = document.getElementById('logout-btn');
-    const loginUsername = document.getElementById('login-username');
-    const loginPassword = document.getElementById('login-password');
-    const loginError = document.getElementById('login-error');
-    const userInfo = document.getElementById('user-info');
+    /* ===== Utility Functions ===== */
+    const $ = id => document.getElementById(id);
+    const nowISO = () => new Date().toISOString().slice(0, 10);
+    const fmtAZN = n => new Intl.NumberFormat('az-AZ', { style: 'currency', currency: 'AZN', maximumFractionDigits: 2 }).format(Number(n) || 0);
+    const show = (elId) => $(elId).style.display = 'block';
+    const hide = (elId) => $(elId).style.display = 'none';
+    const showMessage = (elId, msg) => { $(elId).innerHTML = msg; show(elId); };
+    const hideMessage = (elId) => hide(elId);
 
-    const users = {
-        'admin': '123456',
-        'ali': '123',
-        'satishci': '456'
+    /* ===== LOCAL STORAGE KEYS ===== */
+    const DB = {
+        PRODUCTS: 'bakfon_products',
+        SALES: 'bakfon_sales',
+        CUSTOMERS: 'bakfon_customers',
+        SETTINGS: 'bakfon_settings'
     };
+    const getJSON = (key, def = []) => { try { return JSON.parse(localStorage.getItem(key)) || def; } catch (e) { return def; } };
+    const setJSON = (key, val) => localStorage.setItem(key, JSON.stringify(val));
+
+    /* ===== AUTH ===== */
+    const users = { 'admin': '123456' };
+    const loginPage = $('login-page');
+    const mainApp = $('main-app');
+    const loginBtn = $('login-btn');
+    const logoutBtn = $('logout-btn');
+    const loginUsername = $('login-username');
+    const loginPassword = $('login-password');
+    const userInfo = $('user-info');
     
     function login() {
-        const username = loginUsername.value.trim();
-        const password = loginPassword.value.trim();
-        if (users[username] && users[username] === password) {
-            localStorage.setItem('currentUser', username);
-            loginPage.style.display = 'none';
-            mainApp.style.display = 'grid';
-            userInfo.textContent = `İstifadəçi: ${username}`;
-            hideMessage('login-error');
-            goto('view-home');
+        if (users[loginUsername.value] === loginPassword.value) {
+            localStorage.setItem('currentUser', loginUsername.value);
+            renderApp();
         } else {
             showMessage('login-error', 'İstifadəçi adı və ya şifrə yanlışdır.');
         }
     }
-    
+
     function logout() {
         localStorage.removeItem('currentUser');
-        mainApp.style.display = 'none';
-        loginPage.style.display = 'flex';
-        loginPassword.value = '';
-        hideMessage('login-error');
+        renderApp();
     }
-    
+
+    function renderApp() {
+        if (localStorage.getItem('currentUser')) {
+            hide('login-page');
+            show('main-app');
+            userInfo.textContent = `İstifadəçi: ${localStorage.getItem('currentUser')}`;
+            goto('dashboard');
+        } else {
+            show('login-page');
+            hide('main-app');
+        }
+    }
+
     loginBtn.addEventListener('click', login);
     logoutBtn.addEventListener('click', logout);
-    loginPassword.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-            login();
-        }
+    document.addEventListener('DOMContentLoaded', renderApp);
+
+    /* ===== NAVIGATION ===== */
+    function goto(viewId) {
+        document.querySelectorAll('section').forEach(sec => hide(sec.id));
+        show('view-' + viewId);
+        document.querySelectorAll('.navbtn').forEach(btn => btn.classList.remove('active'));
+        document.querySelector(`.navbtn[data-view="${viewId}"]`).classList.add('active');
+        if (viewId === 'dashboard') renderDashboard();
+        if (viewId === 'inventory') renderInventory();
+        if (viewId === 'sales') renderSales();
+        if (viewId === 'customers') renderCustomers();
+        if (viewId === 'reports') renderReports();
+    }
+    document.getElementById('sidebar').addEventListener('click', (e) => {
+        const view = e.target.closest('.navbtn')?.dataset.view;
+        if (view) goto(view);
     });
-    
-    function checkLogin() {
-        const currentUser = localStorage.getItem('currentUser');
-        if (currentUser) {
-            loginPage.style.display = 'none';
-            mainApp.style.display = 'grid';
-            userInfo.textContent = `İstifadəçi: ${currentUser}`;
-            goto('view-home');
+
+    /* ===== DASHBOARD ===== */
+    function renderDashboard() {
+        const sales = getJSON(DB.SALES);
+        const products = getJSON(DB.PRODUCTS);
+
+        const today = nowISO();
+        const todaySales = sales.filter(s => s.date === today);
+        const totalTodaySales = todaySales.reduce((sum, s) => sum + s.price, 0);
+
+        const thisMonthStart = new Date().toISOString().slice(0, 7);
+        const monthSales = sales.filter(s => s.date.startsWith(thisMonthStart));
+        const totalMonthProfit = monthSales.reduce((sum, s) => {
+            const product = products.find(p => p.sku === s.sku);
+            return sum + (s.price - (product?.cost || 0));
+        }, 0);
+
+        const totalInvCount = products.reduce((sum, p) => sum + (p.quantity || 0), 0);
+        
+        $('todaySales').textContent = fmtAZN(totalTodaySales);
+        $('monthProfit').textContent = fmtAZN(totalMonthProfit);
+        $('invCount').textContent = totalInvCount + ' ədəd';
+    }
+
+    /* ===== INVENTORY ===== */
+    function renderInventory() {
+        const products = getJSON(DB.PRODUCTS);
+        const query = ($('invSearch').value || '').toLowerCase();
+        const filteredProducts = products.filter(p => p.sku.toLowerCase().includes(query) || p.name.toLowerCase().includes(query));
+        
+        let html = `<table><thead><tr><th>SKU</th><th>Ad</th><th>Qiymət</th><th>Maya</th><th>Miqdar</th><th>Əməliyyat</th></tr></thead><tbody>`;
+        filteredProducts.forEach(p => {
+            html += `<tr>
+                <td>${p.sku}</td>
+                <td class="text-left">${p.name}</td>
+                <td>${fmtAZN(p.price)}</td>
+                <td>${fmtAZN(p.cost)}</td>
+                <td>${p.quantity}</td>
+                <td><button class="btn" onclick="editProduct('${p.sku}')">Redaktə</button> <button class="btn danger" onclick="deleteProduct('${p.sku}')">Sil</button></td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+        $('inventoryTable').innerHTML = html;
+    }
+    function addOrUpdateProduct() {
+        const sku = $('invSku').value.trim();
+        const name = $('invName').value.trim();
+        const price = Number($('invPrice').value);
+        const cost = Number($('invCost').value);
+        const qty = Number($('invQty').value);
+        
+        if (!sku || !name || isNaN(price) || isNaN(cost) || isNaN(qty)) {
+            showMessage('inv-alert', 'Bütün xanaları doldurun.');
+            return;
+        }
+        hideMessage('inv-alert');
+        
+        const products = getJSON(DB.PRODUCTS);
+        const existing = products.find(p => p.sku === sku);
+        if (existing) {
+            existing.name = name;
+            existing.price = price;
+            existing.cost = cost;
+            existing.quantity += qty;
         } else {
-            loginPage.style.display = 'flex';
-            mainApp.style.display = 'none';
+            products.push({ sku, name, price, cost, quantity: qty });
         }
-    }
-    
-    document.addEventListener('DOMContentLoaded', checkLogin);
-    
-
-    /* ===== UTIL ===== */
-    const $=id=>document.getElementById(id);
-    const nowISO=()=>{const t=new Date();const m=String(t.getMonth()+1).padStart(2,'0');const d=String(t.getDate()).padStart(2,'0');return `${t.getFullYear()}-${m}-${d}`};
-    const ddmmyyyy=d=>{const dt=(d instanceof Date)?d:new Date(d);const dd=String(dt.getDate()).padStart(2,'0');const mm=String(dt.getMonth()+1).padStart(2,'0');return `${dd}.${mm}.${dt.getFullYear()}`};
-    const fmtAZN=n=> new Intl.NumberFormat('az-AZ',{style:'currency',currency:'AZN',maximumFractionDigits:2}).format(Number(n)||0);
-    const fmtNum=n=>new Intl.NumberFormat('az-AZ',{maximumFractionDigits:2}).format(Number(n)||0);
-
-    const COMPANY={name:"Baktel Electronics MMC",address:"Bakı şəh., Nəsimi ray., Nizami küç., 119",contact:"Əlaqə: *7010 • Mobil: +994102017010"};
-    const K={CUST:'bakfon_customers_v3', PROD:'bakfon_products_v2', PUR:'bakfon_purchases_v2', SALE:'bakfon_sales_v3', EMP:'bakfon_employees_v2', USR:'bakfon_users_v2', OFFER:'bakfon_offers_v2'};
-
-    const getJSON=(k,def=[])=>{try{return JSON.parse(localStorage.getItem(k)||JSON.stringify(def));}catch(e){return def}};
-    const setJSON=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
-    const showMessage=(elId, msg)=>{const el=$(elId);el.innerHTML=msg;el.style.display='block'};
-    const hideMessage=elId=>($(elId).style.display='none');
-
-    /* ===== NAV ===== */
-    function show(viewId){
-        ['view-home','view-calc','view-finalize','view-customers','view-offers','view-inventory','view-purchases','view-sales','view-reports','view-overdue','view-employees','view-users','view-payroll'].forEach(id=>$(id).style.display=(id===viewId?'block':'none'));
-        document.querySelectorAll('.navbtn').forEach(b=>{const t='view-'+b.dataset.view; b.classList.toggle('active',t===viewId)});
-        if(viewId === 'view-customers') renderCustomers();
-        if(viewId === 'view-inventory') renderInventory();
-        if(viewId === 'view-purchases') renderPurchases();
-        if(viewId === 'view-sales') renderSales();
-        if(viewId === 'view-offers') renderOffers();
-        if(viewId === 'view-employees') renderEmployees();
-        if(viewId === 'view-users') renderUsers();
-        if(viewId === 'view-overdue') renderOverdue();
-    }
-    function goto(id){show(id)}
-    $('sidebar').addEventListener('click',e=>{const btn=e.target.closest('.navbtn'); if(!btn) return; goto('view-'+btn.dataset.view)});
-
-    /* ===== CALC ===== */
-    const MAX_DSR=0.40, POLICY={low:.20,med:.30,high:.50};
-    function calc(){
-        ['price','months','risk','salary','oblig'].forEach(id=>$(id).classList.remove('invalid'));
-        const price=Number($('price').value||0), months=Number($('months').value||0), risk=$('risk').value;
-        const salary=Number($('salary').value||0), oblig=Number($('oblig').value||0);
-        const errs=[];
-        if(!price){errs.push('Məhsul dəyərini daxil edin.');$('price').classList.add('invalid')}
-        if(!months){errs.push('Müddəti seçin.');$('months').classList.add('invalid')}
-        if(!risk){errs.push('Risk qrupunu seçin.');$('risk').classList.add('invalid')}
-        if(!salary){errs.push('Aylıq əmək haqqını daxil edin.');$('salary').classList.add('invalid')}
-        if($('oblig').value===''){errs.push('Digər öhdəlikləri daxil edin.');$('oblig').classList.add('invalid')}
-        if(errs.length){showMessage('calcAlert','• '+errs.join('<br>• '));return}else{hideMessage('calcAlert')}
-        const base=POLICY[risk]??POLICY.med;
-        const net=Math.max(0,salary-oblig);
-        let down=Math.max(50,price*base); if(down>price) down=price;
-        let principal=price-down;
-        let monthly=months?principal/months:0;
-        const maxMonthly=net*MAX_DSR;
-        if(monthly > maxMonthly){
-            principal = maxMonthly * months;
-            down = price - principal;
-            monthly = principal / months;
-        }
-        const rows=[]; let bal=principal; const sd=$('startDate')?.value?new Date($('startDate').value):new Date(); const day=sd.getDate();
-        for(let i=1;i<=months;i++){const d=new Date(sd); d.setMonth(d.getMonth()+i); d.setDate(day); bal=Math.max(0,bal-monthly); rows.push({i,date:d,monthly,bal})}
-        $('summary').innerHTML=`<div>Məhsul: <b>${fmtAZN(price)}</b></div><div>İlkin: <b>${fmtAZN(down)}</b></div><div>Kredit: <b>${fmtAZN(principal)}</b></div><div>Aylıq: <b>${fmtAZN(monthly)}</b></div><div>Maks. aylıq (40%): <b>${fmtAZN(maxMonthly)}</b></div>`;
-        $('scheduleWrap').innerHTML=`<table><thead><tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${r.i}</td><td>${ddmmyyyy(r.date)}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join('')}</tbody></table>`;
-        window.__calcSnapshot={price,months,risk,salary,oblig,down,principal,monthly, schedule:rows};
-    }
-    function resetCalc(){['price','months','risk','salary','oblig'].forEach(id=>$(id).value='');$('summary').innerHTML='';$('scheduleWrap').innerHTML='';hideMessage('calcAlert');window.__calcSnapshot=null}
-    $('btnCalc').addEventListener('click', calc);
-    $('btnCalcReset').addEventListener('click', resetCalc);
-
-    /* ===== CUSTOMERS ===== */
-    const ensureStartDate=()=>{const sd=$('startDate'); if(sd && !sd.value) sd.value=nowISO()};
-    function collectCustomer(requireCalc=true){
-        const get=id=>($(id).value||'').trim();
-        const must=['custName','custPhone','prodName','idSerial','finCode','birthDate','address','imei1','contractNo','branch','currency','startDate','sellerRep','saleType'];
-        const errs=[]; must.forEach(id=>{if(!$(id).value){errs.push(id);$(id).classList.add('invalid')}else{$(id).classList.remove('invalid')}});
-        if(errs.length){showMessage('finalizeAlert','• Bütün mütləq xanaları doldurun.');return null}else{hideMessage('finalizeAlert')}
-        const calc=window.__calcSnapshot||null;
-        if(requireCalc && !calc){showMessage('finalizeAlert','• Əvvəlcə Kalkulyatorda hesablayın.');return null}
-        return {custName:get('custName'),custPhone:get('custPhone'),prodName:get('prodName'),idSerial:get('idSerial'),finCode:get('finCode'),birthDate:get('birthDate'),address:get('address'),imei1:get('imei1'),imei2:get('imei2'),contractNo:get('contractNo'),branch:get('branch')||'Nəsimi',currency:get('currency')||'AZN',startDate:get('startDate')||nowISO(),sellerRep:get('sellerRep'),saleType:get('saleType'),createdAt:new Date().toISOString(),calc};
-    }
-    const loadCustomers=()=>getJSON(K.CUST,[]); const saveCustomers=v=>setJSON(K.CUST,v);
-    function upsertCustomer(c){const list=loadCustomers(); const ix=list.findIndex(x=>x.finCode===c.finCode); if(ix>=0){const prevSales=list[ix].sales||[]; list[ix]={...c, sales:prevSales};}else list.push({...c, sales:[]}); saveCustomers(list)}
-    function saveCustomerOnly(){const c=collectCustomer(true); if(!c) return; upsertCustomer(c); alert('Müştəri yadda saxlandı'); resetFinalize(); renderCustomers(); goto('view-customers')}
-    function resetFinalize(){['custName','custPhone','prodName','idSerial','finCode','birthDate','address','imei1','imei2','contractNo','currency','sellerRep','saleType'].forEach(id=>$(id).value=''); $('branch').value='Nəsimi'; ensureStartDate(); hideMessage('finalizeAlert')}
-    function fillFinalize(c){const set=(id,v)=>{if($(id)) $(id).value=v||''}; ['custName','custPhone','prodName','idSerial','finCode','birthDate','address','imei1','imei2','contractNo','branch','currency','startDate','sellerRep','saleType'].forEach(k=>set(k,c[k])); window.__calcSnapshot=c.calc||null}
-    function renderCustomers(){
-        const wrap=$('customersWrap'); const list=loadCustomers();
-        const qn=($('searchName').value||'').toLowerCase(), qp=($('searchPhone').value||'').toLowerCase(), qf=($('searchFin').value||'').toLowerCase();
-        const view=list.filter(x=>{const okN=!qn||(x.custName||'').toLowerCase().includes(qn); const okP=!qp||(x.custPhone||'').toLowerCase().includes(qp); const okF=!qf||(x.finCode||'').toLowerCase().includes(qf); return okN&&okP&&qf});
-        if(!view.length){wrap.innerHTML='<div class="card">Heç bir müştəri tapılmadı.</div>';return}
-        wrap.innerHTML=view.map(c=>`<div class="card" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><div><div style="font-weight:700">${c.custName}</div><div class="muted">FIN: ${c.finCode} • ${c.custPhone} • ${c.prodName} • Satış növü: ${(c.saleType||'').toUpperCase()}</div></div><div style="display:flex;gap:8px"><button class="btn" data-act="info" data-fin="${c.finCode}">ℹ️ Info</button><button class="btn primary" data-act="reprint" data-fin="${c.finCode}">Yenidən Çap</button><button class="btn success" data-act="resell" data-fin="${c.finCode}">Satış et</button><button class="btn" data-act="edit" data-fin="${c.finCode}">Düzəliş</button><button class="btn danger" data-act="del" data-fin="${c.finCode}">Sil</button></div></div></div>`).join('');
-        wrap.querySelectorAll('button[data-act]').forEach(b=>{b.addEventListener('click',()=>{const fin=b.dataset.fin, act=b.dataset.act; const list=loadCustomers(); const c=list.find(x=>x.finCode===fin); if(!c) return;
-            if(act==='info') alert(`Müştəri: ${c.custName}\nFIN: ${c.finCode}\nTelefon: ${c.custPhone}\nÜnvan: ${c.address}\nŞ/V: ${c.idSerial}\nDoğum tarixi: ${c.birthDate}`);
-            if(act==='reprint'){
-                const printRoot=$('printRoot');
-                printRoot.innerHTML=generateCustomerPrint(c);
-                window.print();
-            }
-            if(act==='edit'){ goto('view-finalize'); fillFinalize(c);}
-            if(act==='del'){ if(confirm('Müştəri silinsin?')){ saveCustomers(list.filter(x=>x.finCode!==fin)); renderCustomers(); } }
-            if(act==='resell'){ goto('view-sales'); $('saleFin').value=c.finCode; $('saleDate').value=nowISO(); alert(`Yeni satış: ${c.custName}`);}
-        });});
-    }
-    function generateCustomerPrint(c){
-        const {calc} = c;
-        let scheduleHTML = '';
-        if(calc && calc.schedule){
-            scheduleHTML = `<h4 style="margin-top:20px; text-align:center">Ödəniş Cədvəli</h4>
-            <table>
-                <thead>
-                    <tr><th>#</th><th>Tarix</th><th>Aylıq</th><th>Qalıq</th></tr>
-                </thead>
-                <tbody>
-                    ${calc.schedule.map(r=>`<tr><td>${r.i}</td><td>${ddmmyyyy(r.date)}</td><td>${fmtAZN(r.monthly)}</td><td>${fmtAZN(r.bal)}</td></tr>`).join('')}
-                </tbody>
-            </table>`;
-        }
-        return `
-            <div style="max-width:800px;margin:0 auto">
-                <div class="header">
-                    <h2 style="margin:0">${COMPANY.name}</h2>
-                    <div class="company-info">
-                        <p style="margin:0;font-size:14px">${COMPANY.address}</p>
-                        <p style="margin:4px 0 0;font-size:14px">${COMPANY.contact}</p>
-                    </div>
-                </div>
-                <h2 style="text-align:center;margin:30px 0">Müştəri Müqaviləsi</h2>
-                <p><strong>Müqavilə №:</strong> ${c.contractNo} | <strong>Tarix:</strong> ${ddmmyyyy(c.startDate)}</p>
-                <div style="background-color:#f8f9fa;padding:15px;border-radius:8px">
-                    <p style="margin:0"><strong>Müştəri:</strong> ${c.custName}</p>
-                    <p style="margin:5px 0"><strong>FIN:</strong> ${c.finCode} | <strong>Doğum tarixi:</strong> ${c.birthDate}</p>
-                    <p style="margin:5px 0"><strong>Ünvan:</strong> ${c.address} | <strong>Ş/V:</strong> ${c.idSerial}</p>
-                    <p style="margin:5px 0 0"><strong>Əlaqə:</strong> ${c.custPhone}</p>
-                </div>
-                <div style="margin-top:20px;padding:15px;border-radius:8px;border:1px dashed #ccc">
-                    <p style="margin:0"><strong>Məhsul:</strong> ${c.prodName}</p>
-                    <p style="margin:5px 0 0"><strong>IMEI 1:</strong> ${c.imei1} | <strong>IMEI 2:</strong> ${c.imei2}</p>
-                </div>
-                ${calc ? `
-                    <div style="margin-top:20px;padding:15px;border-radius:8px;background-color:#f0f8ff">
-                        <h4 style="margin:0 0 10px;text-align:center">Kredit Şərtləri</h4>
-                        <p style="margin:0"><strong>Satış Növü:</strong> ${c.saleType}</p>
-                        <p style="margin:5px 0"><strong>Məhsul Dəyəri:</strong> ${fmtAZN(calc.price)}</p>
-                        <p style="margin:5px 0"><strong>İlkin Ödəniş:</strong> ${fmtAZN(calc.down)}</p>
-                        <p style="margin:5px 0"><strong>Kredit Məbləği:</strong> ${fmtAZN(calc.principal)}</p>
-                        <p style="margin:5px 0"><strong>Müddət:</strong> ${calc.months} ay | <strong>Aylıq Ödəniş:</strong> ${fmtAZN(calc.monthly)}</p>
-                    </div>
-                ` : ''}
-                ${scheduleHTML}
-                <div class="footer">
-                    <div class="signature">
-                        <p>_________________________</p>
-                        <p>${c.custName}</p>
-                        <p>Müştəri İmzası</p>
-                    </div>
-                    <div class="signature">
-                        <p>_________________________</p>
-                        <p>${c.sellerRep}</p>
-                        <p>Satıcı Nümayəndə</p>
-                    </div>
-                </div>
-            </div>
-        `;
-    }
-    $('btnSaveCustomer').addEventListener('click',saveCustomerOnly);
-    $('btnFinalizeReset').addEventListener('click',resetFinalize);
-    $('btnAddCustomer').addEventListener('click',()=>{goto('view-finalize');resetFinalize()});
-    ['searchName','searchPhone','searchFin'].forEach(id=>$(id).addEventListener('input',renderCustomers));
-    document.addEventListener('DOMContentLoaded', ensureStartDate);
-
-    /* ===== INVENTORY / PURCHASE / SALES ===== */
-    const loadProducts=()=>getJSON(K.PROD,[]), saveProducts=v=>setJSON(K.PROD,v);
-    const loadPurchases=()=>getJSON(K.PUR,[]), savePurchases=v=>setJSON(K.PUR,v);
-    const loadSales=()=>getJSON(K.SALE,[]), saveSales=v=>setJSON(K.SALE,v);
-
-    function addOrUpdateProduct(){
-        const sku=$('invSku').value.trim(), name=$('invName').value.trim(), price=Number($('invPrice').value||0), cost=Number($('invCost').value||0), qty=Number($('invQty').value||0);
-        if(!sku||!name){alert('SKU və Ad tələb olunur.');return;}
-        const list=loadProducts();
-        const ix=list.findIndex(p=>p.sku===sku);
-        if(ix>=0){
-            list[ix]={...list[ix], name, price, cost, qty:(Number(list[ix].qty)||0)+qty};
-        } else {
-            list.push({sku,name,price,cost,qty});
-        }
-        saveProducts(list);
+        setJSON(DB.PRODUCTS, products);
         renderInventory();
-        ['invSku','invName','invPrice','invCost','invQty'].forEach(id=>$(id).value='');
+        $('invSku').value = $('invName').value = $('invPrice').value = $('invCost').value = $('invQty').value = '';
     }
-    function renderInventory(){
-        const wrap=$('inventoryWrap');
-        const q=($('invSearch').value||'').toLowerCase();
-        const list=loadProducts().filter(p=>!q||p.sku.toLowerCase().includes(q)||(p.name||'').toLowerCase().includes(q));
-        if(!list.length){wrap.innerHTML='<div class="card">Məhsul yoxdur.</div>';return}
-        wrap.innerHTML=`<table><thead><tr><th>SKU</th><th class="text-left">Ad</th><th>Qiymət</th><th>Maya</th><th>Miqdar</th></tr></thead><tbody>${list.map(p=>`<tr><td>${p.sku}</td><td class="text-left">${p.name}</td><td>${fmtAZN(p.price)}</td><td>${fmtAZN(p.cost)}</td><td>${p.qty}</td></tr>`).join('')}</tbody></table>`;
+    function editProduct(sku) {
+        const product = getJSON(DB.PRODUCTS).find(p => p.sku === sku);
+        if (product) {
+            $('invSku').value = product.sku;
+            $('invName').value = product.name;
+            $('invPrice').value = product.price;
+            $('invCost').value = product.cost;
+            $('invQty').value = 0; // Quantity to add, not total
+        }
+    }
+    function deleteProduct(sku) {
+        if (confirm('Məhsulu silmək istədiyinizə əminsinizmi?')) {
+            const products = getJSON(DB.PRODUCTS).filter(p => p.sku !== sku);
+            setJSON(DB.PRODUCTS, products);
+            renderInventory();
+        }
     }
     $('btnAddInv').addEventListener('click', addOrUpdateProduct);
     $('invSearch').addEventListener('input', renderInventory);
 
-    function renderPurchases(){
-        const list=loadPurchases();
-        $('purchaseWrap').innerHTML = list.length? `<table><thead><tr><th>Tarix</th><th>SKU</th><th>Miqdar</th><th>Maya</th></tr></thead><tbody>${list.map(p=>`<tr><td>${ddmmyyyy(p.date)}</td><td>${p.sku}</td><td>${p.qty}</td><td>${fmtAZN(p.cost)}</td></tr>`).join('')}</tbody></table>` : '<div class="card">Məlumat yoxdur.</div>';
+    /* ===== SALES ===== */
+    function renderSales() {
+        const sales = getJSON(DB.SALES);
+        let html = `<table><thead><tr><th>Tarix</th><th>Müştəri FIN</th><th>SKU</th><th>Miqdar</th><th>Qiymət</th><th>Növ</th></tr></thead><tbody>`;
+        sales.forEach(s => {
+            html += `<tr>
+                <td>${s.date}</td>
+                <td>${s.fin}</td>
+                <td>${s.sku}</td>
+                <td>${s.quantity}</td>
+                <td>${fmtAZN(s.price)}</td>
+                <td>${s.type}</td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+        $('salesTable').innerHTML = html;
     }
-    function addPurchase(){
-        const date=$('purDate').value||nowISO(), sku=$('purSku').value.trim(), qty=Number($('purQty').value||0), cost=Number($('purCost').value||0);
-        if(!sku||qty<=0||cost<=0){alert('Məlumatları düzgün daxil edin.');return;}
-        const p=loadPurchases(); p.push({date,sku,qty,cost}); savePurchases(p);
-        const prods=loadProducts();
-        const ix=prods.findIndex(x=>x.sku===sku);
-        if(ix>=0){ prods[ix].qty=(Number(prods[ix].qty)||0)+qty; prods[ix].cost=cost; }
-        else prods.push({sku,name:sku,price:cost*1.2,cost,qty});
-        saveProducts(prods);
-        renderPurchases(); renderInventory();
-        ['purSku','purQty','purCost'].forEach(id=>$(id).value='');
-    }
-    $('btnAddPurchase').addEventListener('click', addPurchase);
+    function makeSale() {
+        const fin = $('saleFin').value.trim();
+        const sku = $('saleSku').value.trim();
+        const qty = Number($('saleQty').value);
+        const price = Number($('salePrice').value);
+        const type = $('saleType').value;
 
-    function renderSales(){
-        const list=loadSales();
-        $('salesWrap').innerHTML = list.length? `<table><thead><tr><th>Tarix</th><th>FIN</th><th>SKU</th><th>Miq.</th><th>Qiymət</th><th>IMEI</th><th>Əməkdaş</th></tr></thead><tbody>${list.map(s=>`<tr><td>${ddmmyyyy(s.date)}</td><td>${s.fin}</td><td>${s.sku}</td><td>${s.qty}</td><td>${fmtAZN(s.price)}</td><td>${s.imei||'-'}</td><td>${s.employee||'-'}</td></tr>`).join('')}</tbody></table>` : '<div class="card">Məlumat yoxdur.</div>';
-    }
-    function addSale(){
-        const date=$('saleDate').value||nowISO(), fin=$('saleFin').value.trim(), sku=$('saleSku').value.trim(), qty=Number($('saleQty').value||0), price=Number($('salePrice').value||0), imei=$('saleImei').value.trim(), saleType=$('saleTypeSel').value, employee=$('saleEmployee').value.trim();
-        if(!fin||!sku||qty<=0||price<=0){alert('Satış məlumatlarını tam daxil edin.');return;}
-        const customers=loadCustomers(); const cust=customers.find(c=>c.finCode===fin); if(!cust){alert('Bu FIN ilə müştəri yoxdur.');return;}
-        const prods=loadProducts(); const pr=prods.find(p=>p.sku===sku); if(!pr||(Number(pr.qty)||0)<qty){alert('Anbarda kifayət qədər stok yoxdur.');return;}
-        const saleId='S'+Date.now();
-        const sale={id:saleId,date,fin,sku,qty,price,imei,saleType,employee};
-        const sales=loadSales(); sales.push(sale); saveSales(sales);
-        pr.qty=Number(pr.qty)-qty; saveProducts(prods);
-        renderSales(); renderInventory();
-        cust.sales=cust.sales||[]; cust.sales.push({id:saleId,date,sku,qty,price,imei,saleType,employee, payments:[]});
-        saveCustomers(customers);
-        alert('Satış qeyd edildi!');
-    }
-    $('btnAddSale').addEventListener('click', addSale);
+        if (!fin || !sku || isNaN(qty) || qty <= 0 || isNaN(price) || price <= 0) {
+            showMessage('sale-alert', 'Bütün sahələri doldurun.');
+            return;
+        }
 
-    /* ===== OFFER MODAL ===== */
-    const offerModal=$('offerModal'), ofBody=$('ofBody');
-    let ofData={rows:[]};
-    function showOfferModal(offer=null){
-        ofData=offer?{...offer}: {rows:[]};
-        $('ofFrom').value=ofData.ofFrom||COMPANY.name;
-        $('ofTo').value=ofData.ofTo||'';
-        $('ofDate').value=ofData.ofDate||nowISO();
-        $('ofNote').value=ofData.ofNote||'';
-        $('ofDirector').value=ofData.ofDirector||'İlqar Mahmudov';
-        $('ofToLine').value=ofData.ofToLine||'';
-        $('ofNo').value=ofData.ofNo||'Auto';
-        renderOfferRows();
-        offerModal.classList.add('show');
+        const products = getJSON(DB.PRODUCTS);
+        const product = products.find(p => p.sku === sku);
+        if (!product || product.quantity < qty) {
+            showMessage('sale-alert', 'Anbarda kifayət qədər məhsul yoxdur.');
+            return;
+        }
+        
+        product.quantity -= qty;
+        setJSON(DB.PRODUCTS, products);
+
+        const sales = getJSON(DB.SALES);
+        sales.push({ date: nowISO(), fin, sku, quantity: qty, price, type });
+        setJSON(DB.SALES, sales);
+
+        hideMessage('sale-alert');
+        renderSales();
+        $('saleFin').value = $('saleSku').value = $('saleQty').value = $('salePrice').value = '';
+        alert('Satış uğurla qeydə alındı!');
     }
-    function hideOfferModal(){offerModal.classList.remove('show')}
-    function addOfferRow(item={name:'',qty:1,price:0}){
-        ofData.rows.push(item);
-        renderOfferRows();
-    }
-    function renderOfferRows(){
-        ofBody.innerHTML=ofData.rows.map((r,ix)=>`
-            <tr>
-                <td class="text-center">${ix+1}</td>
-                <td class="text-left"><input type="text" class="of-name" value="${r.name||''}"></td>
-                <td><input type="number" class="of-qty" value="${r.qty}" min="1" step="1"></td>
-                <td><input type="number" class="of-price" value="${r.price}" min="0" step="0.01"></td>
-                <td class="of-total">${fmtAZN((r.qty||0)*(r.price||0))}</td>
-                <td class="text-center"><button class="btn danger" data-ix="${ix}">Sil</button></td>
-            </tr>
-        `).join('');
-        ofBody.querySelectorAll('.of-name, .of-qty, .of-price').forEach(el=>{
-            el.addEventListener('input', updateOfferRow);
-            el.addEventListener('change', updateOfferRow);
+    $('btnMakeSale').addEventListener('click', makeSale);
+
+    /* ===== CUSTOMERS ===== */
+    function renderCustomers() {
+        const customers = getJSON(DB.CUSTOMERS);
+        const query = ($('searchCustomer').value || '').toLowerCase();
+        const filteredCustomers = customers.filter(c => 
+            c.name.toLowerCase().includes(query) || 
+            c.fin.toLowerCase().includes(query) || 
+            c.phone.includes(query)
+        );
+
+        let html = `<table><thead><tr><th>Ad Soyad</th><th>FIN Kodu</th><th>Telefon</th><th>Əməliyyat</th></tr></thead><tbody>`;
+        filteredCustomers.forEach(c => {
+            html += `<tr>
+                <td>${c.name}</td>
+                <td>${c.fin}</td>
+                <td>${c.phone}</td>
+                <td><button class="btn" onclick="editCustomer('${c.fin}')">Redaktə</button> <button class="btn danger" onclick="deleteCustomer('${c.fin}')">Sil</button></td>
+            </tr>`;
         });
-        ofBody.querySelectorAll('.btn.danger').forEach(el=>{
-            el.addEventListener('click', e=>{
-                const ix=e.target.dataset.ix;
-                ofData.rows.splice(ix,1);
-                renderOfferRows();
-            });
-        });
-        calculateOfferTotals();
+        html += `</tbody></table>`;
+        $('customersTable').innerHTML = html;
     }
-    function updateOfferRow(e){
-        const row=e.target.closest('tr');
-        const ix=Array.from(ofBody.children).indexOf(row);
-        const name=row.querySelector('.of-name').value;
-        const qty=Number(row.querySelector('.of-qty').value||0);
-        const price=Number(row.querySelector('.of-price').value||0);
-        ofData.rows[ix]={name,qty,price};
-        row.querySelector('.of-total').textContent=fmtAZN(qty*price);
-        calculateOfferTotals();
+    function addCustomer() {
+        const name = $('custName').value.trim();
+        const fin = $('custFin').value.trim();
+        const phone = $('custPhone').value.trim();
+        if (!name || !fin || !phone) {
+            showMessage('customer-alert', 'Bütün xanaları doldurun.');
+            return;
+        }
+        hideMessage('customer-alert');
+        const customers = getJSON(DB.CUSTOMERS);
+        const existing = customers.find(c => c.fin === fin);
+        if (existing) {
+            showMessage('customer-alert', 'Bu FIN kodu artıq mövcuddur.');
+            return;
+        }
+        customers.push({ name, fin, phone });
+        setJSON(DB.CUSTOMERS, customers);
+        renderCustomers();
+        $('custName').value = $('custFin').value = $('custPhone').value = '';
+        alert('Müştəri əlavə olundu!');
     }
-    function calculateOfferTotals(){
-        const subtotal=ofData.rows.reduce((sum,r)=>sum+(Number(r.qty||0)*Number(r.price||0)),0);
-        const vat=subtotal*0.18;
-        const grandTotal=subtotal+vat;
-        $('ofSub').textContent=fmtAZN(subtotal);
-        $('ofVat').textContent=fmtAZN(vat);
-        $('ofGrand').textContent=fmtAZN(grandTotal);
+    function editCustomer(fin) {
+        const customer = getJSON(DB.CUSTOMERS).find(c => c.fin === fin);
+        if (customer) {
+            $('custName').value = customer.name;
+            $('custFin').value = customer.fin;
+            $('custPhone').value = customer.phone;
+        }
     }
-    function saveOffer(print=false){
-        const ofNo=$('ofNo').value==='Auto'?`P-${Date.now().toString().slice(-6)}`:$('ofNo').value;
-        const offer={
-            ...ofData,
-            ofFrom:$('ofFrom').value,
-            ofTo:$('ofTo').value,
-            ofDate:$('ofDate').value,
-            ofNo,
-            ofNote:$('ofNote').value,
-            ofDirector:$('ofDirector').value,
-            ofToLine:$('ofToLine').value,
-            createdAt:new Date().toISOString()
-        };
-        const list=getJSON(K.OFFER);
-        const ix=list.findIndex(x=>x.ofNo===offer.ofNo);
-        if(ix>=0){list[ix]=offer}else{list.push(offer)};
-        setJSON(K.OFFER, list);
-        alert('Protokol yadda saxlandı!');
-        if(print) printOffer(offer);
-        hideOfferModal();
-        renderOffers();
+    function deleteCustomer(fin) {
+        if (confirm('Müştərini silmək istədiyinizə əminsinizmi?')) {
+            const customers = getJSON(DB.CUSTOMERS).filter(c => c.fin !== fin);
+            setJSON(DB.CUSTOMERS, customers);
+            renderCustomers();
+        }
     }
-    function renderOffers(){
-        const wrap=$('offersWrap');
-        const list=getJSON(K.OFFER).sort((a,b)=>new Date(b.createdAt)-new Date(a.createdAt));
-        if(!list.length){wrap.innerHTML='<div class="card">Heç bir protokol yoxdur.</div>';return;}
-        wrap.innerHTML=`<table><thead><tr><th>Protokol №</th><th class="text-left">Tərəf</th><th>Tarix</th><th>Məbləğ</th><th>Çap</th><th>Sil</th></tr></thead><tbody>
-            ${list.map(o=>`
-                <tr>
-                    <td>${o.ofNo}</td>
-                    <td class="text-left">${o.ofTo}</td>
-                    <td>${ddmmyyyy(o.ofDate)}</td>
-                    <td>${fmtAZN(o.rows.reduce((s,r)=>s+(r.qty*r.price),0)*1.18)}</td>
-                    <td><button class="btn" data-act="print" data-no="${o.ofNo}">Çap</button></td>
-                    <td><button class="btn danger" data-act="del" data-no="${o.ofNo}">Sil</button></td>
-                </tr>
-            `).join('')}
-        </tbody></table>`;
-        wrap.querySelectorAll('button[data-act="print"]').forEach(b=>{
-            b.addEventListener('click',e=>{
-                const offer=list.find(o=>o.ofNo===e.target.dataset.no);
-                if(offer) printOffer(offer);
-            })
-        });
-        wrap.querySelectorAll('button[data-act="del"]').forEach(b=>{
-            b.addEventListener('click',e=>{
-                if(confirm('Protokol silinsin?')){
-                    const newlist=list.filter(o=>o.ofNo!==e.target.dataset.no);
-                    setJSON(K.OFFER, newlist);
-                    renderOffers();
-                }
-            })
-        });
-    }
-    function printOffer(offer){
-        const subtotal=offer.rows.reduce((sum,r)=>sum+(Number(r.qty||0)*Number(r.price||0)),0);
-        const vat=subtotal*0.18;
-        const grandTotal=subtotal+vat;
-        const printRoot=$('printRoot');
-        printRoot.innerHTML=`
-            <div style="max-width:800px;margin:0 auto">
-                <div class="header">
-                    <h2 style="margin:0">${COMPANY.name}</h2>
-                    <div class="company-info">
-                        <p style="margin:0;font-size:14px">${COMPANY.address}</p>
-                        <p style="margin:4px 0 0;font-size:14px">${COMPANY.contact}</p>
-                    </div>
-                </div>
-                <div style="text-align:center;margin:24px 0 16px">
-                    <h3 style="margin:0">QİYMƏT RAZILAŞDIRMA PROTOKOLU</h3>
-                    <p style="margin:4px 0;font-size:14px">Protokol №: ${offer.ofNo} • Tarix: ${ddmmyyyy(offer.ofDate)}</p>
-                </div>
-                <div style="font-size:14px;margin-bottom:20px;line-height:1.6">
-                    <p style="margin:0"><strong>Təklif edən tərəf:</strong> ${offer.ofFrom}</p>
-                    <p style="margin:0"><strong>Təklif olunan tərəf:</strong> ${offer.ofTo}</p>
-                    <p style="margin:0"><strong>Kimə:</strong> ${offer.ofToLine}</p>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th style="width:5%">#</th>
-                            <th>Məhsul / Təsvir</th>
-                            <th style="width:15%">Miqdar</th>
-                            <th style="width:20%">Vahidin qiyməti (AZN)</th>
-                            <th style="width:20%">Cəm (AZN)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${offer.rows.map((r,ix)=>`
-                            <tr>
-                                <td>${ix+1}</td>
-                                <td>${r.name}</td>
-                                <td>${fmtNum(r.qty)}</td>
-                                <td>${fmtAZN(r.price)}</td>
-                                <td>${fmtAZN(r.qty*r.price)}</td>
-                            </tr>
-                        `).join('')}
-                    </tbody>
-                </table>
-                <div class="totals">
-                    <table>
-                        <tr><td>Cəmi:</td><td>${fmtAZN(subtotal)}</td></tr>
-                        <tr><td>ƏDV (18%):</td><td>${fmtAZN(vat)}</td></tr>
-                        <tr><td style="font-size:1.1rem">Yekun:</td><td style="font-size:1.1rem;font-weight:bold">${fmtAZN(grandTotal)}</td></tr>
-                    </table>
-                </div>
-                ${offer.ofNote?`<div style="clear:both;margin-top:20px;font-size:14px"><strong>Qeydlər:</strong> ${offer.ofNote}</div>`:''}
-                <div class="footer">
-                    <div class="signature">
-                        <p>_________________________</p>
-                        <p>${offer.ofDirector}</p>
-                        <p>Direktor</p>
-                    </div>
-                    <div class="signature">
-                        <p>_________________________</p>
-                        <p>${offer.ofTo}</p>
-                        <p>İmza</p>
-                    </div>
-                </div>
-            </div>
-        `;
-        window.print();
-    }
-    $('btnOpenOffer').addEventListener('click',()=>showOfferModal());
-    $('offerClose').addEventListener('click',hideOfferModal);
-    $('ofAddRow').addEventListener('click',()=>addOfferRow());
-    $('ofClearRows').addEventListener('click',()=>{if(confirm('Bütün sətirlər silinsin?')){ofData.rows=[];renderOfferRows()}});
-    $('ofSave').addEventListener('click',()=>saveOffer());
-    $('ofSavePrint').addEventListener('click',()=>saveOffer(true));
-    $('btnOfferNew').addEventListener('click',()=>showOfferModal());
+    $('btnAddCustomer').addEventListener('click', addCustomer);
+    $('searchCustomer').addEventListener('input', renderCustomers);
 
     /* ===== REPORTS ===== */
-    const loadEmployees=()=>getJSON(K.EMP,[]), saveEmployees=v=>setJSON(K.EMP,v);
-    const loadUsers=()=>getJSON(K.USR,[]), saveUsers=v=>setJSON(K.USR,v);
-
-    function renderEmployees(){
-        const list=loadEmployees();
-        const wrap=$('empWrap');
-        if(!list.length){wrap.innerHTML='<div class="card">Əməkdaş yoxdur.</div>';return;}
-        wrap.innerHTML=`<table><thead><tr><th>Ad Soyad</th><th>Baz Maaş</th><th>Bonus %</th><th>Status</th><th>Əməliyyat</th></tr></thead><tbody>
-            ${list.map((e,ix)=>`
-                <tr>
-                    <td>${e.name}</td>
-                    <td>${fmtAZN(e.baseSalary)}</td>
-                    <td>${e.bonusPct}%</td>
-                    <td>${e.status}</td>
-                    <td><button class="btn danger" data-ix="${ix}" data-act="del">Sil</button></td>
-                </tr>
-            `).join('')}
-        </tbody></table>`;
-        wrap.querySelectorAll('button[data-act="del"]').forEach(b=>{
-            b.addEventListener('click',e=>{
-                if(confirm('Əməkdaş silinsin?')){
-                    const newlist=list.filter((_,ix)=>ix!=e.target.dataset.ix);
-                    saveEmployees(newlist);
-                    renderEmployees();
-                }
-            })
-        });
+    function renderReports() {
+        hide('reportSummary');
+        hide('reportTable');
     }
-    function addEmployee(){
-        const name=$('empName').value.trim(), baseSalary=Number($('empBase').value), bonusPct=Number($('empBonusPct').value), status=$('empStatus').value;
-        if(!name||!baseSalary||bonusPct===null){alert('Bütün sahələri doldurun');return;}
-        const list=loadEmployees();
-        const ix=list.findIndex(x=>x.name.toLowerCase()===name.toLowerCase());
-        if(ix>=0){list[ix]={name,baseSalary,bonusPct,status}}else{list.push({name,baseSalary,bonusPct,status, id:'E'+Date.now()})}
-        saveEmployees(list);
-        renderEmployees();
-        ['empName','empBase','empBonusPct'].forEach(id=>$(id).value='');
-    }
-    $('btnAddEmp').addEventListener('click',addEmployee);
+    function runReport() {
+        const fromDate = $('repFrom').value;
+        const toDate = $('repTo').value;
+        if (!fromDate || !toDate) {
+            alert('Tarixləri seçin.');
+            return;
+        }
 
-    function renderUsers(){
-        const list=loadUsers();
-        const wrap=$('usersWrap');
-        if(!list.length){wrap.innerHTML='<div class="card">İstifadəçi yoxdur.</div>';return;}
-        wrap.innerHTML=`<table><thead><tr><th>Login</th><th>Ad Soyad</th><th>Rol</th><th>Status</th><th>Əməliyyat</th></tr></thead><tbody>
-            ${list.map((u,ix)=>`
-                <tr>
-                    <td>${u.login}</td>
-                    <td>${u.name}</td>
-                    <td>${u.role}</td>
-                    <td>${u.status}</td>
-                    <td><button class="btn danger" data-ix="${ix}" data-act="del">Sil</button></td>
-                </tr>
-            `).join('')}
-        </tbody></table>`;
-        wrap.querySelectorAll('button[data-act="del"]').forEach(b=>{
-            b.addEventListener('click',e=>{
-                if(confirm('İstifadəçi silinsin?')){
-                    const newlist=list.filter((_,ix)=>ix!=e.target.dataset.ix);
-                    saveUsers(newlist);
-                    renderUsers();
-                }
-            })
+        const sales = getJSON(DB.SALES);
+        const products = getJSON(DB.PRODUCTS);
+
+        const filteredSales = sales.filter(s => s.date >= fromDate && s.date <= toDate);
+        
+        let totalRevenue = 0;
+        let totalCost = 0;
+        let totalProfit = 0;
+        
+        let html = `<table><thead><tr><th>Tarix</th><th>Müştəri FIN</th><th>SKU</th><th>Qiymət</th><th>Maya</th><th>Mənfəət</th></tr></thead><tbody>`;
+        filteredSales.forEach(s => {
+            const product = products.find(p => p.sku === s.sku);
+            const cost = product ? product.cost * s.quantity : 0;
+            const profit = (s.price * s.quantity) - cost;
+            
+            totalRevenue += s.price * s.quantity;
+            totalCost += cost;
+            totalProfit += profit;
+
+            html += `<tr>
+                <td>${s.date}</td>
+                <td>${s.fin}</td>
+                <td>${s.sku}</td>
+                <td>${fmtAZN(s.price * s.quantity)}</td>
+                <td>${fmtAZN(cost)}</td>
+                <td>${fmtAZN(profit)}</td>
+            </tr>`;
         });
-    }
-    function addUser(){
-        const login=$('usrLogin').value.trim(), name=$('usrName').value.trim(), role=$('usrRole').value, status=$('usrStatus').value;
-        if(!login||!name){alert('Bütün sahələri doldurun');return;}
-        const list=loadUsers();
-        const ix=list.findIndex(x=>x.login.toLowerCase()===login.toLowerCase());
-        if(ix>=0){list[ix]={...list[ix], name, role, status}}else{list.push({login,name,role,status, id:'U'+Date.now()})}
-        saveUsers(list);
-        renderUsers();
-        ['usrLogin','usrName'].forEach(id=>$(id).value='');
-    }
-    $('btnAddUser').addEventListener('click',addUser);
-
-    /* REPORTS */
-    function runReport(){
-        const from=($('repFrom').value?new Date($('repFrom').value):null);
-        const to=($('repTo').value?new Date($('repTo').value):null);
-        const employee=($('repEmployee').value||'').trim().toLowerCase();
-        const sku=($('repSku').value||'').trim().toLowerCase();
-        const sales=loadSales();
-        const filteredSales=sales.filter(s=>{
-            const sDate=new Date(s.date);
-            const dateMatch=(!from || sDate>=from) && (!to || sDate<=to);
-            const employeeMatch=!employee || (s.employee||'').toLowerCase().includes(employee);
-            const skuMatch=!sku || s.sku.toLowerCase().includes(sku);
-            return dateMatch&&employeeMatch&&skuMatch;
-        });
-
-        let totalRevenue=0;
-        let totalCost=0;
-        const products=loadProducts();
-        const reportData=filteredSales.map(s=>{
-            const product=products.find(p=>p.sku===s.sku);
-            const cost=product?.cost||0;
-            const profit=s.price-cost;
-            totalRevenue+=s.price;
-            totalCost+=cost;
-            return {
-                date:s.date,
-                fin:s.fin,
-                sku:s.sku,
-                price:s.price,
-                cost,
-                profit
-            }
-        });
-
-        const profit=totalRevenue-totalCost;
-        $('reportWrap').innerHTML=`
+        html += `</tbody></table>`;
+        
+        $('reportSummary').innerHTML = `
             <div class="row">
-                <div class="col-4 card"><h4 style="margin:0">Ümumi Satış</h4><p style="font-size:1.5rem;font-weight:700;margin:0">${fmtAZN(totalRevenue)}</p></div>
-                <div class="col-4 card"><h4 style="margin:0">Ümumi Maya</h4><p style="font-size:1.5rem;font-weight:700;margin:0">${fmtAZN(totalCost)}</p></div>
-                <div class="col-4 card"><h4 style="margin:0">Ümumi Mənfəət</h4><p style="font-size:1.5rem;font-weight:700;margin:0">${fmtAZN(profit)}</p></div>
+                <div class="col-4"><h4 style="margin:0">Ümumi Satış</h4><p style="font-size:1.5rem;font-weight:700;margin:0">${fmtAZN(totalRevenue)}</p></div>
+                <div class="col-4"><h4 style="margin:0">Ümumi Maya</h4><p style="font-size:1.5rem;font-weight:700;margin:0">${fmtAZN(totalCost)}</p></div>
+                <div class="col-4"><h4 style="margin:0">Ümumi Mənfəət</h4><p style="font-size:1.5rem;font-weight:700;margin:0">${fmtAZN(totalProfit)}</p></div>
             </div>
-            <table>
-                <thead><tr><th>Tarix</th><th>FIN</th><th>SKU</th><th>Satış Qiyməti</th><th>Maya</th><th>Mənfəət</th></tr></thead>
-                <tbody>
-                    ${reportData.map(r=>`<tr>
-                        <td>${ddmmyyyy(r.date)}</td>
-                        <td>${r.fin}</td>
-                        <td>${r.sku}</td>
-                        <td>${fmtAZN(r.price)}</td>
-                        <td>${fmtAZN(r.cost)}</td>
-                        <td>${fmtAZN(r.profit)}</td>
-                    </tr>`).join('')}
-                </tbody>
-            </table>
         `;
+        $('reportTable').innerHTML = html;
+        show('reportSummary');
+        show('reportTable');
     }
     $('btnRunReport').addEventListener('click', runReport);
 
-    /* PAYROLL */
-    function runPayroll(){
-        const from=($('payFrom').value?new Date($('payFrom').value):null);
-        const to=($('payTo').value?new Date($('payTo').value):null);
-        if(!from||!to){alert('Başlanğıc və bitiş tarixlərini seçin.');return;}
-        const employees=loadEmployees();
-        const sales=loadSales();
-        const prods=loadProducts();
-        const salesByEmp=employees.map(emp=>{
-            const empSales=sales.filter(s=>{
-                const sDate=new Date(s.date);
-                return (s.employee||'').toLowerCase()===emp.name.toLowerCase() && sDate>=from && sDate<=to;
-            });
-            const totalProfit=empSales.reduce((sum,s)=>{
-                const prod=prods.find(p=>p.sku===s.sku);
-                const profit=(s.price||0)-(prod?.cost||0);
-                return sum+profit;
-            },0);
-            const bonus=totalProfit*(emp.bonusPct/100);
-            const totalSalary=emp.baseSalary+bonus;
-            return {
-                name:emp.name,
-                baseSalary:emp.baseSalary,
-                totalProfit,
-                bonus,
-                totalSalary
-            }
-        });
-        $('payrollWrap').innerHTML=`
-            <table>
-                <thead><tr><th>Əməkdaş</th><th>Baz Maaş</th><th>Ümumi Mənfəət</th><th>Bonus</th><th>Yekun Əməkhaqqı</th></tr></thead>
-                <tbody>
-                    ${salesByEmp.map(e=>`
-                        <tr>
-                            <td>${e.name}</td>
-                            <td>${fmtAZN(e.baseSalary)}</td>
-                            <td>${fmtAZN(e.totalProfit)}</td>
-                            <td>${fmtAZN(e.bonus)}</td>
-                            <td>${fmtAZN(e.totalSalary)}</td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
-    }
-    $('btnRunPayroll').addEventListener('click',runPayroll);
-
-    /* OVERDUE (dummy) */
-    function renderOverdue(){
-        const wrap = $('overdueWrap');
-        const sales = loadSales();
-        const overdueSales = sales.filter(s => {
-            if (s.saleType !== 'kredit') return false;
-            // Dummy logic: check if any payments are overdue. This part is not fully implemented
-            // in the original code, so this is a placeholder.
-            return false; // Assuming no overdue payments for this demo.
-        });
-        if(overdueSales.length){
-            wrap.innerHTML = `<table><thead><tr><th>FIN</th><th>Məhsul</th><th>Tarix</th></tr></thead><tbody>
-                ${overdueSales.map(s=>`<tr><td>${s.fin}</td><td>${s.sku}</td><td>${ddmmyyyy(s.date)}</td></tr>`).join('')}
-            </tbody></table>`;
-        } else {
-            wrap.innerHTML = '<div class="card">Gecikmiş ödəniş yoxdur.</div>';
+    /* ===== CALCULATOR ===== */
+    function calculate() {
+        const price = Number($('calcPrice').value);
+        const months = Number($('calcMonths').value);
+        
+        if (isNaN(price) || price <= 0 || isNaN(months) || months <= 0) {
+            showMessage('calc-alert', 'Bütün xanaları düzgün doldurun.');
+            return;
         }
+        hideMessage('calc-alert');
+
+        const monthlyPayment = price / months;
+        $('calcResult').innerHTML = `
+            <h4>Hesablamanın nəticəsi</h4>
+            <p><strong>Aylıq ödəniş:</strong> ${fmtAZN(monthlyPayment)}</p>
+            <p><strong>Cəmi məbləğ:</strong> ${fmtAZN(price)}</p>
+            <p><strong>Müddət:</strong> ${months} ay</p>
+        `;
+        show('calcResult');
     }
+    $('btnCalc').addEventListener('click', calculate);
+
+    /* ===== SETTINGS ===== */
+    function renderSettings() {
+        const settings = getJSON(DB.SETTINGS, { companyName: 'Bakfon Electronics' });
+        $('companyName').value = settings.companyName;
+    }
+    function saveSettings() {
+        const companyName = $('companyName').value;
+        setJSON(DB.SETTINGS, { companyName });
+        alert('Ayarlar yadda saxlandı!');
+    }
+    $('btnSaveSettings').addEventListener('click', saveSettings);
 
 </script>
 </body>
