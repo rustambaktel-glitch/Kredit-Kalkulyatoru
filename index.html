@@ -226,21 +226,21 @@
         }
         .data-table {
             width: 100%;
-            border-collapse: collapse; /* Cədvəllər arasında xətləri birləşdirir */
+            border-collapse: collapse; 
             border-spacing: 0;
         }
         .data-table th,
         .data-table td {
             padding: 1rem 1.5rem;
             text-align: left;
-            border: 1px solid var(--border-color); /* Hər hücrəyə xətt əlavə edir */
+            border: 1px solid var(--border-color); 
         }
         .data-table th {
             color: var(--text-secondary);
             font-weight: 600;
             text-transform: uppercase;
             font-size: 0.75rem;
-            background-color: #f9fafb; /* Başlıq sətirinin arxa fonu */
+            background-color: #f9fafb;
         }
         .data-table tbody tr {
             background: #ffffff;
@@ -481,7 +481,7 @@
     <div id="customerSalesHistoryModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 id="customer-history-title">Müştəri Satış Tarixçəsi</h2><div id="customerSalesHistoryContent" style="margin-top: 20px;"><table class="data-table" style="width:100%;"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Məbləğ</th><th></th></tr></thead><tbody id="customer-sales-history-table-body"></tbody></table></div></div></div>
 
     <template id="finance-page-template"><div class="page-container"><div class="page-header"><h1>Maliyyə</h1><button id="btnBackupData" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Məlumatları Yüklə (Backup)</span></button></div><div class="summary-cards"><div class="card"><h3>Cari Kassa Balansı</h3><p id="current-cash-balance">0.00 ₼</p></div><div class="card"><h3>Müştəri Borcları</h3><p id="total-receivables" class="positive">0.00 ₼</p></div><div class="card"><h3>Təchizatçı Borcları</h3><p id="total-payables" class="negative">0.00 ₼</p></div></div><div class="content-area"><div class="page-header" style="margin-bottom: 1rem; padding: 0;"><h2>Son Əməliyyatlar</h2><div class="finance-actions" style="display: flex; gap: 0.5rem;"><button id="btnAcceptPayment" class="btn btn-success"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 4v4m0 4v2m-6-2h12a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> Ödəniş Qəbul Et</span></button><button id="btnAddExpense" class="btn btn-danger"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> Xərc Əlavə Et</span></button><button id="btnPaySupplier" class="btn btn-warning"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 21h10a2 2 0 002-2V8a2 2 0 00-2-2H7a2 2 0 00-2 2v11a2 2 0 002 2z"></path></svg> Təchizatçıya Ödə</span></button></div></div><table class="data-table"><thead><tr><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th></tr></thead><tbody id="transactionsTableBody"></tbody></table></div></div></template>
-    <template id="reports-page-template"><div class="page-container"><div class="page-header"><h1>Hesabatlar</h1></div><div class="content-area"><div class="report-actions"><button id="viewAllSalesBtn" class="btn btn-primary active" data-report="sales">Satışlar</button><button id="viewPurchasesBtn" class="btn btn-primary" data-report="purchases">Alışlar</button><button id="viewFinancialBtn" class="btn btn-primary" data-report="financial">Maliyyə</button></div><div id="sales-report-view" class="report-view active"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Müştəri</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="salesHistoryTableBody"></tbody></table></div><div id="purchases-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Təchizatçı</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="purchasesHistoryTableBody"></tbody></table></div><div id="financial-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="financialReportSearch" class="search-input" placeholder="Növ və ya açıqlamaya görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th></tr></thead><tbody id="financialHistoryTableBody"></tbody></table></div></div></div></template>
+    <template id="reports-page-template"><div class="page-container"><div class="page-header"><h1>Hesabatlar</h1></div><div class="content-area"><div class="report-actions"><button id="viewAllSalesBtn" class="btn btn-primary" data-report="sales">Satışlar</button><button id="viewPurchasesBtn" class="btn btn-primary" data-report="purchases">Alışlar</button><button id="viewFinancialBtn" class="btn btn-primary" data-report="financial">Maliyyə</button></div><div id="sales-report-view" class="report-view"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Müştəri</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="salesHistoryTableBody"></tbody></table></div><div id="purchases-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Təchizatçı</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="purchasesHistoryTableBody"></tbody></table></div><div id="financial-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="financialReportSearch" class="search-input" placeholder="Növ və ya açıqlamaya görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th></tr></thead><tbody id="financialHistoryTableBody"></tbody></table></div></div></div></template>
     <template id="sales-page-template"><div class="page-container"><div class="page-header"><h1>Satış Etmək</h1></div><form id="saleForm"><div class="sale-container"><div class="content-area"><h4>Müştəri və Məhsul seçimi</h4><div class="form-group"><label for="saleCustomer">Müştəri Seçin</label><select id="saleCustomer" required></select></div><div class="form-group"><label for="saleProduct">Məhsul Əlavə Et</label><select id="saleProduct"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th></th></tr></thead><tbody id="cartTableBody"></tbody></table></div><div class="content-area"><h4>Satışı Yekunlaşdır</h4><div class="form-group"><label>Satış Növünü Seçin</label><div class="sale-type-buttons" style="display:flex; gap: 0.5rem;"><button type="button" class="btn sale-type-btn" data-type="Nağd">Nağd</button><button type="button" class="btn sale-type-btn" data-type="POS Terminal">POS</button><button type="button" class="btn sale-type-btn" data-type="Kredit">Kredit</button><button type="button" class="btn sale-type-btn" data-type="Korporativ">Korporativ</button></div></div><div class="form-group" id="initialPaymentGroup" style="display:none;"><label for="initialPayment">İlkin Ödəniş (₼)</label><input type="number" id="initialPayment" value="0" step="0.01"></div><div class="summary-row"><span>Yekun Məbləğ:</span><span id="summaryTotal">0.00 ₼</span></div><div class="summary-row" id="debt-row" style="display:none;"><span>Borc qalığı:</span><span id="debt-total">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;"><span>Satışı Tamamla</span></button></div></div></div></form></div></template>
     <template id="purchases-page-template"><div class="page-container"><div class="page-header"><h1>Yeni Mal Alışı</h1></div><form id="purchaseForm"><div class="sale-container"><div class="content-area"><h4>Təchizatçı və Məhsul seçimi</h4><div class="form-group"><label>Təchizatçı Seçin</label><select id="purchaseSupplierSelect" required></select></div><div class="form-group"><label>Məhsul Əlavə Et</label><select id="purchaseProductSelect"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Alış Qiyməti</th><th>Toplam</th><th></th></tr></thead><tbody id="purchaseCartTableBody"></tbody></table></div><div class="content-area"><h4>Alışı Yekunlaşdır</h4><div class="summary-row total" style="margin-top: 1.5rem;"><span>Yekun Məbləğ:</span><span id="purchaseTotal">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;"><span>Alışı Tamamla</span></button></div></div></div></form></div></template>
     <template id="products-page-template"><div class="page-container"><div class="page-header"><h1>Məhsullar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="productSearch" class="search-input" placeholder="Məhsul adı və ya ID ilə axtar..."></div><button id="addProductBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Məhsul</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th></th></tr></thead><tbody id="productTableBody"></tbody></table></div></div></template>
@@ -655,7 +655,11 @@
                 });
             };
             
+            // Dəyişiklik burada: Hadisə dinləyicisi yalnız bir dəfə əlavə edilir
+            addCustomerBtn.removeEventListener('click', () => { openModal(addCustomerModal); });
             addCustomerBtn.addEventListener('click', () => { addCustomerForm.reset(); openModal(addCustomerModal); });
+            
+            addCustomerForm.removeEventListener('submit', (e) => {});
             addCustomerForm.addEventListener('submit', (e) => {
                 e.preventDefault();
                 const customers = getCustomers();
@@ -1120,14 +1124,12 @@
             const salesReportView = appContainer.querySelector('#sales-report-view');
             const purchasesReportView = appContainer.querySelector('#purchases-report-view');
             const financialReportView = appContainer.querySelector('#financial-report-view');
-
             const salesHistoryTableBody = appContainer.querySelector('#salesHistoryTableBody');
             const salesReportSearch = appContainer.querySelector('#salesReportSearch');
             const purchasesHistoryTableBody = appContainer.querySelector('#purchasesHistoryTableBody');
             const purchasesReportSearch = appContainer.querySelector('#purchasesReportSearch');
             const financialHistoryTableBody = appContainer.querySelector('#financialHistoryTableBody');
             const financialReportSearch = appContainer.querySelector('#financialReportSearch');
-
             const saleDetailsModal = document.getElementById('saleDetailsModal');
 
             const renderAllSales = () => {
@@ -1178,6 +1180,8 @@
                 });
             };
 
+            // Dəyişiklik burada: Hadisə dinləyicisi yalnız bir dəfə əlavə edilir
+            reportTabs.removeEventListener('click', (e) => {});
             reportTabs.addEventListener('click', (e) => {
                 const button = e.target.closest('button');
                 if (!button) return;
@@ -1202,7 +1206,39 @@
                 }
             });
 
-            // Initial render based on active tab
+            appContainer.removeEventListener('click', (e) => {});
+            appContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('button');
+                if (btn && btn.classList.contains('btn-details') && btn.dataset.id) {
+                    const saleId = parseInt(btn.dataset.id);
+                    const sale = getSales().find(s => s.id === saleId);
+                    if (!sale) return;
+                    let detailsHtml = `
+                        <p><strong>Satış ID:</strong> ${sale.id}</p>
+                        <p><strong>Müştəri:</strong> ${sale.customerName}</p>
+                        <p><strong>Satış Növü:</strong> ${sale.type}</p>
+                        <p><strong>Yekun Məbləğ:</strong> ${sale.totalAmount.toFixed(2)} ₼</p>
+                        <p><strong>Ödənilmiş Məbləğ:</strong> ${sale.initialPayment.toFixed(2)} ₼</p>
+                        <p><strong>Borc:</strong> ${(sale.totalAmount - sale.initialPayment).toFixed(2)} ₼</p>
+                        <hr style="border-color:var(--border-color); margin: 15px 0;">
+                        <h4 style="margin-bottom:10px;">Satılan Məhsullar</h4>
+                        <table class="data-table" style="width:100%;">
+                            <thead>
+                                <tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    sale.items.forEach(i => {
+                        detailsHtml += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.salePrice.toFixed(2)} ₼</td><td>${(i.quantity * i.salePrice).toFixed(2)} ₼</td></tr>`;
+                    });
+                    detailsHtml += '</tbody></table>';
+                    document.getElementById('saleDetailsContent').innerHTML = detailsHtml;
+                    openModal(saleDetailsModal);
+                }
+            });
+            
+            // Dəyişiklik burada: Aktiv düymənin ilkin görünüşü təmin edilir
+            reportTabs.querySelector('[data-report="sales"]').classList.add('active');
             renderAllSales();
         }
 
@@ -1311,7 +1347,7 @@
                 if(!supplierId){ alert("Təchizatçı seçin."); return; }
                 const amount = parseFloat(document.getElementById('supplierPaymentAmount').value);
                 let suppliers = getSuppliers();
-                const supplier = suppliers.find(s => s.id === supplierId);
+                const supplier = suppliers.find(s => s.id === sId);
                 if (!supplier || amount > supplier.balance || amount <= 0) {
                     alert('Ödəniş məbləği düzgün deyil!');
                     return;
