@@ -499,8 +499,17 @@
         const getFromStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
         const saveToStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
         
-        const openModal = (modal) => modal.style.display = 'flex';
-        const closeModal = (modal) => modal.style.display = 'none';
+        const openModal = (modal) => {
+            modal.style.display = 'flex';
+            modal.style.zIndex = '1000';
+            modal.style.position = 'fixed';
+            modal.style.animation = 'modal-open 0.3s ease-out';
+        };
+
+        const closeModal = (modal) => {
+            modal.style.display = 'none';
+        };
+
         allModals.forEach(modal => {
             const closeButton = modal.querySelector('.modal-close');
             if(closeButton) closeButton.addEventListener('click', () => closeModal(modal));
@@ -770,7 +779,6 @@
                     openModal(saleDetailsModal);
                 }
             });
-
 
             customerSearch.addEventListener('input', renderCustomers);
             renderCustomers();
