@@ -475,12 +475,58 @@
     <div id="addSupplierModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Yeni Təchizatçı</h2><form id="addSupplierForm"><div class="form-group"><label for="supplierNameModal">Təchizatçı Adı</label><input type="text" id="supplierNameModal" required></div><div class="form-group"><label for="supplierPhoneModal">Telefon</label><input type="text" id="supplierPhoneModal"></div><div class="form-actions"><button type="submit" class="btn btn-primary">Yadda Saxla</button></div></form></div></div>
     <div id="editSupplierModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Təchizatçını Redaktə Et</h2><form id="editSupplierForm"><input type="hidden" id="editSupplierId"><div class="form-group"><label for="editSupplierName">Təchizatçı Adı</label><input type="text" id="editSupplierName" required></div><div class="form-group"><label for="editSupplierPhone">Telefon</label><input type="text" id="editSupplierPhone"></div><div class="form-actions"><button type="submit" class="btn btn-primary">Dəyişikliyi Saxla</button></div></form></div></div>
     <div id="saleDetailsModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Satış Detalları</h2><div id="saleDetailsContent" style="margin-top: 20px;"></div></div></div>
-    <div id="acceptPaymentModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Müştəri Ödənişi Qəbul Et</h2><form id="acceptPaymentForm"><div class="form-group"><label>Müştəri</label><select id="paymentCustomerSelect" required></select></div><div class="form-group"><label>Ödənilən Məbləğ (₼)</label><input type="number" id="paymentAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-success">Ödənişi Qəbul Et</button></div></form></div></div>
+    <div id="acceptPaymentModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Müştəri Ödənişi Qəbul Et</h2><form id="acceptPaymentForm"><div class="form-group"><label>Müştəri</label><select id="paymentCustomerSelect" required></select></div><div class="form-group"><label for="paymentType">Ödəniş Növü</label><select id="paymentType" required><option value="Nağd">Nağd</option><option value="POS Terminal">POS Terminal</option></select></div><div class="form-group"><label>Ödənilən Məbləğ (₼)</label><input type="number" id="paymentAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-success">Ödənişi Qəbul Et</button></div></form></div></div>
     <div id="addExpenseModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Xərc Əlavə Et</h2><form id="addExpenseForm"><div class="form-group"><label for="expenseType">Xərc Növü</label><select id="expenseType" required><option value="">-- Seçin --</option><option value="Ofis xərcləri">Ofis xərcləri</option><option value="Reklam xərcləri">Reklam xərcləri</option><option value="Daşınma xərcləri">Daşınma xərcləri</option><option value="Rabitə xərcləri">Rabitə xərcləri</option><option value="Digər xərclər">Digər xərclər</option></select></div><div class="form-group"><label>Məbləğ (₼)</label><input type="number" id="expenseAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-danger">Xərci Əlavə Et</button></div></form></div></div>
     <div id="paySupplierModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Təchizatçıya Ödəniş</h2><form id="paySupplierForm"><div class="form-group"><label>Təchizatçı</label><select id="paymentSupplierSelect" required></select></div><div class="form-group"><label>Ödənilən Məbləğ (₼)</label><input type="number" id="supplierPaymentAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-warning">Ödənişi Et</button></div></form></div></div>
     <div id="customerSalesHistoryModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 id="customer-history-title">Müştəri Satış Tarixçəsi</h2><div id="customerSalesHistoryContent" style="margin-top: 20px;"></div></div></div>
     <div id="purchaseDetailsModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Alış Detalları</h2><div id="purchaseDetailsContent" style="margin-top: 20px;"></div></div></div>
-    <div id="productsInSaleModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Satışdakı Məhsullar</h2><div id="productsInSaleContent"></div></div></div>
+    <div id="incomeTypeModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Mədaxil Növü</h2>
+            <div style="display: flex; gap: 1rem; flex-direction: column; margin-top: 2rem;">
+                <button id="btnAcceptPayment" class="btn btn-success" style="width: 100%; padding: 1rem;">
+                    <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 4v4m0 4v2m-6-2h12a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> Müştəri Ödənişi</span>
+                </button>
+                <button id="btnOtherIncome" class="btn btn-success" style="width: 100%; padding: 1rem;">
+                    <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"></path></svg> Digər Mədaxil</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="expenseTypeModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Məxaric Növü</h2>
+            <div style="display: flex; gap: 1rem; flex-direction: column; margin-top: 2rem;">
+                <button id="btnPaySupplier" class="btn btn-warning" style="width: 100%; padding: 1rem;">
+                    <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 21h10a2 2 0 002-2V8a2 2 0 00-2-2H7a2 2 0 00-2 2v11a2 2 0 002 2z"></path></svg> Təchizatçıya Ödəniş</span>
+                </button>
+                <button id="btnOtherExpense" class="btn btn-danger" style="width: 100%; padding: 1rem;">
+                    <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> Xərc Əlavə Et</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <div id="otherIncomeModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2>Digər Mədaxil Əlavə Et</h2>
+            <form id="otherIncomeForm">
+                <div class="form-group">
+                    <label for="otherIncomeDescription">Mədaxilin Təsviri</label>
+                    <textarea id="otherIncomeDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="otherIncomeAmount">Məbləğ (₼)</label>
+                    <input type="number" id="otherIncomeAmount" step="0.01" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-success">Əlavə Et</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <template id="finance-page-template">
         <div class="page-container">
@@ -532,6 +578,8 @@
         const productsInSaleModal = document.getElementById('productsInSaleModal');
         const saleDetailsModal = document.getElementById('saleDetailsModal');
         const customerSalesHistoryModal = document.getElementById('customerSalesHistoryModal');
+        const otherIncomeModal = document.getElementById('otherIncomeModal');
+        const otherIncomeForm = document.getElementById('otherIncomeForm');
 
         const getFromStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
         const saveToStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
@@ -1374,12 +1422,9 @@
             const acceptPaymentModal = document.getElementById('acceptPaymentModal');
             const addExpenseModal = document.getElementById('addExpenseModal');
             const paySupplierModal = document.getElementById('paySupplierModal');
-            const acceptPaymentForm = document.getElementById('acceptPaymentForm');
-            const addExpenseForm = document.getElementById('addExpenseForm');
-            const paySupplierForm = document.getElementById('paySupplierForm');
+            const otherIncomeModal = document.getElementById('otherIncomeModal');
             const incomeTypeModal = document.getElementById('incomeTypeModal');
             const expenseTypeModal = document.getElementById('expenseTypeModal');
-            const expenseTypeSelect = document.getElementById('expenseType');
 
             const renderFinancePage = () => {
                 const transactions = getTransactions();
@@ -1417,6 +1462,11 @@
             });
             
             btnIncome.addEventListener('click', () => {
+                openModal(incomeTypeModal);
+            });
+
+            document.getElementById('btnAcceptPayment').addEventListener('click', () => {
+                closeModal(incomeTypeModal);
                 const cDebt = getCustomers().filter(c => c.debt > 0);
                 const select = document.getElementById('paymentCustomerSelect');
                 select.innerHTML = '<option value="">-- Müştəri Seçin --</option>';
@@ -1425,13 +1475,28 @@
                 openModal(acceptPaymentModal);
             });
             
-            btnExpense.addEventListener('click', () => {
-                addExpenseForm.reset();
-                openModal(addExpenseModal);
+            document.getElementById('btnOtherIncome').addEventListener('click', () => {
+                closeModal(incomeTypeModal);
+                otherIncomeForm.reset();
+                openModal(otherIncomeModal);
             });
 
+            document.getElementById('otherIncomeForm').addEventListener('submit', e => {
+                e.preventDefault();
+                const desc = document.getElementById('otherIncomeDescription').value;
+                const amount = parseFloat(document.getElementById('otherIncomeAmount').value);
+                if (amount <= 0) { alert('Məbləğ müsbət olmalıdır.'); return; }
+                addTransaction('Digər Mədaxil', desc, amount);
+                renderFinancePage();
+                closeModal(otherIncomeModal);
+            });
 
-            btnPaySupplier.addEventListener('click', () => {
+            btnExpense.addEventListener('click', () => {
+                openModal(expenseTypeModal);
+            });
+
+            document.getElementById('btnPaySupplier').addEventListener('click', () => {
+                closeModal(expenseTypeModal);
                 const sBal = getSuppliers().filter(s => (s.balance || 0) > 0);
                 const select = document.getElementById('paymentSupplierSelect');
                 select.innerHTML = '<option value="">-- Təchizatçı Seçin --</option>';
@@ -1439,12 +1504,20 @@
                 paySupplierForm.reset();
                 openModal(paySupplierModal);
             });
+            
+            document.getElementById('btnOtherExpense').addEventListener('click', () => {
+                closeModal(expenseTypeModal);
+                addExpenseForm.reset();
+                openModal(addExpenseModal);
+            });
+
 
             acceptPaymentForm.addEventListener('submit', e => {
                 e.preventDefault();
                 const customerId = parseInt(document.getElementById('paymentCustomerSelect').value);
                 if (!customerId) { alert("Müştəri seçin."); return; }
                 const amount = parseFloat(document.getElementById('paymentAmount').value);
+                const paymentType = document.getElementById('paymentType').value;
                 let customers = getCustomers();
                 const customer = customers.find(c => c.id === customerId);
                 if (!customer || amount > customer.debt || amount <= 0) {
@@ -1453,14 +1526,14 @@
                 }
                 customer.debt -= amount;
                 saveCustomers(customers);
-                addTransaction('Müştəri Ödənişi', `${customer.name} tərəfindən ödəniş`, amount);
+                addTransaction(`Müştəri Ödənişi (${paymentType})`, `${customer.name} tərəfindən ödəniş`, amount);
                 renderFinancePage();
                 closeModal(acceptPaymentModal);
             });
 
             addExpenseForm.addEventListener('submit', e => {
                 e.preventDefault();
-                const expenseType = expenseTypeSelect.value;
+                const expenseType = document.getElementById('expenseType').value;
                 const amount = parseFloat(document.getElementById('expenseAmount').value);
                 if(amount <= 0) { alert("Məbləğ müsbət olmalıdır."); return; }
                 addTransaction(expenseType, `Xərc: ${expenseType}`, -amount);
