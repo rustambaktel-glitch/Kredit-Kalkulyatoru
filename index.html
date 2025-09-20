@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>İdarəetmə Paneli - Lokal Versiya</title>
+    <title>İdarəetmə Paneli - Full Versiya</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
-        :root { --primary-color: #2980b9; --light-bg-color: #f4f7fa; --white-color: #ffffff; }
+        :root { --primary-color: #2980b9; --danger-color: #c0392b; --warning-color: #f39c12; --success-color: #27ae60; --light-bg-color: #f4f7fa; --white-color: #ffffff; --border-color: #e0e0e0; }
         body { font-family: 'Poppins', sans-serif; margin: 0; background-color: var(--light-bg-color); display: flex; font-size: 14px; }
         .sidebar { width: 240px; background-color: var(--white-color); height: 100vh; position: fixed; box-shadow: 2px 0 5px rgba(0,0,0,0.05); z-index: 100; }
         .sidebar .logo { text-align: center; padding: 20px 0; font-size: 24px; font-weight: 600; }
@@ -19,20 +19,20 @@
         .page { display: none; } .page.active { display: block; }
         .content-area { margin-top: 25px; background-color: var(--white-color); padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .btn { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; text-decoration: none; }
-        .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-success { background-color: #27ae60; color: white; }
+        .btn { padding: 10px 18px; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; text-decoration: none; color: white; }
+        .btn-primary { background-color: var(--primary-color); } .btn-success { background-color: var(--success-color); }
         .data-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+        .data-table th, .data-table td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); }
         .data-table th { background-color: #f8f9fa; font-weight: 600; }
-        .btn-edit, .btn-delete { padding: 6px 12px; font-size: 13px; color:white; border:none; border-radius: 4px; cursor: pointer;}
-        .btn-edit { background-color: #f39c12; } .btn-delete { background-color: #c0392b; }
+        .btn-edit, .btn-delete { padding: 6px 12px; font-size: 13px; border:none; border-radius: 4px; cursor: pointer;}
+        .btn-edit { background-color: var(--warning-color); } .btn-delete { background-color: var(--danger-color); }
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); justify-content: center; align-items: center; }
         .modal-content { background-color: var(--white-color); padding: 30px; border-radius: 8px; width: 500px; position: relative; }
         .modal-close { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #aaa; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; }
-        .form-group input, .form-group select { width: calc(100% - 22px); padding: 10px; border-radius: 5px; border: 1px solid #e0e0e0; }
+        .form-group input, .form-group select { width: calc(100% - 22px); padding: 10px; border-radius: 5px; border: 1px solid var(--border-color); }
+        .form-actions { text-align: right; margin-top: 20px; }
         .sale-container { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
         .sale-summary { background-color: #f8f9fa; padding: 20px; border-radius: 8px; }
         .summary-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 16px; }
@@ -41,219 +41,45 @@
     </style>
 </head>
 <body>
-
     <div class="sidebar">
         <div class="logo">LOGO</div>
-        <nav id="sidebar-nav">
-            <ul>
-                <li><a data-target="products-page" class="active">📦 Məhsullar</a></li>
-                <li><a data-target="customers-page">👥 Müştərilər</a></li>
-                <li><a data-target="sales-page">🛒 Satış Etmək</a></li>
-            </ul>
-        </nav>
+        <nav id="sidebar-nav"><ul><li><a data-target="products-page" class="active">📦 Məhsullar</a></li><li><a data-target="customers-page">👥 Müştərilər</a></li><li><a data-target="sales-page">🛒 Satış Etmək</a></li></ul></nav>
     </div>
-
     <div class="main-content">
         <header><h1 id="page-title">Məhsullar</h1></header>
-
-        <div id="products-page" class="page active">
-            <div class="content-area">
-                <div class="page-header"><h2>Məhsul Siyahısı</h2><button id="addProductBtn" class="btn btn-primary">➕ Yeni Məhsul Əlavə Et</button></div>
-                <table class="data-table">
-                    <thead><tr><th>#ID</th><th>Məhsul Adı</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th>Əməliyyatlar</th></tr></thead>
-                    <tbody id="productTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-
-        <div id="customers-page" class="page">
-            <div class="content-area">
-                <div class="page-header"><h2>Müştəri Siyahısı</h2><button id="addCustomerBtn" class="btn btn-primary">➕ Yeni Müştəri Əlavə Et</button></div>
-                <table class="data-table">
-                    <thead><tr><th>#ID</th><th>Tam Adı</th><th>Telefon Nömrəsi</th><th>Ümumi Borc</th><th>Əməliyyatlar</th></tr></thead>
-                    <tbody id="customerTableBody"></tbody>
-                </table>
-            </div>
-        </div>
-        
-        <div id="sales-page" class="page">
-             <form id="saleForm">
-                <div class="content-area sale-container">
-                    <div>
-                        <h4>1. Müştəri və Məhsul seçimi</h4>
-                        <div class="form-group"><label for="saleCustomer">Müştəri Seçin</label><select id="saleCustomer" required></select></div>
-                        <div class="form-group"><label for="saleProduct">Məhsul Əlavə Et</label><select id="saleProduct"></select></div>
-                        <table class="data-table">
-                            <thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th>Sil</th></tr></thead>
-                            <tbody id="cartTableBody"><tr><td colspan="5" style="text-align:center;">Səbət boşdur</td></tr></tbody>
-                        </table>
-                    </div>
-                    <div class="sale-summary">
-                        <h4>2. Satışı Yekunlaşdır</h4>
-                        <div class="form-group"><label>Satış Növü</label><input type="radio" id="typeCash" name="saleType" value="cash" checked> <label for="typeCash">Nağd</label> <input type="radio" id="typeCredit" name="saleType" value="credit"> <label for="typeCredit">Kredit</label></div>
-                        <div class="form-group" id="initialPaymentGroup"><label for="initialPayment">İlkin Ödəniş (₼)</label><input type="number" id="initialPayment" value="0" step="0.01"></div><hr>
-                        <div class="summary-row"><span>Ümumi Məbləğ:</span><span id="summarySubtotal">0.00 ₼</span></div>
-                        <div class="summary-row total"><span>Yekun Məbləğ:</span><span id="summaryTotal">0.00 ₼</span></div>
-                        <div class="form-actions" style="margin-top: 30px;"><button type="submit" class="btn btn-success" style="width: 100%; padding: 15px; font-size: 18px;">✅ Satışı Tamamla</button></div>
-                    </div>
-                </div>
-            </form>
-        </div>
+        <div id="products-page" class="page active"><div class="content-area"><div class="page-header"><h2>Məhsul Siyahısı</h2><button id="addProductBtn" class="btn btn-primary">➕ Yeni Məhsul</button></div><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th>Əməliyyatlar</th></tr></thead><tbody id="productTableBody"></tbody></table></div></div>
+        <div id="customers-page" class="page"><div class="content-area"><div class="page-header"><h2>Müştəri Siyahısı</h2><button id="addCustomerBtn" class="btn btn-primary">➕ Yeni Müştəri</button></div><table class="data-table"><thead><tr><th>#ID</th><th>Tam Adı</th><th>Telefon</th><th>Borc</th><th>Əməliyyatlar</th></tr></thead><tbody id="customerTableBody"></tbody></table></div></div>
+        <div id="sales-page" class="page"><form id="saleForm"><div class="content-area sale-container"><div><h4>1. Müştəri və Məhsul seçimi</h4><div class="form-group"><label for="saleCustomer">Müştəri Seçin</label><select id="saleCustomer" required></select></div><div class="form-group"><label for="saleProduct">Məhsul Əlavə Et</label><select id="saleProduct"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th>Sil</th></tr></thead><tbody id="cartTableBody"></tbody></table></div><div class="sale-summary"><h4>2. Satışı Yekunlaşdır</h4><div class="form-group"><label>Satış Növü</label><input type="radio" id="typeCash" name="saleType" value="cash" checked> <label for="typeCash">Nağd</label> <input type="radio" id="typeCredit" name="saleType" value="credit"> <label for="typeCredit">Kredit</label></div><div class="form-group" id="initialPaymentGroup"><label for="initialPayment">İlkin Ödəniş (₼)</label><input type="number" id="initialPayment" value="0" step="0.01"></div><hr><div class="summary-row"><span>Ümumi Məbləğ:</span><span id="summarySubtotal">0.00 ₼</span></div><div class="summary-row total"><span>Yekun Məbləğ:</span><span id="summaryTotal">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 15px; font-size: 18px;">✅ Satışı Tamamla</button></div></div></div></form></div>
     </div>
 
-    <div id="addProductModal" class="modal">...</div>
-    <div id="editProductModal" class="modal">...</div>
-    <div id="addCustomerModal" class="modal">...</div>
-    <div id="editCustomerModal" class="modal">...</div>
+    <div id="addProductModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Yeni Məhsul</h2><form id="addProductForm"><div class="form-group"><label for="productName">Məhsul Adı</label><input type="text" id="productName" required></div><div class="form-group"><label for="purchasePrice">Alış Qiyməti (₼)</label><input type="number" id="purchasePrice" step="0.01" required></div><div class="form-group"><label for="salePrice">Satış Qiyməti (₼)</label><input type="number" id="salePrice" step="0.01" required></div><div class="form-group"><label for="stockQuantity">Anbar Sayı</label><input type="number" id="stockQuantity" required></div><div class="form-actions"><button type="submit" class="btn btn-primary">Yadda Saxla</button></div></form></div></div>
+    <div id="editProductModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Məhsulu Redaktə Et</h2><form id="editProductForm"><input type="hidden" id="editProductId"><div class="form-group"><label for="editProductName">Məhsul Adı</label><input type="text" id="editProductName" required></div><div class="form-group"><label for="editPurchasePrice">Alış Qiyməti (₼)</label><input type="number" id="editPurchasePrice" step="0.01" required></div><div class="form-group"><label for="editSalePrice">Satış Qiyməti (₼)</label><input type="number" id="editSalePrice" step="0.01" required></div><div class="form-group"><label for="editStockQuantity">Anbar Sayı</label><input type="number" id="editStockQuantity" required></div><div class="form-actions"><button type="submit" class="btn btn-primary">Dəyişikliyi Saxla</button></div></form></div></div>
+
+    <div id="addCustomerModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Yeni Müştəri</h2><form id="addCustomerForm"><div class="form-group"><label for="customerName">Tam Adı</label><input type="text" id="customerName" required></div><div class="form-group"><label for="customerPhone">Telefon Nömrəsi</label><input type="text" id="customerPhone" required></div><div class="form-actions"><button type="submit" class="btn btn-primary">Yadda Saxla</button></div></form></div></div>
+    <div id="editCustomerModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Müştərini Redaktə Et</h2><form id="editCustomerForm"><input type="hidden" id="editCustomerId"><div class="form-group"><label for="editCustomerName">Tam Adı</label><input type="text" id="editCustomerName" required></div><div class="form-group"><label for="editCustomerPhone">Telefon Nömrəsi</label><input type="text" id="editCustomerPhone" required></div><div class="form-actions"><button type="submit" class="btn btn-primary">Dəyişikliyi Saxla</button></div></form></div></div>
+
     <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // --- BÜTÜN ELEMENTLƏR ---
+        // --- ELEMENTLƏR ---
         const pageTitle = document.getElementById('page-title');
         const sidebarNav = document.getElementById('sidebar-nav');
         const pages = document.querySelectorAll('.page');
         const allModals = document.querySelectorAll('.modal');
-        // (Modalların və formaların elementlərini də burada təyin etmək lazımdır)
-
-        // --- LOCALSTORAGE FUNKSİYALARI ---
-        const getFromStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
-        const saveToStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
-
-        // --- NAVİQASİYA ---
-        sidebarNav.addEventListener('click', (e) => {
-            if (e.target.tagName === 'A') {
-                const targetPageId = e.target.getAttribute('data-target');
-                
-                pages.forEach(page => page.classList.remove('active'));
-                sidebarNav.querySelectorAll('a').forEach(link => link.classList.remove('active'));
-                
-                document.getElementById(targetPageId).classList.add('active');
-                e.target.classList.add('active');
-                pageTitle.textContent = e.target.textContent.trim().substring(2);
-                
-                // DÜZƏLİŞ: Hədəf səhifə "Satış" səhifəsidirsə, onu yenidən hazırla
-                if (targetPageId === 'sales-page') {
-                    initializeSalePage();
-                }
-            }
-        });
         
-        // --- ÜMUMİ MODAL İDARƏETMƏSİ ---
-        // (əvvəlki kimi)
-        
-        // --- MƏHSUL FUNKSİYALARI (CRUD) ---
-        const productTableBody = document.getElementById('productTableBody');
-        const getProducts = () => getFromStorage('products');
-        const saveProducts = (products) => saveToStorage('products', products);
-        
-        function renderProducts() {
-            // ... (əvvəlki renderProducts kodu)
-        }
-        // ... (Məhsul əlavə etmə, redaktə, silmə üçün bütün event listener-lər)
-
-        // --- MÜŞTƏRİ FUNKSİYALARI (CRUD) ---
-        const customerTableBody = document.getElementById('customerTableBody');
-        const getCustomers = () => getFromStorage('customers');
-        const saveCustomers = (customers) => saveToStorage('customers', customers);
-
-        function renderCustomers() {
-            // ... (əvvəlki renderCustomers kodu)
-        }
-        // ... (Müştəri əlavə etmə, redaktə, silmə üçün bütün event listener-lər)
-
-        // --- SATIŞ SƏHİFƏSİ FUNKSİYALARI ---
-        const saleForm = document.getElementById('saleForm');
-        const saleCustomerSelect = document.getElementById('saleCustomer');
-        const saleProductSelect = document.getElementById('saleProduct');
-        const cartTableBody = document.getElementById('cartTableBody');
-        const summarySubtotal = document.getElementById('summarySubtotal');
-        const summaryTotal = document.getElementById('summaryTotal');
-        const saleTypeRadios = document.querySelectorAll('input[name="saleType"]');
-        const initialPaymentGroup = document.getElementById('initialPaymentGroup');
-        const initialPaymentInput = document.getElementById('initialPayment');
-
-        let currentCart = [];
-
-        function initializeSalePage() {
-            const customers = getCustomers();
-            saleCustomerSelect.innerHTML = '<option value="">-- Müştəri Seçin --</option><option value="0">Nağd Alıcı (Walk-in)</option>';
-            customers.forEach(c => {
-                saleCustomerSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`;
-            });
-
-            const products = getProducts();
-            saleProductSelect.innerHTML = '<option value="">-- Məhsul Seçin --</option>';
-            products.forEach(p => {
-                if (p.stock > 0) {
-                    saleProductSelect.innerHTML += `<option value="${p.id}">${p.name} (${p.stock} ədəd)</option>`;
-                }
-            });
-            
-            currentCart = [];
-            renderCart();
-            saleForm.reset();
-            initialPaymentGroup.style.display = 'none';
-        }
-
-        function renderCart() {
-            // ... (əvvəlki renderCart kodu)
-        }
-        
-        saleProductSelect.addEventListener('change', () => { /* ... (əvvəlki kimi) ... */ });
-        cartTableBody.addEventListener('click', (e) => { /* ... (əvvəlki kimi) ... */ });
-        cartTableBody.addEventListener('change', (e) => { /* ... (əvvəlki kimi) ... */ });
-        saleTypeRadios.forEach(radio => { radio.addEventListener('change', () => { /* ... (əvvəlki kimi) ... */ }); });
-
-        saleForm.addEventListener('submit', (e) => {
-            e.preventDefault();
-            // ... (əvvəlki satış tamamlama kodu tam olaraq burada olmalıdır)
-            
-            // Vacib hissə: Satışdan sonra məhsul siyahısını yeniləyir ki, anbar sayı düzgün görünsün
-             if (document.getElementById('products-page').classList.contains('active')) {
-                renderProducts();
-            }
-        });
-
-        // --- İLK YÜKLƏMƏ ---
-        // Bütün render funksiyalarını burada çağırmaq əvəzinə, naviqasiya idarə edəcək.
-        // Sadece default səhifəni render edək.
-        renderProducts();
-        renderCustomers();
-        // Lazım olarsa, satış səhifəsini də ilkin yükləyək
-        if (document.getElementById('sales-page').classList.contains('active')) {
-            initializeSalePage();
-        }
-    });
-
-    // QEYD: Oxunaqlılıq üçün yuxarıdakı JavaScript hissəsi qısaldılıb.
-    // Zəhmət olmasa, əvvəlki cavabdan JavaScript-in tam funksional versiyasını
-    // bu yeni strukturun içinə yerləşdirin. Əsas dəyişiklik naviqasiya
-    // event listener-inin içindəki if şərtidir.
-    </script>
-    
-    <script>
-    document.addEventListener('DOMContentLoaded', () => {
-        // --- ELEMENTLƏRİN TƏYİN EDİLMƏSİ ---
-        const pageTitle = document.getElementById('page-title');
-        const sidebarNav = document.getElementById('sidebar-nav');
-        const pages = document.querySelectorAll('.page');
-
-        // Məhsul Elementləri
-        const addProductModal = document.getElementById('addProductModal'); // Bu və digər modalların HTML-i yuxarıda olmalıdır
+        const addProductModal = document.getElementById('addProductModal');
         const editProductModal = document.getElementById('editProductModal');
         const addProductBtn = document.getElementById('addProductBtn');
         const addProductForm = document.getElementById('addProductForm');
         const editProductForm = document.getElementById('editProductForm');
         const productTableBody = document.getElementById('productTableBody');
-
-        // Müştəri Elementləri
+        
         const addCustomerModal = document.getElementById('addCustomerModal');
         const editCustomerModal = document.getElementById('editCustomerModal');
         const addCustomerBtn = document.getElementById('addCustomerBtn');
         const addCustomerForm = document.getElementById('addCustomerForm');
         const editCustomerForm = document.getElementById('editCustomerForm');
         const customerTableBody = document.getElementById('customerTableBody');
-
-        // Satış Elementləri
+        
         const saleForm = document.getElementById('saleForm');
         const saleCustomerSelect = document.getElementById('saleCustomer');
         const saleProductSelect = document.getElementById('saleProduct');
@@ -265,7 +91,7 @@
         const initialPaymentInput = document.getElementById('initialPayment');
         let currentCart = [];
 
-        // --- LOCALSTORAGE FUNKSİYALARI ---
+        // --- LOCALSTORAGE ---
         const getFromStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
         const saveToStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
 
@@ -273,103 +99,166 @@
         sidebarNav.addEventListener('click', (e) => {
             if (e.target.tagName === 'A') {
                 const targetPageId = e.target.getAttribute('data-target');
-                
-                pages.forEach(page => page.classList.remove('active'));
-                sidebarNav.querySelectorAll('a').forEach(link => link.classList.remove('active'));
-                
+                pages.forEach(p => p.classList.remove('active'));
+                sidebarNav.querySelectorAll('a').forEach(l => l.classList.remove('active'));
                 document.getElementById(targetPageId).classList.add('active');
                 e.target.classList.add('active');
                 pageTitle.textContent = e.target.textContent.trim().substring(2);
-                
                 if (targetPageId === 'sales-page') {
                     initializeSalePage();
                 }
             }
         });
         
-        // --- MƏHSUL FUNKSİYALARI (ƏVVƏLKİ KİMİ TAM KOD) ---
+        // --- MODAL İDARƏETMƏSİ ---
+        const openModal = (modal) => modal.style.display = 'flex';
+        const closeModal = (modal) => modal.style.display = 'none';
+        allModals.forEach(modal => {
+            modal.querySelector('.modal-close').addEventListener('click', () => closeModal(modal));
+            window.addEventListener('click', (event) => {
+                if (event.target === modal) closeModal(modal);
+            });
+        });
+
+        // --- MƏHSUL MODULU ---
         const getProducts = () => getFromStorage('products');
-        const saveProducts = (products) => saveToStorage('products', products);
-        const renderProducts = () => { /* ... tam kod ... */ };
-        // ... add, edit, delete event listener-ləri ...
+        const saveProducts = (p) => saveToStorage('products', p);
+        const renderProducts = () => {
+            const products = getProducts();
+            productTableBody.innerHTML = '';
+            if (products.length === 0) {
+                productTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Məhsul yoxdur.</td></tr>'; return;
+            }
+            products.forEach(p => { productTableBody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.purchasePrice.toFixed(2)} ₼</td><td>${p.salePrice.toFixed(2)} ₼</td><td>${p.stock} ədəd</td><td><button class="btn-edit" data-id="${p.id}">✏️</button><button class="btn-delete" data-id="${p.id}">🗑️</button></td></tr>`; });
+        };
+        addProductBtn.addEventListener('click', () => openModal(addProductModal));
+        addProductForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const products = getProducts();
+            products.push({ id: Date.now(), name: document.getElementById('productName').value, purchasePrice: parseFloat(document.getElementById('purchasePrice').value), salePrice: parseFloat(document.getElementById('salePrice').value), stock: parseInt(document.getElementById('stockQuantity').value) });
+            saveProducts(products);
+            renderProducts();
+            addProductForm.reset();
+            closeModal(addProductModal);
+        });
+        productTableBody.addEventListener('click', (e) => {
+            const id = parseInt(e.target.dataset.id);
+            if (e.target.classList.contains('btn-delete')) { if (confirm('Məhsulu silməyə əminsiniz?')) { saveProducts(getProducts().filter(p => p.id !== id)); renderProducts(); } }
+            if (e.target.classList.contains('btn-edit')) {
+                const p = getProducts().find(p => p.id === id);
+                document.getElementById('editProductId').value = p.id; document.getElementById('editProductName').value = p.name; document.getElementById('editPurchasePrice').value = p.purchasePrice; document.getElementById('editSalePrice').value = p.salePrice; document.getElementById('editStockQuantity').value = p.stock;
+                openModal(editProductModal);
+            }
+        });
+        editProductForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editProductId').value);
+            const updatedProducts = getProducts().map(p => p.id === id ? { id, name: document.getElementById('editProductName').value, purchasePrice: parseFloat(document.getElementById('editPurchasePrice').value), salePrice: parseFloat(document.getElementById('editSalePrice').value), stock: parseInt(document.getElementById('editStockQuantity').value) } : p);
+            saveProducts(updatedProducts);
+            renderProducts();
+            closeModal(editProductModal);
+        });
 
-        // --- MÜŞTƏRİ FUNKSİYALARI (ƏVVƏLKİ KİMİ TAM KOD) ---
+        // --- MÜŞTƏRİ MODULU ---
         const getCustomers = () => getFromStorage('customers');
-        const saveCustomers = (customers) => saveToStorage('customers', customers);
-        const renderCustomers = () => { /* ... tam kod ... */ };
-        // ... add, edit, delete event listener-ləri ...
-
-        // --- SATIŞ FUNKSİYALARI (ƏVVƏLKİ KİMİ TAM KOD) ---
-        function initializeSalePage() {
+        const saveCustomers = (c) => saveToStorage('customers', c);
+        const renderCustomers = () => {
             const customers = getCustomers();
-            saleCustomerSelect.innerHTML = '<option value="">-- Müştəri Seçin --</option><option value="0">Nağd Alıcı (Walk-in)</option>';
-            customers.forEach(c => { saleCustomerSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
+            customerTableBody.innerHTML = '';
+            if (customers.length === 0) {
+                customerTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Müştəri yoxdur.</td></tr>'; return;
+            }
+            customers.forEach(c => { customerTableBody.innerHTML += `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.phone}</td><td>${c.debt.toFixed(2)} ₼</td><td><button class="btn-edit" data-id="${c.id}">✏️</button><button class="btn-delete" data-id="${c.id}">🗑️</button></td></tr>`; });
+        };
+        addCustomerBtn.addEventListener('click', () => openModal(addCustomerModal));
+        addCustomerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const customers = getCustomers();
+            customers.push({ id: Date.now(), name: document.getElementById('customerName').value, phone: document.getElementById('customerPhone').value, debt: 0 });
+            saveCustomers(customers);
+            renderCustomers();
+            addCustomerForm.reset();
+            closeModal(addCustomerModal);
+        });
+        customerTableBody.addEventListener('click', (e) => {
+            const id = parseInt(e.target.dataset.id);
+            if (e.target.classList.contains('btn-delete')) { if (confirm('Müştərini silməyə əminsiniz?')) { saveCustomers(getCustomers().filter(c => c.id !== id)); renderCustomers(); } }
+            if (e.target.classList.contains('btn-edit')) {
+                const c = getCustomers().find(c => c.id === id);
+                document.getElementById('editCustomerId').value = c.id; document.getElementById('editCustomerName').value = c.name; document.getElementById('editCustomerPhone').value = c.phone;
+                openModal(editCustomerModal);
+            }
+        });
+        editCustomerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editCustomerId').value);
+            const updatedCustomers = getCustomers().map(c => c.id === id ? { ...c, name: document.getElementById('editCustomerName').value, phone: document.getElementById('editCustomerPhone').value } : c);
+            saveCustomers(updatedCustomers);
+            renderCustomers();
+            closeModal(editCustomerModal);
+        });
 
+        // --- SATIŞ MODULU ---
+        const initializeSalePage = () => {
+            const customers = getCustomers();
+            saleCustomerSelect.innerHTML = '<option value="">-- Müştəri Seçin --</option><option value="0">Nağd Alıcı</option>';
+            customers.forEach(c => { saleCustomerSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
             const products = getProducts();
             saleProductSelect.innerHTML = '<option value="">-- Məhsul Seçin --</option>';
-            products.forEach(p => { if (p.stock > 0) { saleProductSelect.innerHTML += `<option value="${p.id}">${p.name} (${p.stock} ədəd)</option>`; }});
-            
+            products.forEach(p => { if (p.stock > 0) { saleProductSelect.innerHTML += `<option value="${p.id}">${p.name} (Stok: ${p.stock})</option>`; }});
             currentCart = [];
             renderCart();
             saleForm.reset();
             initialPaymentGroup.style.display = 'none';
-        }
-
-        function renderCart() {
-             cartTableBody.innerHTML = '';
-            let subtotal = 0;
-
-            if (currentCart.length === 0) {
-                cartTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Səbət boşdur</td></tr>';
-            } else {
-                currentCart.forEach(item => {
-                    const itemTotal = item.quantity * item.salePrice;
-                    subtotal += itemTotal;
-                    cartTableBody.innerHTML += `<tr><td>${item.name}</td><td><input type="number" class="cart-quantity-input" data-id="${item.id}" value="${item.quantity}" min="1" max="${item.stock}"></td><td>${item.salePrice.toFixed(2)} ₼</td><td>${itemTotal.toFixed(2)} ₼</td><td><button type="button" class="btn-delete cart-remove-btn" data-id="${item.id}">🗑️</button></td></tr>`;
-                });
+        };
+        const renderCart = () => {
+            cartTableBody.innerHTML = ''; let subtotal = 0;
+            if (currentCart.length === 0) { cartTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Səbət boşdur</td></tr>'; }
+            else { currentCart.forEach(item => { const itemTotal = item.quantity * item.salePrice; subtotal += itemTotal; cartTableBody.innerHTML += `<tr><td>${item.name}</td><td><input type="number" class="cart-quantity-input" data-id="${item.id}" value="${item.quantity}" min="1" max="${item.stock}"></td><td>${item.salePrice.toFixed(2)} ₼</td><td>${itemTotal.toFixed(2)} ₼</td><td><button type="button" class="btn-delete cart-remove-btn" data-id="${item.id}">🗑️</button></td></tr>`; }); }
+            summarySubtotal.textContent = `${subtotal.toFixed(2)} ₼`; summaryTotal.textContent = `${subtotal.toFixed(2)} ₼`;
+        };
+        saleProductSelect.addEventListener('change', () => {
+            const productId = parseInt(saleProductSelect.value); if (!productId) return;
+            const product = getProducts().find(p => p.id === productId); const existingItem = currentCart.find(item => item.id === productId);
+            if (existingItem) { if (existingItem.quantity < product.stock) { existingItem.quantity++; } else { alert('Anbarda kifayət qədər məhsul yoxdur!'); } }
+            else { currentCart.push({ ...product, quantity: 1 }); }
+            renderCart(); saleProductSelect.value = '';
+        });
+        cartTableBody.addEventListener('change', (e) => {
+            if (e.target.classList.contains('cart-quantity-input')) {
+                const productId = parseInt(e.target.dataset.id); let newQuantity = parseInt(e.target.value); const item = currentCart.find(item => item.id === productId);
+                if (newQuantity > item.stock) { alert(`Anbarda yalnız ${item.stock} ədəd var!`); newQuantity = item.stock; e.target.value = newQuantity; }
+                item.quantity = newQuantity < 1 ? 1 : newQuantity; renderCart();
             }
-            summarySubtotal.textContent = `${subtotal.toFixed(2)} ₼`;
-            summaryTotal.textContent = `${subtotal.toFixed(2)} ₼`;
-        }
-        
-        // ... satış səhifəsinin qalan bütün event listener-ləri ...
-        
+        });
+        cartTableBody.addEventListener('click', (e) => { if (e.target.classList.contains('cart-remove-btn')) { currentCart = currentCart.filter(item => item.id !== parseInt(e.target.dataset.id)); renderCart(); }});
+        saleTypeRadios.forEach(r => { r.addEventListener('change', () => { initialPaymentGroup.style.display = document.getElementById('typeCredit').checked ? 'block' : 'none'; }); });
         saleForm.addEventListener('submit', (e) => {
             e.preventDefault();
-            
             if (currentCart.length === 0 || !saleCustomerSelect.value) { alert('Müştəri seçin və səbətə məhsul əlavə edin!'); return; }
-            
-            const totalAmount = currentCart.reduce((sum, item) => sum + (item.quantity * item.salePrice), 0);
+            const total = currentCart.reduce((s, i) => s + (i.quantity * i.salePrice), 0);
             const isCredit = document.getElementById('typeCredit').checked;
             const customerId = parseInt(saleCustomerSelect.value);
-            const initialPayment = isCredit ? parseFloat(initialPaymentInput.value) : totalAmount;
-
+            const payment = isCredit ? parseFloat(initialPaymentInput.value) : total;
             if (isCredit && customerId === 0) { alert('Kredit satışı üçün "Nağd Alıcı" seçilə bilməz!'); return; }
-            if (isCredit && initialPayment >= totalAmount) { alert('İlkin ödəniş ümumi məbləğdən az olmalıdır!'); return; }
-
+            if (isCredit && payment >= total) { alert('İlkin ödəniş ümumi məbləğdən az olmalıdır!'); return; }
             let products = getProducts();
-            currentCart.forEach(cartItem => {
-                let product = products.find(p => p.id === cartItem.id);
-                if (product) { product.stock -= cartItem.quantity; }
-            });
+            currentCart.forEach(item => { let p = products.find(prod => prod.id === item.id); if (p) p.stock -= item.quantity; });
             saveProducts(products);
-
             if (isCredit) {
                 let customers = getCustomers();
-                let customer = customers.find(c => c.id === customerId);
-                if (customer) { customer.debt += (totalAmount - initialPayment); }
+                let c = customers.find(cust => cust.id === customerId); if (c) c.debt += (total - payment);
                 saveCustomers(customers);
             }
-            
             let sales = getFromStorage('sales');
-            sales.push({ id: Date.now(), customerId, customerName: customerId === 0 ? "Nağd Alıcı" : getCustomers().find(c=>c.id === customerId).name, items: currentCart, totalAmount, type: isCredit ? 'Kredit' : 'Nağd', initialPayment, date: new Date().toLocaleString('az-AZ') });
+            sales.push({ id: Date.now(), customerId, customerName: customerId === 0 ? "Nağd Alıcı" : getCustomers().find(c => c.id === customerId).name, items: currentCart, totalAmount: total, type: isCredit ? 'Kredit' : 'Nağd', initialPayment: payment, date: new Date().toLocaleString('az-AZ') });
             saveToStorage('sales', sales);
-
             alert('Satış uğurla tamamlandı!');
             initializeSalePage();
+            renderCustomers();
         });
-
-        // --- İLK YÜKLƏMƏ ---
+        
+        // --- PROQRAMIN BAŞLADILMASI ---
         renderProducts();
         renderCustomers();
     });
