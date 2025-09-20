@@ -655,9 +655,20 @@
                 });
             };
             
-            // Dəyişiklik burada: Yalnız bir dəfə əlavə edilir
-            addCustomerBtn.addEventListener('click', () => { addCustomerForm.reset(); openModal(addCustomerModal); });
-            addCustomerForm.addEventListener('submit', (e) => {
+            // Dəyişiklik burada
+            addCustomerBtn.removeEventListener('click', addCustomerBtnClickHandler);
+            addCustomerBtn.addEventListener('click', addCustomerBtnClickHandler);
+            
+            function addCustomerBtnClickHandler() {
+                addCustomerForm.reset();
+                openModal(addCustomerModal);
+            }
+
+            // Dəyişiklik burada
+            addCustomerForm.removeEventListener('submit', addCustomerFormSubmitHandler);
+            addCustomerForm.addEventListener('submit', addCustomerFormSubmitHandler);
+            
+            function addCustomerFormSubmitHandler(e) {
                 e.preventDefault();
                 const customers = getCustomers();
                 customers.push({
@@ -669,7 +680,7 @@
                 saveCustomers(customers);
                 renderCustomers();
                 closeModal(addCustomerModal);
-            });
+            }
 
             customerTableBody.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
@@ -1175,8 +1186,7 @@
                     financialHistoryTableBody.innerHTML += `<tr><td>${tr.id}</td><td>${tr.date}</td><td>${tr.type}</td><td>${tr.description}</td><td class="${tr.amount >= 0 ? 'positive' : 'negative'}">${tr.amount.toFixed(2)} ₼</td></tr>`;
                 });
             };
-
-            // Dəyişiklik burada: Hadisə dinləyicisi yalnız bir dəfə əlavə edilir
+            
             reportTabs.addEventListener('click', (e) => {
                 const button = e.target.closest('button');
                 if (!button) return;
@@ -1205,7 +1215,6 @@
             salesReportView.style.display = 'block';
             renderAllSales();
 
-            // Axtarış sahələrini də düzgün funksiyalarla birləşdir
             salesReportSearch.addEventListener('input', renderAllSales);
             purchasesReportSearch.addEventListener('input', renderPurchases);
             financialReportSearch.addEventListener('input', renderFinancial);
