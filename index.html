@@ -5,21 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Biznes Panel</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap');
         :root {
-            --primary-color: #4f46e5;
-            --primary-hover: #4338ca;
-            --success-color: #10b981;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
-            --details-color: #8b5cf6;
-            --text-primary: #111827;
-            --text-secondary: #6b7280;
-            --bg-main: #f3f4f6;
+            --primary-color: #3f51b5;
+            --primary-light: #7986cb;
+            --primary-dark: #303f9f;
+            --success-color: #4caf50;
+            --danger-color: #f44336;
+            --warning-color: #ff9800;
+            --text-primary: #212121;
+            --text-secondary: #757575;
+            --bg-main: #f5f7fa;
             --bg-content: #ffffff;
-            --border-color: #e5e7eb;
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            --border-color: #e0e0e0;
+            --shadow-sm: 0 2px 4px rgba(0,0,0,0.08);
+            --shadow-md: 0 4px 8px rgba(0,0,0,0.1);
         }
         * {
             box-sizing: border-box;
@@ -27,30 +27,32 @@
             padding: 0;
         }
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Roboto', sans-serif;
             background: var(--bg-main);
             color: var(--text-primary);
             display: flex;
-            font-size: 14px;
-            overflow: hidden;
+            min-height: 100vh;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
         .sidebar {
-            width: 260px;
+            width: 250px;
             height: 100vh;
             position: fixed;
             background: var(--bg-content);
             border-right: 1px solid var(--border-color);
-            padding: 24px 0;
+            padding: 2rem 0;
             display: flex;
             flex-direction: column;
             box-shadow: var(--shadow-md);
+            z-index: 100;
+            transition: transform 0.3s ease-in-out;
         }
         .sidebar .logo {
             text-align: center;
-            padding: 0 0 32px 0;
-            font-size: 24px;
+            padding: 0 0 2rem 0;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.5rem;
             font-weight: 700;
             color: var(--primary-color);
             text-transform: uppercase;
@@ -60,55 +62,62 @@
         }
         .sidebar nav ul {
             list-style: none;
+            padding: 0 1rem;
         }
         .sidebar nav li a {
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 14px 24px;
-            margin: 6px 16px;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            margin-bottom: 0.5rem;
             text-decoration: none;
             color: var(--text-secondary);
             font-weight: 500;
             cursor: pointer;
-            border-radius: 12px;
+            border-radius: 0.75rem;
             transition: all 0.2s ease-in-out;
         }
         .sidebar nav li a:hover {
-            background: #f1f5f9;
+            background: #f0f4f7;
             color: var(--primary-color);
         }
         .sidebar nav li a.active {
-            background: #eef2ff;
-            color: var(--primary-color);
+            background: var(--primary-color);
+            color: #ffffff;
             font-weight: 600;
+            box-shadow: var(--shadow-sm);
+        }
+        .sidebar nav li a.active svg {
+            color: #ffffff;
         }
         .sidebar nav li a svg {
-            width: 20px;
-            height: 20px;
+            width: 1.25rem;
+            height: 1.25rem;
             stroke-width: 2;
+            color: var(--text-secondary);
+            transition: color 0.2s ease-in-out;
         }
         .main-content {
-            margin-left: 260px;
-            width: calc(100% - 260px);
-            padding: 32px;
-            height: 100vh;
-            overflow-y: auto;
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 2rem;
+            transition: margin-left 0.3s ease-in-out;
         }
         .page-container {
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 1.5rem;
         }
         .page-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 1rem;
         }
         .page-header h1 {
-            font-size: 32px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 2rem;
             font-weight: 700;
         }
         .search-container {
@@ -116,96 +125,95 @@
         }
         .search-container svg {
             position: absolute;
-            left: 16px;
+            left: 1rem;
             top: 50%;
             transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
+            width: 1.25rem;
+            height: 1.25rem;
             color: var(--text-secondary);
         }
         .search-input {
-            min-width: 300px;
-            padding: 12px 16px 12px 48px;
-            border-radius: 12px;
+            min-width: 20rem;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            border-radius: 0.75rem;
             border: 1px solid var(--border-color);
             background: var(--bg-content);
-            font-size: 14px;
+            font-size: 0.875rem;
             transition: all 0.2s ease-in-out;
         }
         .search-input:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
         }
         .content-area {
             background: var(--bg-content);
             border: 1px solid var(--border-color);
-            padding: 32px;
-            border-radius: 16px;
+            padding: 2rem;
+            border-radius: 1rem;
             box-shadow: var(--shadow-sm);
         }
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            padding: 12px 24px;
-            border: 1px solid transparent;
-            border-radius: 12px;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.75rem;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 0.875rem;
             font-weight: 600;
             text-decoration: none;
             color: white;
             transition: all 0.2s ease-in-out;
+            box-shadow: var(--shadow-sm);
         }
         .btn svg {
-            width: 18px;
-            height: 18px;
+            width: 1.125rem;
+            height: 1.125rem;
         }
         .btn-primary {
             background-color: var(--primary-color);
-            border-color: var(--primary-color);
-            box-shadow: var(--shadow-sm);
         }
         .btn-primary:hover {
-            background-color: var(--primary-hover);
+            background-color: var(--primary-dark);
         }
         .btn-success {
             background-color: var(--success-color);
-            border-color: var(--success-color);
         }
         .btn-success:hover {
-            background-color: #0c9c6f;
+            background-color: #43a047;
         }
         .btn-danger {
             background-color: var(--danger-color);
         }
         .btn-danger:hover {
-            background-color: #cc3636;
+            background-color: #d32f2f;
         }
         .btn-warning {
             background-color: var(--warning-color);
             color: var(--text-primary);
         }
         .btn-warning:hover {
-            background-color: #d88a07;
+            background-color: #fb8c00;
         }
         .actions-cell {
             text-align: right;
+            white-space: nowrap;
         }
         .actions-cell button {
-            padding: 10px;
-            margin-left: 8px;
+            padding: 0.5rem;
+            margin-left: 0.5rem;
             border: none;
-            border-radius: 8px;
+            border-radius: 0.5rem;
             cursor: pointer;
             display: inline-flex;
             background: transparent;
             transition: background-color 0.2s;
         }
         .actions-cell button:hover {
-            background-color: #e9ecef;
+            background-color: #f0f4f7;
         }
         .btn-edit {
             color: var(--warning-color);
@@ -214,27 +222,33 @@
             color: var(--danger-color);
         }
         .btn-details {
-            color: var(--details-color);
+            color: var(--primary-color);
         }
         .data-table {
             width: 100%;
             border-collapse: separate;
-            border-spacing: 0;
+            border-spacing: 0 0.5rem;
         }
         .data-table th,
         .data-table td {
-            padding: 16px;
+            padding: 1rem 1.5rem;
             text-align: left;
-            border-bottom: 1px solid var(--border-color);
+            border-bottom: none;
         }
         .data-table th {
             color: var(--text-secondary);
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 12px;
+            font-size: 0.75rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .data-table tbody tr {
+            background: #fcfcfc;
+            border-radius: 0.75rem;
+            transition: box-shadow 0.2s;
         }
         .data-table tbody tr:hover {
-            background-color: #f9fafb;
+            box-shadow: var(--shadow-sm);
         }
         .modal {
             display: none;
@@ -244,39 +258,45 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(17, 24, 39, 0.6);
+            background-color: rgba(33, 33, 33, 0.6);
             backdrop-filter: blur(5px);
             justify-content: center;
             align-items: center;
         }
         .modal-content {
             background: var(--bg-content);
-            padding: 40px;
-            border-radius: 16px;
-            width: 700px;
+            padding: 2.5rem;
+            border-radius: 1rem;
+            width: 45rem;
+            max-width: 90%;
             position: relative;
-            max-height: 85vh;
+            max-height: 90vh;
             overflow-y: auto;
             box-shadow: var(--shadow-md);
+            animation: modal-open 0.3s ease-out;
+        }
+        @keyframes modal-open {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         .modal-close {
             position: absolute;
-            top: 20px;
-            right: 25px;
-            font-size: 32px;
+            top: 1rem;
+            right: 1.5rem;
+            font-size: 2rem;
             cursor: pointer;
-            color: #adb5bd;
+            color: #bdbdbd;
             transition: color 0.2s;
         }
         .modal-close:hover {
             color: var(--text-primary);
         }
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 1.25rem;
         }
         .form-group label {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 0.5rem;
             color: var(--text-secondary);
             font-weight: 500;
         }
@@ -284,12 +304,12 @@
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 14px;
-            border-radius: 12px;
+            padding: 0.875rem;
+            border-radius: 0.75rem;
             border: 1px solid var(--border-color);
             background: var(--bg-main);
             color: var(--text-primary);
-            font-size: 14px;
+            font-size: 0.875rem;
             transition: all 0.2s ease-in-out;
         }
         .form-group input:focus,
@@ -297,39 +317,39 @@
         .form-group textarea:focus {
             outline: none;
             border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            box-shadow: 0 0 0 3px rgba(63, 81, 181, 0.2);
         }
         .form-actions {
             text-align: right;
-            margin-top: 30px;
+            margin-top: 2rem;
         }
         .sale-container {
             display: grid;
-            grid-template-columns: 1.5fr 1fr;
-            gap: 24px;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
         }
         .summary-cards {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+            gap: 1.5rem;
         }
         .card {
             background: var(--bg-content);
-            padding: 32px;
-            border-radius: 16px;
+            padding: 1.5rem;
+            border-radius: 1rem;
             text-align: center;
             border: 1px solid var(--border-color);
             box-shadow: var(--shadow-sm);
         }
         .card h3 {
-            margin: 0 0 12px 0;
-            font-size: 16px;
+            margin: 0 0 0.5rem 0;
+            font-size: 0.875rem;
             color: var(--text-secondary);
             font-weight: 500;
         }
         .card p {
-            margin: 0;
-            font-size: 36px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 2.25rem;
             font-weight: 700;
             color: var(--text-primary);
         }
@@ -341,20 +361,20 @@
         }
         .view-toggle {
             display: flex;
-            gap: 10px;
-            padding: 6px;
+            gap: 0.5rem;
+            padding: 0.3rem;
             background: #e9ecef;
-            border-radius: 12px;
-            margin-bottom: 20px;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
         }
         .view-toggle button {
             flex: 1;
-            padding: 10px 18px;
+            padding: 0.6rem 1rem;
             background: transparent;
             border: none;
             color: var(--text-secondary);
             font-weight: 500;
-            border-radius: 10px;
+            border-radius: 0.75rem;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -366,35 +386,83 @@
         .summary-row {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding: 10px 0;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
             border-bottom: 1px solid var(--border-color);
+            font-size: 1rem;
+            color: var(--text-primary);
         }
         .summary-row.total {
             font-weight: 700;
-            font-size: 1.4em;
+            font-size: 1.5rem;
+            margin-top: 1.5rem;
             border-bottom: none;
-            margin-top: 20px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                box-shadow: none;
+                padding: 1rem;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+            .sidebar .logo {
+                display: none;
+            }
+            .sidebar nav ul {
+                display: flex;
+                justify-content: space-around;
+                flex-wrap: wrap;
+                padding: 0;
+            }
+            .sidebar nav li a {
+                margin: 0.25rem;
+                flex-direction: column;
+                gap: 0.25rem;
+                padding: 0.5rem;
+            }
+            .sidebar nav li a span {
+                font-size: 0.75rem;
+            }
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1rem;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .search-input {
+                min-width: 100%;
+            }
+            .sale-container {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 </head>
 <body>
     <div class="sidebar">
         <div class="logo">BİZNES PANEL</div>
-        <nav id="sidebar-nav"><ul>
-            <li><a data-page="finance" class="active"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> <span>Maliyyə</span></a></li>
-            <li><a data-page="reports"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0h6m-6-10h6m-6 4h6m0 0v6a2 2 0 002 2h2a2 2 0 002-2v-6a2 2 0 00-2-2h-2a2 2 0 00-2 2z"></path></svg> <span>Hesabatlar</span></a></li>
-            <li><a data-page="sales"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> <span>Satış Etmək</span></a></li>
-            <li><a data-page="purchases"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg> <span>Mal Alışı</span></a></li>
-            <li><a data-page="products"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg> <span>Məhsullar</span></a></li>
-            <li><a data-page="customers"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-1-3.794M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span>Müştərilər</span></a></li>
-            <li><a data-page="suppliers"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg> <span>Təchizatçılar</span></a></li>
-        </ul></nav>
+        <nav id="sidebar-nav">
+            <ul>
+                <li><a data-page="finance" class="active"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> <span>Maliyyə</span></a></li>
+                <li><a data-page="reports"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0h6m-6-10h6m-6 4h6m0 0v6a2 2 0 002 2h2a2 2 0 002-2v-6a2 2 0 00-2-2h-2a2 2 0 00-2 2z"></path></svg> <span>Hesabatlar</span></a></li>
+                <li><a data-page="sales"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> <span>Satış Etmək</span></a></li>
+                <li><a data-page="purchases"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg> <span>Mal Alışı</span></a></li>
+                <li><a data-page="products"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg> <span>Məhsullar</span></a></li>
+                <li><a data-page="customers"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-1-3.794M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span>Müştərilər</span></a></li>
+                <li><a data-page="suppliers"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg> <span>Təchizatçılar</span></a></li>
+            </ul>
+        </nav>
     </div>
 
     <main class="main-content" id="app-container">
     </main>
-    
+
     <div id="addProductModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Yeni Məhsul</h2><form id="addProductForm"><div class="form-group"><label for="productNameModal">Məhsul Adı</label><input type="text" id="productNameModal" required></div><div class="form-group"><label for="purchasePriceModal">Alış Qiyməti (₼)</label><input type="number" id="purchasePriceModal" step="0.01" required></div><div class="form-group"><label for="salePriceModal">Satış Qiyməti (₼)</label><input type="number" id="salePriceModal" step="0.01" required></div><div class="form-group"><label for="stockQuantityModal">Anbar Sayı</label><input type="number" id="stockQuantityModal" required></div><div class="form-actions"><button type="submit" class="btn btn-primary">Yadda Saxla</button></div></form></div></div>
     <div id="editProductModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Məhsulu Redaktə Et</h2><form id="editProductForm"><input type="hidden" id="editProductId"><div class="form-group"><label for="editProductName">Məhsul Adı</label><input type="text" id="editProductName" required></div><div class="form-group"><label for="editPurchasePrice">Alış Qiyməti (₼)</label><input type="number" id="editPurchasePrice" step="0.01" required></div><div class="form-group"><label for="editSalePrice">Satış Qiyməti (₼)</label><input type="number" id="editSalePrice" step="0.01" required></div><div class="form-group"><label for="editStockQuantity">Anbar Sayı</label><input type="number" id="editStockQuantity" required></div><div class="form-actions"><button type="submit" class="btn btn-primary">Dəyişikliyi Saxla</button></div></form></div></div>
     <div id="addCustomerModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Yeni Müştəri</h2><form id="addCustomerForm"><div class="form-group"><label for="customerNameModal">Tam Adı</label><input type="text" id="customerNameModal" required></div><div class="form-group"><label for="customerPhoneModal">Telefon Nömrəsi</label><input type="text" id="customerPhoneModal" required></div><div class="form-actions"><button type="submit" class="btn btn-primary">Yadda Saxla</button></div></form></div></div>
@@ -407,13 +475,13 @@
     <div id="paySupplierModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Təchizatçıya Ödəniş</h2><form id="paySupplierForm"><div class="form-group"><label>Təchizatçı</label><select id="paymentSupplierSelect" required></select></div><div class="form-group"><label>Ödənilən Məbləğ (₼)</label><input type="number" id="supplierPaymentAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-warning">Ödənişi Et</button></div></form></div></div>
     <div id="customerSalesHistoryModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 id="customer-history-title">Müştəri Satış Tarixçəsi</h2><div id="customerSalesHistoryContent" style="margin-top: 20px;"><table class="data-table" style="width:100%;"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Məbləğ</th><th></th></tr></thead><tbody id="customer-sales-history-table-body"></tbody></table></div></div></div>
 
-    <template id="finance-page-template"><div class="page-container"><div class="page-header"><h1>Maliyyə</h1><button id="btnBackupData" class="btn btn-primary"><span>Məlumatları Yüklə (Backup)</span></button></div><div class="summary-cards"><div class="card"><h3>Cari Kassa Balansı</h3><p id="current-cash-balance">0.00 ₼</p></div><div class="card"><h3>Müştəri Borcları</h3><p id="total-receivables" class="positive">0.00 ₼</p></div><div class="card"><h3>Təchizatçı Borcları</h3><p id="total-payables" class="negative">0.00 ₼</p></div></div><div class="content-area"><div class="page-header"><h2>Son Əməliyyatlar</h2></div><div class="finance-actions" style="margin-bottom: 20px;"><button id="btnAcceptPayment" class="btn btn-success"><span>Ödəniş Qəbul Et</span></button><button id="btnAddExpense" class="btn btn-danger"><span>Xərc Əlavə Et</span></button><button id="btnPaySupplier" class="btn btn-warning"><span>Təchizatçıya Ödə</span></button></div><table class="data-table"><thead><tr><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th></tr></thead><tbody id="transactionsTableBody"></tbody></table></div></div></template>
-    <template id="reports-page-template"><div class="page-container"><div class="page-header"><h1>Hesabatlar</h1></div><div class="content-area"><div class="view-toggle"><button id="viewAllSalesBtn" class="active">Bütün Satışlar</button><button id="viewByCustomerBtn">Müştərilər Üzrə</button></div><div id="all-sales-view" class="report-view active"><div class="page-header" style="padding: 16px 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Müştəri</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="salesHistoryTableBody"></tbody></table></div><div id="by-customer-view" class="report-view"><div class="page-header" style="padding: 16px 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="customerReportSearch" class="search-input" placeholder="Müştəri adına görə axtar..."></div></div><table class="data-table"><thead><tr><th>Müştəri Adı</th><th>Satış Sayı</th><th>Ümumi Dövriyyə</th><th></th></tr></thead><tbody id="customerSalesSummaryTableBody"></tbody></table></div></div></div></template>
-    <template id="sales-page-template"><div class="page-container"><div class="page-header"><h1>Satış Etmək</h1></div><form id="saleForm"><div class="sale-container"><div class="content-area"><h4>1. Müştəri və Məhsul seçimi</h4><div class="form-group"><label for="saleCustomer">Müştəri Seçin</label><select id="saleCustomer" required></select></div><div class="form-group"><label for="saleProduct">Məhsul Əlavə Et</label><select id="saleProduct"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th></th></tr></thead><tbody id="cartTableBody"></tbody></table></div><div class="content-area"><h4>2. Satışı Yekunlaşdır</h4><div class="form-group"><label>Satış Növünü Seçin</label><div class="sale-type-buttons"><button type="button" class="btn sale-type-btn active" data-type="Nağd">Nağd</button><button type="button" class="btn sale-type-btn" data-type="POS Terminal">POS</button><button type="button" class="btn sale-type-btn" data-type="Kredit">Kredit</button><button type="button" class="btn sale-type-btn" data-type="Korporativ">Korporativ</button></div></div><div class="form-group" id="initialPaymentGroup"><label for="initialPayment">İlkin Ödəniş (₼)</label><input type="number" id="initialPayment" value="0" step="0.01"></div><div class="summary-row"><span>Yekun Məbləğ:</span><span id="summaryTotal">0.00 ₼</span></div><div class="summary-row" id="debt-row" style="display:none;"><span>Borc qalığı:</span><span id="debt-total">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 15px; font-size: 16px;"><span>Satışı Tamamla</span></button></div></div></div></form></div></template>
-    <template id="purchases-page-template"><div class="page-container"><div class="page-header"><h1>Yeni Mal Alışı</h1></div><form id="purchaseForm"><div class="sale-container"><div class="content-area"><h4>1. Təchizatçı və Məhsul seçimi</h4><div class="form-group"><label>Təchizatçı Seçin</label><select id="purchaseSupplierSelect" required></select></div><div class="form-group"><label>Məhsul Əlavə Et</label><select id="purchaseProductSelect"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Alış Qiyməti</th><th>Toplam</th><th></th></tr></thead><tbody id="purchaseCartTableBody"></tbody></table></div><div class="content-area"><h4>2. Alışı Yekunlaşdır</h4><div class="summary-row total" style="margin-top: 24px;"><span>Yekun Məbləğ:</span><span id="purchaseTotal">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 15px; font-size: 16px;"><span>Alışı Tamamla</span></button></div></div></div></form></div></template>
-    <template id="products-page-template"><div class="page-container"><div class="page-header"><h1>Məhsullar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="productSearch" class="search-input" placeholder="Məhsul adı və ya ID ilə axtar..."></div><button id="addProductBtn" class="btn btn-primary"><span>Yeni Məhsul</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th></th></tr></thead><tbody id="productTableBody"></tbody></table></div></div></template>
-    <template id="customers-page-template"><div class="page-container"><div class="page-header"><h1>Müştərilər</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="customerSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addCustomerBtn" class="btn btn-primary"><span>Yeni Müştəri</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Tam Adı</th><th>Telefon</th><th>Borc</th><th></th></tr></thead><tbody id="customerTableBody"></tbody></table></div></div></template>
-    <template id="suppliers-page-template"><div class="page-container"><div class="page-header"><h1>Təchizatçılar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="supplierSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addSupplierBtn" class="btn btn-primary"><span>Yeni Təchizatçı</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Telefon</th><th>Bizim Borcumuz</th><th></th></tr></thead><tbody id="supplierTableBody"></tbody></table></div></div></template>
+    <template id="finance-page-template"><div class="page-container"><div class="page-header"><h1>Maliyyə</h1><button id="btnBackupData" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Məlumatları Yüklə (Backup)</span></button></div><div class="summary-cards"><div class="card"><h3>Cari Kassa Balansı</h3><p id="current-cash-balance">0.00 ₼</p></div><div class="card"><h3>Müştəri Borcları</h3><p id="total-receivables" class="positive">0.00 ₼</p></div><div class="card"><h3>Təchizatçı Borcları</h3><p id="total-payables" class="negative">0.00 ₼</p></div></div><div class="content-area"><div class="page-header" style="margin-bottom: 1rem; padding: 0;"><h2>Son Əməliyyatlar</h2><div class="finance-actions" style="display: flex; gap: 0.5rem;"><button id="btnAcceptPayment" class="btn btn-success"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 4v4m0 4v2m-6-2h12a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> Ödəniş Qəbul Et</span></button><button id="btnAddExpense" class="btn btn-danger"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> Xərc Əlavə Et</span></button><button id="btnPaySupplier" class="btn btn-warning"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 21h10a2 2 0 002-2V8a2 2 0 00-2-2H7a2 2 0 00-2 2v11a2 2 0 002 2z"></path></svg> Təchizatçıya Ödə</span></button></div></div><table class="data-table"><thead><tr><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th></tr></thead><tbody id="transactionsTableBody"></tbody></table></div></div></template>
+    <template id="reports-page-template"><div class="page-container"><div class="page-header"><h1>Hesabatlar</h1></div><div class="content-area"><div class="view-toggle"><button id="viewAllSalesBtn" class="active">Bütün Satışlar</button><button id="viewByCustomerBtn">Müştərilər Üzrə</button></div><div id="all-sales-view" class="report-view active"><div class="page-header" style="padding: 16px 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Müştəri</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="salesHistoryTableBody"></tbody></table></div><div id="by-customer-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 16px 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="customerReportSearch" class="search-input" placeholder="Müştəri adına görə axtar..."></div></div><table class="data-table"><thead><tr><th>Müştəri Adı</th><th>Satış Sayı</th><th>Ümumi Dövriyyə</th><th></th></tr></thead><tbody id="customerSalesSummaryTableBody"></tbody></table></div></div></div></template>
+    <template id="sales-page-template"><div class="page-container"><div class="page-header"><h1>Satış Etmək</h1></div><form id="saleForm"><div class="sale-container"><div class="content-area"><h4>Müştəri və Məhsul seçimi</h4><div class="form-group"><label for="saleCustomer">Müştəri Seçin</label><select id="saleCustomer" required></select></div><div class="form-group"><label for="saleProduct">Məhsul Əlavə Et</label><select id="saleProduct"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th></th></tr></thead><tbody id="cartTableBody"></tbody></table></div><div class="content-area"><h4>Satışı Yekunlaşdır</h4><div class="form-group"><label>Satış Növünü Seçin</label><div class="sale-type-buttons" style="display:flex; gap: 0.5rem;"><button type="button" class="btn btn-primary sale-type-btn active" data-type="Nağd">Nağd</button><button type="button" class="btn btn-primary sale-type-btn" data-type="POS Terminal">POS</button><button type="button" class="btn btn-primary sale-type-btn" data-type="Kredit">Kredit</button><button type="button" class="btn btn-primary sale-type-btn" data-type="Korporativ">Korporativ</button></div></div><div class="form-group" id="initialPaymentGroup" style="display:none;"><label for="initialPayment">İlkin Ödəniş (₼)</label><input type="number" id="initialPayment" value="0" step="0.01"></div><div class="summary-row"><span>Yekun Məbləğ:</span><span id="summaryTotal">0.00 ₼</span></div><div class="summary-row" id="debt-row" style="display:none;"><span>Borc qalığı:</span><span id="debt-total">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;"><span>Satışı Tamamla</span></button></div></div></div></form></div></template>
+    <template id="purchases-page-template"><div class="page-container"><div class="page-header"><h1>Yeni Mal Alışı</h1></div><form id="purchaseForm"><div class="sale-container"><div class="content-area"><h4>Təchizatçı və Məhsul seçimi</h4><div class="form-group"><label>Təchizatçı Seçin</label><select id="purchaseSupplierSelect" required></select></div><div class="form-group"><label>Məhsul Əlavə Et</label><select id="purchaseProductSelect"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Alış Qiyməti</th><th>Toplam</th><th></th></tr></thead><tbody id="purchaseCartTableBody"></tbody></table></div><div class="content-area"><h4>Alışı Yekunlaşdır</h4><div class="summary-row total" style="margin-top: 1.5rem;"><span>Yekun Məbləğ:</span><span id="purchaseTotal">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;"><span>Alışı Tamamla</span></button></div></div></div></form></div></template>
+    <template id="products-page-template"><div class="page-container"><div class="page-header"><h1>Məhsullar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="productSearch" class="search-input" placeholder="Məhsul adı və ya ID ilə axtar..."></div><button id="addProductBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Məhsul</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th></th></tr></thead><tbody id="productTableBody"></tbody></table></div></div></template>
+    <template id="customers-page-template"><div class="page-container"><div class="page-header"><h1>Müştərilər</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="customerSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addCustomerBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Müştəri</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Tam Adı</th><th>Telefon</th><th>Borc</th><th></th></tr></thead><tbody id="customerTableBody"></tbody></table></div></div></template>
+    <template id="suppliers-page-template"><div class="page-container"><div class="page-header"><h1>Təchizatçılar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="supplierSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addSupplierBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Təchizatçı</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Telefon</th><th>Bizim Borcumuz</th><th></th></tr></thead><tbody id="supplierTableBody"></tbody></table></div></div></template>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -459,7 +527,6 @@
             }
         });
 
-        // --- DATA FUNCTIONS ---
         const getProducts = () => getFromStorage('products'); const saveProducts = (p) => saveToStorage('products', p);
         const getCustomers = () => getFromStorage('customers'); const saveCustomers = (c) => saveToStorage('customers', c);
         const getSuppliers = () => getFromStorage('suppliers'); const saveSuppliers = (s) => saveToStorage('suppliers', s);
@@ -473,7 +540,6 @@
             saveTransactions(transactions);
         }
 
-        // --- PAGE SETUPS ---
         function setupProductsPage() {
             const productTableBody = appContainer.querySelector('#productTableBody');
             const addProductBtn = appContainer.querySelector('#addProductBtn');
@@ -495,7 +561,7 @@
                     return;
                 }
                 products.forEach(p => {
-                    productTableBody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.purchasePrice.toFixed(2)} ₼</td><td>${p.salePrice.toFixed(2)} ₼</td><td>${p.stock} ədəd</td><td class="actions-cell"><button class="btn-edit" data-id="${p.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L14.732 3.732z"></path></svg></button><button class="btn-delete" data-id="${p.id}"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></td></tr>`;
+                    productTableBody.innerHTML += `<tr><td>${p.id}</td><td>${p.name}</td><td>${p.purchasePrice.toFixed(2)} ₼</td><td>${p.salePrice.toFixed(2)} ₼</td><td>${p.stock} ədəd</td><td class="actions-cell"><button class="btn-edit" data-id="${p.id}">✏️</button><button class="btn-delete" data-id="${p.id}">🗑️</button></td></tr>`;
                 });
             };
 
@@ -1303,7 +1369,6 @@
             renderFinancePage();
         }
 
-        // --- INITIAL LOAD ---
         renderPage('finance');
     });
     </script>
