@@ -410,6 +410,13 @@
             max-width: 95rem; 
         }
 
+        .product-details {
+            border-left: 3px solid var(--primary-color);
+            padding-left: 1rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -1225,10 +1232,10 @@
                     let salesHistoryHtml = `
                         <h4>Satış Tarixçəsi</h4>
                         <table class="data-table" style="margin-top: 1rem; font-size: 0.8rem;">
-                            <thead><tr><th>#</th><th>Satış ID</th><th>Tarix</th><th>Növ</th><th>Müddət</th><th>Aylıq Ödəniş</th><th>Yekun Məbləğ</th><th>Ödənilib</th><th>Qalıq Borc</th><th></th></tr></thead>
+                            <thead><tr><th>#</th><th>Satış ID</th><th>Tarix</th><th>Növ</th><th>Yekun Məbləğ</th><th>Ödənilib</th><th>Borc Qalığı</th></tr></thead>
                             <tbody>`;
                     if (sales.length === 0) {
-                        salesHistoryHtml += '<tr><td colspan="10" style="text-align:center;">Bu müştərinin satış tarixçəsi yoxdur.</td></tr>';
+                        salesHistoryHtml += '<tr><td colspan="7" style="text-align:center;">Bu müştərinin satış tarixçəsi yoxdur.</td></tr>';
                     } else {
                         sales.forEach((sale, index) => {
                             const debt = (sale.totalAmount - sale.initialPayment);
@@ -1238,13 +1245,21 @@
                                     <td>${sale.id}</td>
                                     <td>${sale.date}</td>
                                     <td>${sale.type}</td>
-                                    <td>${sale.loanTerm ? sale.loanTerm + ' ay' : '-'}</td>
-                                    <td>${sale.monthlyPayment ? sale.monthlyPayment.toFixed(2) + ' ₼' : '-'}</td>
                                     <td>${sale.totalAmount.toFixed(2)} ₼</td>
                                     <td class="positive">${sale.initialPayment.toFixed(2)} ₼</td>
                                     <td class="${debt > 0.01 ? 'negative' : ''}">${debt.toFixed(2)} ₼</td>
-                                    <td class="actions-cell">
-                                        <button class="btn btn-primary products-in-sale-btn" data-id="${sale.id}" style="padding: 0.5rem; color: white;">Detallar</button>
+                                </tr>
+                                <tr>
+                                    <td colspan="7" style="padding-top: 0;">
+                                        <div class="product-details">
+                                            <strong>Məhsullar:</strong>
+                                            <ul>
+                                                ${sale.items.map(item => `<li>
+                                                    ${item.name} (${item.quantity} ədəd) - ${item.salePrice.toFixed(2)} ₼/ədəd
+                                                    ${(item.imeiCodes && item.imeiCodes.length > 0) ? ` (IMEI: ${item.imeiCodes.join(', ')})` : ''}
+                                                </li>`).join('')}
+                                            </ul>
+                                        </div>
                                     </td>
                                 </tr>`;
                         });
@@ -1253,29 +1268,10 @@
                     const totalPaid = sales.reduce((sum, s) => sum + s.initialPayment, 0);
                     const totalDebtRem = sales.reduce((sum, s) => sum + (s.totalAmount - s.initialPayment), 0);
                     salesHistoryHtml += `</tbody>
-                        <tfoot><tr><td colspan="6" style="text-align:right;">CƏMİ:</td><td>${totalSale.toFixed(2)} ₼</td><td>${totalPaid.toFixed(2)} ₼</td><td>${totalDebtRem.toFixed(2)} ₼</td><td></td></tr></tfoot>
+                        <tfoot><tr><td colspan="4" style="text-align:right;">CƏMİ:</td><td>${totalSale.toFixed(2)} ₼</td><td>${totalPaid.toFixed(2)} ₼</td><td>${totalDebtRem.toFixed(2)} ₼</td></tr></tfoot>
                     </table>`;
                     
                     historyContent.innerHTML = summaryCardsHtml + customerInfoHtml + salesHistoryHtml;
-                    
-                    historyContent.querySelector('tbody')?.addEventListener('click', e => {
-                        const productsInSaleBtn = e.target.closest('.products-in-sale-btn');
-                        if (productsInSaleBtn) {
-                            const saleId = parseInt(productsInSaleBtn.dataset.id);
-                            const sale = getSales().find(s => s.id === saleId);
-                            if (!sale) return;
-
-                            const productsContent = document.getElementById('productsInSaleContent');
-                            let productsHtml = `<h4>Satış #${sale.id} - Məhsul Siyahısı</h4><table class="data-table"><thead><tr><th>#</th><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th>IMEI Kodları</th></tr></thead><tbody>`;
-                            sale.items.forEach((item, index) => {
-                                const imeiList = (item.imeiCodes && item.imeiCodes.length > 0) ? item.imeiCodes.join(', ') : '-';
-                                productsHtml += `<tr><td>${index + 1}</td><td>${item.name}</td><td>${item.quantity}</td><td>${item.salePrice.toFixed(2)} ₼</td><td>${(item.quantity * item.salePrice).toFixed(2)} ₼</td><td>${imeiList}</td></tr>`;
-                            });
-                            productsHtml += '</tbody></table>';
-                            productsContent.innerHTML = productsHtml;
-                            openModal(productsInSaleModal);
-                        }
-                    });
                     openModal(customerSalesHistoryModal);
                     return;
                 }
