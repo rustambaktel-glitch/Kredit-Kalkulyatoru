@@ -273,6 +273,7 @@
             overflow-y: auto;
             box-shadow: var(--shadow-md);
             animation: modal-open 0.3s ease-out;
+            z-index: 1001; /* Modal içeriğinin önde kalması için z-index artırıldı */
         }
         @keyframes modal-open {
             from { transform: translateY(-50px); opacity: 0; }
