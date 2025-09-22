@@ -518,9 +518,14 @@
         <div class="page-container">
             <div class="page-header">
                 <h1>Maliyyə</h1>
-                <button id="btnBackupData" class="btn btn-primary">
-                    <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Məlumatları Yüklə (Backup)</span>
-                </button>
+                <div style="display:flex; gap: 1rem; flex-wrap: wrap;">
+                    <button id="btnBackupData" class="btn btn-primary">
+                        <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Məlumatları Yüklə (Backup)</span>
+                    </button>
+                    <button id="btnFixData" class="btn btn-danger">
+                        <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> Məlumatları Düzəlt (Birdəfəlik)</span>
+                    </button>
+                </div>
             </div>
             <div class="summary-cards">
                 <div class="card"><h3>Cari Kassa Balansı</h3><p id="current-cash-balance">0.00 ₼</p></div>
@@ -639,6 +644,32 @@
             if(closeButton) closeButton.addEventListener('click', () => closeModal(modal));
             window.addEventListener('click', (event) => { if (event.target === modal) closeModal(modal); });
         });
+        
+        // MƏNFİ BORCU DÜZƏLTMƏK ÜÇÜN FUNKSİYA
+        function recalculateAllCustomerDebts() {
+            let allSales = getSales();
+            let allCustomers = getCustomers();
+
+            if (allCustomers.length === 0) return;
+
+            allCustomers.forEach(customer => {
+                let newDebt = 0;
+                const customerSales = allSales.filter(sale => sale.customerId === customer.id);
+                customerSales.forEach(sale => {
+                    const totalAmount = parseFloat(sale.totalAmount) || 0;
+                    const initialPayment = parseFloat(sale.initialPayment) || 0;
+                    const remainingSaleDebt = totalAmount - initialPayment;
+                    if (remainingSaleDebt > 0) {
+                        newDebt += remainingSaleDebt;
+                    }
+                });
+                customer.debt = newDebt;
+            });
+
+            saveCustomers(allCustomers);
+            alert('Proses tamamlandı! Bütün müştəri borcları satışlara əsasən yenidən hesablandı. Səhifə avtomatik yenilənəcək.');
+            location.reload();
+        }
 
         const pageSetups = {
             'finance': setupFinancePage, 'reports': setupReportsPage, 'sales': setupSalesPage,
@@ -1453,6 +1484,7 @@
             const btnIncome = appContainer.querySelector('#btnIncome');
             const btnExpense = appContainer.querySelector('#btnExpense');
             const btnBackupData = appContainer.querySelector('#btnBackupData');
+            const btnFixData = appContainer.querySelector('#btnFixData');
             
             const renderFinancePage = () => {
                 const transactions = getTransactions();
@@ -1463,7 +1495,7 @@
                 currentCashBalanceEl.textContent = `${cashBalance.toFixed(2)} ₼`;
                 currentCashBalanceEl.classList.toggle('negative', cashBalance < 0);
                 
-                const totalReceivables = customers.reduce((sum, cust) => sum + cust.debt, 0);
+                const totalReceivables = customers.reduce((sum, cust) => sum + (cust.debt || 0), 0);
                 totalReceivablesEl.textContent = `${totalReceivables.toFixed(2)} ₼`;
                 
                 const totalPayables = suppliers.reduce((sum, sup) => sum + (sup.balance || 0), 0);
@@ -1486,6 +1518,14 @@
                 document.body.removeChild(a);
             });
             
+            if (btnFixData) {
+                btnFixData.addEventListener('click', () => {
+                    if (confirm('Diqqət! Bu əməliyyat bütün müştəri borclarını satışlara əsasən yenidən hesablayacaq. Yalnız səhv məlumatları (məs. mənfi borc) düzəltmək üçün istifadə edin. Davam etmək istəyirsiniz?')) {
+                        recalculateAllCustomerDebts();
+                    }
+                });
+            }
+
             btnIncome.addEventListener('click', () => { openModal(incomeTypeModal); });
             btnExpense.addEventListener('click', () => { openModal(expenseTypeModal); });
             
