@@ -850,10 +850,20 @@
         const getPurchases = () => getFromStorage('purchases'); const savePurchases = (p) => saveToStorage('purchases', p);
         const getTransactions = () => getFromStorage('transactions'); const saveTransactions = (t) => saveToStorage('transactions', t);
         
-        function addTransaction(type, description, amount) {
+        // YENİLƏNMİŞ FUNKSİYA: Əməliyyatlara əlavə detallar (customerId, saleId) əlavə edir
+        function addTransaction(type, description, amount, details = {}) {
             const transactions = getTransactions();
-            transactions.push({ id: Date.now(), date: new Date().toLocaleString('az-AZ'), type, description, amount });
+            const newTransaction = { 
+                id: Date.now(), 
+                date: new Date().toLocaleString('az-AZ'), 
+                type, 
+                description, 
+                amount,
+                ...details
+            };
+            transactions.push(newTransaction);
             saveTransactions(transactions);
+            return newTransaction; // Geri qaytarırıq ki, ID-sini istifadə edə bilək
         }
 
         addProductForm.addEventListener('submit', (e) => {
@@ -960,7 +970,7 @@
             if (!customer || amount <= 0 || amount > customer.debt) { alert('Ödəniş məbləği düzgün deyil və ya borcdan artıqdır!'); return; }
             customer.debt -= amount;
             saveCustomers(customers);
-            addTransaction(`Ümumi Ödəniş (${paymentType})`, `${customer.name} tərəfindən ödəniş`, amount);
+            addTransaction(`Ümumi Ödəniş (${paymentType})`, `${customer.name} tərəfindən ödəniş`, amount, { customerId: customer.id });
             closeModal(acceptPaymentModal);
             renderPage(document.querySelector('.sidebar nav a.active').dataset.page);
         });
@@ -1005,11 +1015,14 @@
             
             sale.initialPayment += paymentAmount;
             
+            const transaction = addTransaction('Qaimə Ödənişi', `Satış #${saleId} üçün ödəniş`, paymentAmount, { customerId: sale.customerId, saleId: sale.id });
+            
             if (!sale.payments) sale.payments = [];
             sale.payments.push({ 
                 date: new Date().toLocaleString('az-AZ'), 
                 amount: paymentAmount,
-                type: 'Ödəniş' 
+                type: 'Ödəniş',
+                transactionId: transaction.id
             });
 
             let customers = getCustomers();
@@ -1017,13 +1030,49 @@
             if (customer) {
                 customer.debt -= paymentAmount;
             }
-            addTransaction('Qaimə Ödənişi', `Satış #${saleId} üçün ödəniş`, paymentAmount);
+            
             saveSales(sales);
             saveCustomers(customers);
             alert('Ödəniş uğurla qəbul edildi!');
             closeModal(payDebtModal);
             renderPage('debts');
         });
+
+        // YENİLƏNMİŞ FUNKSİYA: Əməliyyatı silərkən borcu geri qaytarır
+        function deleteTransaction(id) {
+            let transactions = getTransactions();
+            const transactionToDelete = transactions.find(t => t.id === id);
+            
+            if (!transactionToDelete) return;
+
+            // Ödənişdirsə, borcu geri qaytar
+            if (transactionToDelete.customerId && transactionToDelete.amount > 0) {
+                let customers = getCustomers();
+                let customer = customers.find(c => c.id === transactionToDelete.customerId);
+                if (customer) {
+                    customer.debt += transactionToDelete.amount;
+                    saveCustomers(customers);
+
+                    // Satışın daxili ödəniş tarixçəsini də yenilə
+                    if (transactionToDelete.saleId) {
+                        let sales = getSales();
+                        let sale = sales.find(s => s.id === transactionToDelete.saleId);
+                        if (sale) {
+                            sale.initialPayment -= transactionToDelete.amount;
+                            if (sale.payments) {
+                                sale.payments = sale.payments.filter(p => p.transactionId !== id);
+                            }
+                            saveSales(sales);
+                        }
+                    }
+                     alert(`Əməliyyat silindi. ${customer.name} adlı müştərinin borcuna ${transactionToDelete.amount.toFixed(2)} ₼ geri əlavə edildi.`);
+                }
+            }
+
+            // Əməliyyatı sistemdən sil
+            transactions = transactions.filter(t => t.id !== id);
+            saveTransactions(transactions);
+        }
 
         function setupProductsPage() {
             const productTableBody = appContainer.querySelector('#productTableBody');
@@ -1146,7 +1195,6 @@
                         if(guarantor) guarantorName = guarantor.name;
                     }
                     
-                    // Dövriyyə və balans hesabatları
                     const totalSalesAmount = sales.reduce((sum, s) => sum + s.totalAmount, 0);
                     const totalPaidAmount = sales.reduce((sum, s) => sum + s.initialPayment, 0);
                     const creditTurnover = sales.filter(s => ['Kredit', 'Korporativ'].includes(s.type)).reduce((sum, s) => sum + s.totalAmount, 0);
@@ -1611,20 +1659,19 @@
                     payments: []
                 };
                 
+                const transaction = addTransaction(`${type} Satış`, `Satış #${newSale.id} - ${customerName}`, initialPayment, { customerId: newSale.customerId, saleId: newSale.id });
+
                 if (initialPayment > 0) {
                     newSale.payments.push({
                         date: new Date().toLocaleString('az-AZ'),
                         amount: initialPayment,
-                        type: 'İlkin ödəniş'
+                        type: 'İlkin ödəniş',
+                        transactionId: transaction.id
                     });
                 }
 
                 sales.push(newSale);
                 saveSales(sales);
-                
-                if (initialPayment > 0) {
-                    addTransaction(`${type} Satış`, `Satış #${newSale.id} - ${customerName}`, initialPayment);
-                }
             };
             
             populateDropdowns(forms.cash);
@@ -1828,8 +1875,8 @@
                 const btn = e.target.closest('button');
                 if (btn && btn.classList.contains('finance-delete-btn')) {
                     const id = parseInt(btn.dataset.id);
-                    if (confirm('Bu əməliyyatı silməyə əminsiniz? Bu əməliyyatın təsir etdiyi borc və ya anbar məlumatları geri qayıtmayacaq!')) {
-                        saveTransactions(getTransactions().filter(t => t.id !== id));
+                    if (confirm('Bu əməliyyatı silməyə əminsiniz? Ödənişdirsə, müştəri borcu avtomatik bərpa olunacaq.')) {
+                        deleteTransaction(id);
                         renderFinancial();
                     }
                 }
@@ -1907,8 +1954,8 @@
                 const btn = e.target.closest('button');
                 if (btn && btn.classList.contains('finance-delete-btn')) {
                     const id = parseInt(btn.dataset.id);
-                    if (confirm('Bu əməliyyatı silməyə əminsiniz? Bu əməliyyatın təsir etdiyi borc və ya anbar məlumatları geri qayıtmayacaq!')) {
-                        saveTransactions(getTransactions().filter(t => t.id !== id));
+                    if (confirm('Bu əməliyyatı silməyə əminsiniz? Ödənişdirsə, müştəri borcu avtomatik bərpa olunacaq.')) {
+                        deleteTransaction(id);
                         renderFinancePage();
                     }
                 }
