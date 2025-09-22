@@ -477,54 +477,43 @@
     <div id="addSupplierModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Yeni Təchizatçı</h2><form id="addSupplierForm"><div class="form-group"><label for="supplierNameModal">Təchizatçı Adı</label><input type="text" id="supplierNameModal" required></div><div class="form-group"><label for="supplierPhoneModal">Telefon</label><input type="text" id="supplierPhoneModal"></div><div class="form-actions"><button type="submit" class="btn btn-primary">Yadda Saxla</button></div></form></div></div>
     <div id="editSupplierModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Təchizatçını Redaktə Et</h2><form id="editSupplierForm"><input type="hidden" id="editSupplierId"><div class="form-group"><label for="editSupplierName">Təchizatçı Adı</label><input type="text" id="editSupplierName" required></div><div class="form-group"><label for="editSupplierPhone">Telefon</label><input type="text" id="editSupplierPhone"></div><div class="form-actions"><button type="submit" class="btn btn-primary">Dəyişikliyi Saxla</button></div></form></div></div>
     <div id="saleDetailsModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Satış Detalları</h2><div id="saleDetailsContent" style="margin-top: 20px;"></div></div></div>
-    <div id="acceptPaymentModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Müştəri Ödənişi Qəbul Et</h2><form id="acceptPaymentForm"><div class="form-group"><label>Müştəri</label><select id="paymentCustomerSelect" required></select></div><div class="form-group"><label for="paymentType">Ödəniş Növü</label><select id="paymentType" required><option value="Nağd">Nağd</option><option value="POS Terminal">POS Terminal</option></select></div><div class="form-group"><label>Ödənilən Məbləğ (₼)</label><input type="number" id="paymentAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-success">Ödənişi Qəbul Et</button></div></form></div></div>
+    <div id="acceptPaymentModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Ümumi Müştəri Ödənişi</h2><form id="acceptPaymentForm"><div class="form-group"><label>Müştəri</label><select id="paymentCustomerSelect" required></select></div><div class="form-group"><label for="paymentType">Ödəniş Növü</label><select id="paymentType" required><option value="Nağd">Nağd</option><option value="POS Terminal">POS Terminal</option></select></div><div class="form-group"><label>Ödənilən Məbləğ (₼)</label><input type="number" id="paymentAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-success">Ödənişi Qəbul Et</button></div></form></div></div>
     <div id="addExpenseModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Xərc Əlavə Et</h2><form id="addExpenseForm"><div class="form-group"><label for="expenseType">Xərc Növü</label><select id="expenseType" required><option value="">-- Seçin --</option><option value="Ofis xərcləri">Ofis xərcləri</option><option value="Reklam xərcləri">Reklam xərcləri</option><option value="Daşınma xərcləri">Daşınma xərcləri</option><option value="Rabitə xərcləri">Rabitə xərcləri</option><option value="Digər xərclər">Digər xərclər</option></select></div><div class="form-group"><label>Məbləğ (₼)</label><input type="number" id="expenseAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-danger">Xərci Əlavə Et</button></div></form></div></div>
     <div id="paySupplierModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Təchizatçıya Ödəniş</h2><form id="paySupplierForm"><div class="form-group"><label>Təchizatçı</label><select id="paymentSupplierSelect" required></select></div><div class="form-group"><label>Ödənilən Məbləğ (₼)</label><input type="number" id="supplierPaymentAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-warning">Ödənişi Et</button></div></form></div></div>
     <div id="productsInSaleModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Satışda olan məhsullar</h2><div id="productsInSaleContent" style="margin-top: 20px;"></div></div></div>
     <div id="customerSalesHistoryModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 id="customer-history-title">Müştəri Satış Tarixçəsi</h2><div id="customerSalesHistoryContent" style="margin-top: 20px;"></div></div></div>
     <div id="purchaseDetailsModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Alış Detalları</h2><div id="purchaseDetailsContent" style="margin-top: 20px;"></div></div></div>
-
-    <div id="incomeTypeModal" class="modal">
-        <div class="modal-content" style="width: 30rem;">
-            <span class="modal-close">&times;</span>
-            <h2>Mədaxil Növünü Seçin</h2>
-            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
-                <button id="btnAcceptPayment" class="btn btn-success" style="width: 100%;">Müştəri Ödənişi Qəbul Et</button>
-                <button id="btnOtherIncome" class="btn btn-primary" style="width: 100%;">Digər Mədaxil</button>
-            </div>
-        </div>
-    </div>
     
-    <div id="expenseTypeModal" class="modal">
-        <div class="modal-content" style="width: 30rem;">
-            <span class="modal-close">&times;</span>
-            <h2>Məxaric Növünü Seçin</h2>
-            <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;">
-                <button id="btnPaySupplier" class="btn btn-warning" style="width: 100%;">Təchizatçıya Ödəniş Et</button>
-                <button id="btnOtherExpense" class="btn btn-danger" style="width: 100%;">Digər Xərc</button>
-            </div>
-        </div>
-    </div>
+    <div id="incomeTypeModal" class="modal"><div class="modal-content" style="width: 30rem;"><span class="modal-close">&times;</span><h2>Mədaxil Növünü Seçin</h2><div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;"><button id="btnAcceptPayment" class="btn btn-success" style="width: 100%;">Ümumi Müştəri Ödənişi</button><button id="btnOtherIncome" class="btn btn-primary" style="width: 100%;">Digər Mədaxil</button></div></div></div>
+    <div id="expenseTypeModal" class="modal"><div class="modal-content" style="width: 30rem;"><span class="modal-close">&times;</span><h2>Məxaric Növünü Seçin</h2><div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;"><button id="btnPaySupplier" class="btn btn-warning" style="width: 100%;">Təchizatçıya Ödəniş Et</button><button id="btnOtherExpense" class="btn btn-danger" style="width: 100%;">Digər Xərc</button></div></div></div>
+    <div id="otherIncomeModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Digər Mədaxil Əlavə Et</h2><form id="otherIncomeForm"><div class="form-group"><label for="otherIncomeDescription">Açıqlama</label><input type="text" id="otherIncomeDescription" required></div><div class="form-group"><label>Məbləğ (₼)</label><input type="number" id="otherIncomeAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-success">Mədaxili Əlavə Et</button></div></form></div></div>
     
-    <div id="otherIncomeModal" class="modal">
+    <div id="payDebtModal" class="modal">
         <div class="modal-content">
             <span class="modal-close">&times;</span>
-            <h2>Digər Mədaxil Əlavə Et</h2>
-            <form id="otherIncomeForm">
+            <h2>Qaimə Üzrə Ödəniş</h2>
+            <form id="payDebtForm">
+                <input type="hidden" id="debtSaleId">
                 <div class="form-group">
-                    <label for="otherIncomeDescription">Açıqlama</label>
-                    <input type="text" id="otherIncomeDescription" required>
+                    <label>Müştəri</label>
+                    <input type="text" id="debtCustomerName" disabled>
+                </div>
+                 <div class="form-group">
+                    <label>Qaimə Borcu</label>
+                    <input type="text" id="debtSaleAmount" disabled>
                 </div>
                 <div class="form-group">
-                    <label>Məbləğ (₼)</label>
-                    <input type="number" id="otherIncomeAmount" step="0.01" required>
+                    <label for="debtPaymentAmount">Ödəniləcək Məbləğ (₼)</label>
+                    <input type="number" id="debtPaymentAmount" step="0.01" required>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-success">Mədaxili Əlavə Et</button>
+                    <button type="submit" class="btn btn-success">Ödənişi Təsdiqlə</button>
                 </div>
             </form>
         </div>
     </div>
+
+
     <template id="finance-page-template">
         <div class="page-container">
             <div class="page-header">
@@ -566,6 +555,7 @@
     <template id="products-page-template"><div class="page-container"><div class="page-header"><h1>Məhsullar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="productSearch" class="search-input" placeholder="Məhsul adı və ya ID ilə axtar..."></div><button id="addProductBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Məhsul</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th></th></tr></thead><tbody id="productTableBody"></tbody></table></div></div></template>
     <template id="customers-page-template"><div class="page-container"><div class="page-header"><h1>Müştərilər</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="customerSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addCustomerBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Müştəri</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Tam Adı</th><th>Telefon</th><th>Borc</th><th></th></tr></thead><tbody id="customerTableBody"></tbody></table></div></div></template>
     <template id="suppliers-page-template"><div class="page-container"><div class="page-header"><h1>Təchizatçılar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="supplierSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addSupplierBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Təchizatçı</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Telefon</th><th>Bizim Borcumuz</th><th></th></tr></thead><tbody id="supplierTableBody"></tbody></table></div></div></template>
+    
     <template id="debts-page-template">
         <div class="page-container">
             <div class="page-header">
@@ -586,7 +576,7 @@
                     </div>
                     <table class="data-table">
                         <thead>
-                            <tr><th>Satış ID</th><th>Tarix</th><th>Müştəri</th><th>Toplam Məbləğ</th><th>Ödənilən</th><th>Borc Qalığı</th><th></th></tr>
+                            <tr><th>Satış ID</th><th>Tarix</th><th>Müştəri</th><th>Toplam Məbləğ</th><th>Ödənilən</th><th>Borc Qalığı</th><th></th><th>Ödəniş</th></tr>
                         </thead>
                         <tbody id="debtTableBody"></tbody>
                     </table>
@@ -618,6 +608,7 @@
         const incomeTypeModal = document.getElementById('incomeTypeModal');
         const expenseTypeModal = document.getElementById('expenseTypeModal');
         const otherIncomeModal = document.getElementById('otherIncomeModal');
+        const payDebtModal = document.getElementById('payDebtModal'); // Yeni modal
         
         // Formlar
         const addProductForm = document.getElementById('addProductForm');
@@ -630,6 +621,7 @@
         const addExpenseForm = document.getElementById('addExpenseForm');
         const paySupplierForm = document.getElementById('paySupplierForm');
         const otherIncomeForm = document.getElementById('otherIncomeForm');
+        const payDebtForm = document.getElementById('payDebtForm'); // Yeni form
 
         const getFromStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
         const saveToStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
@@ -689,18 +681,11 @@
             saveTransactions(transactions);
         }
 
-        // Global Event Listeners
+        // ===== BÜTÜN GLOBAL FORM HADİSƏLƏRİ =====
         addProductForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const products = getProducts();
-            const newProduct = {
-                id: Date.now(),
-                name: document.getElementById('productNameModal').value,
-                purchasePrice: parseFloat(document.getElementById('purchasePriceModal').value),
-                salePrice: parseFloat(document.getElementById('salePriceModal').value),
-                stock: parseInt(document.getElementById('stockQuantityModal').value)
-            };
-            products.push(newProduct);
+            products.push({ id: Date.now(), name: document.getElementById('productNameModal').value, purchasePrice: parseFloat(document.getElementById('purchasePriceModal').value), salePrice: parseFloat(document.getElementById('salePriceModal').value), stock: parseInt(document.getElementById('stockQuantityModal').value) });
             saveProducts(products);
             closeModal(addProductModal);
             renderPage('products');
@@ -709,13 +694,7 @@
         editProductForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const id = parseInt(document.getElementById('editProductId').value);
-            const updatedProducts = getProducts().map(p => p.id === id ? {
-                id,
-                name: document.getElementById('editProductName').value,
-                purchasePrice: parseFloat(document.getElementById('editPurchasePrice').value),
-                salePrice: parseFloat(document.getElementById('editSalePrice').value),
-                stock: parseInt(document.getElementById('editStockQuantity').value)
-            } : p);
+            const updatedProducts = getProducts().map(p => p.id === id ? { id, name: document.getElementById('editProductName').value, purchasePrice: parseFloat(document.getElementById('editPurchasePrice').value), salePrice: parseFloat(document.getElementById('editSalePrice').value), stock: parseInt(document.getElementById('editStockQuantity').value) } : p);
             saveProducts(updatedProducts);
             closeModal(editProductModal);
             renderPage('products');
@@ -724,12 +703,7 @@
         addCustomerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const customers = getCustomers();
-            customers.push({
-                id: Date.now(),
-                name: document.getElementById('customerNameModal').value,
-                phone: document.getElementById('customerPhoneModal').value,
-                debt: 0
-            });
+            customers.push({ id: Date.now(), name: document.getElementById('customerNameModal').value, phone: document.getElementById('customerPhoneModal').value, debt: 0 });
             saveCustomers(customers);
             closeModal(addCustomerModal);
             renderPage('customers');
@@ -738,11 +712,7 @@
         editCustomerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const id = parseInt(document.getElementById('editCustomerId').value);
-            const updatedCustomers = getCustomers().map(c => c.id === id ? {
-                ...c,
-                name: document.getElementById('editCustomerName').value,
-                phone: document.getElementById('editCustomerPhone').value
-            } : c);
+            const updatedCustomers = getCustomers().map(c => c.id === id ? { ...c, name: document.getElementById('editCustomerName').value, phone: document.getElementById('editCustomerPhone').value } : c);
             saveCustomers(updatedCustomers);
             closeModal(editCustomerModal);
             renderPage('customers');
@@ -751,12 +721,7 @@
         addSupplierForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const suppliers = getSuppliers();
-            suppliers.push({
-                id: Date.now(),
-                name: document.getElementById('supplierNameModal').value,
-                phone: document.getElementById('supplierPhoneModal').value,
-                balance: 0
-            });
+            suppliers.push({ id: Date.now(), name: document.getElementById('supplierNameModal').value, phone: document.getElementById('supplierPhoneModal').value, balance: 0 });
             saveSuppliers(suppliers);
             closeModal(addSupplierModal);
             renderPage('suppliers');
@@ -765,11 +730,7 @@
         editSupplierForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const id = parseInt(document.getElementById('editSupplierId').value);
-            const updatedSuppliers = getSuppliers().map(s => s.id === id ? {
-                ...s,
-                name: document.getElementById('editSupplierName').value,
-                phone: document.getElementById('editSupplierPhone').value
-            } : s);
+            const updatedSuppliers = getSuppliers().map(s => s.id === id ? { ...s, name: document.getElementById('editSupplierName').value, phone: document.getElementById('editSupplierPhone').value } : s);
             saveSuppliers(updatedSuppliers);
             closeModal(editSupplierModal);
             renderPage('suppliers');
@@ -779,7 +740,7 @@
             e.preventDefault();
             const desc = document.getElementById('otherIncomeDescription').value;
             const amount = parseFloat(document.getElementById('otherIncomeAmount').value);
-            if (amount <= 0) { alert('Məbləğ müsbət olmalıdır.'); return; }
+            if (!desc || amount <= 0) { alert('Məlumatları düzgün daxil edin.'); return; }
             addTransaction('Digər Mədaxil', desc, amount);
             closeModal(otherIncomeModal);
             renderPage('finance');
@@ -795,23 +756,20 @@
             let customers = getCustomers();
             let customer = customers.find(c => c.id === customerId);
 
-            if (!customer || amount <= 0 || amount > customer.debt) {
-                alert('Ödəniş məbləği düzgün deyil və ya borcdan artıqdır!');
-                return;
-            }
+            if (!customer || amount <= 0 || amount > customer.debt) { alert('Ödəniş məbləği düzgün deyil və ya borcdan artıqdır!'); return; }
             
             customer.debt -= amount;
             saveCustomers(customers);
-            addTransaction(`Müştəri Ödənişi (${paymentType})`, `${customer.name} tərəfindən ödəniş`, amount);
+            addTransaction(`Ümumi Ödəniş (${paymentType})`, `${customer.name} tərəfindən ödəniş`, amount);
             closeModal(acceptPaymentModal);
-            renderPage('finance');
+            renderPage(document.querySelector('.sidebar nav a.active').dataset.page);
         });
 
         addExpenseForm.addEventListener('submit', e => {
             e.preventDefault();
             const expenseType = document.getElementById('expenseType').value;
             const amount = parseFloat(document.getElementById('expenseAmount').value);
-            if(amount <= 0) { alert("Məbləğ müsbət olmalıdır."); return; }
+            if(!expenseType || amount <= 0) { alert("Məlumatları düzgün daxil edin."); return; }
             addTransaction(expenseType, `Xərc: ${expenseType}`, -amount);
             closeModal(addExpenseModal);
             renderPage('finance');
@@ -824,15 +782,50 @@
             const amount = parseFloat(document.getElementById('supplierPaymentAmount').value);
             let suppliers = getSuppliers();
             const supplier = suppliers.find(s => s.id === supplierId);
-            if (!supplier || amount > supplier.balance || amount <= 0) {
-                alert('Ödəniş məbləği düzgün deyil!');
-                return;
-            }
+            if (!supplier || amount > supplier.balance || amount <= 0) { alert('Ödəniş məbləği düzgün deyil!'); return; }
             supplier.balance -= amount;
             saveSuppliers(suppliers);
             addTransaction('Təchizatçıya Ödəniş', `${supplier.name} üçün ödəniş`, -amount);
             closeModal(paySupplierModal);
             renderPage('finance');
+        });
+
+        // YENİ QAİMƏ ÜZRƏ ÖDƏNİŞ FORMU ÜÇÜN HADİSƏ
+        payDebtForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const saleId = parseInt(document.getElementById('debtSaleId').value);
+            const paymentAmount = parseFloat(document.getElementById('debtPaymentAmount').value);
+
+            let sales = getSales();
+            let sale = sales.find(s => s.id === saleId);
+            if (!sale) return;
+
+            const remainingDebt = sale.totalAmount - sale.initialPayment;
+
+            if (paymentAmount <= 0 || paymentAmount > remainingDebt) {
+                alert(`Ödəniş məbləği 0-dan böyük və ${remainingDebt.toFixed(2)} ₼-dən kiçik və ya bərabər olmalıdır.`);
+                return;
+            }
+
+            // Satışın ödənilmiş məbləğini artırırıq
+            sale.initialPayment += paymentAmount;
+
+            // Müştərinin ümumi borcunu azaldırıq
+            let customers = getCustomers();
+            let customer = customers.find(c => c.id === sale.customerId);
+            if (customer) {
+                customer.debt -= paymentAmount;
+            }
+
+            // Əməliyyatı tarixçəyə yazırıq
+            addTransaction('Qaimə Ödənişi', `Satış #${saleId} üçün ödəniş`, paymentAmount);
+
+            saveSales(sales);
+            saveCustomers(customers);
+
+            alert('Ödəniş uğurla qəbul edildi!');
+            closeModal(payDebtModal);
+            renderPage('debts'); // Səhifəni yeniləyirik
         });
 
         function setupProductsPage() {
@@ -934,7 +927,7 @@
                                 <td>${sale.date}</td>
                                 <td>${sale.type}</td>
                                 <td>${sale.totalAmount.toFixed(2)} ₼</td>
-                                <td>${debt} ₼</td>
+                                <td>${debt > 0 ? debt : '0.00'} ₼</td>
                                 <td class="actions-cell"><button class="btn-details view-sale-details" data-id="${sale.id}">Məhsullar</button></td>
                             </tr>`;
                         });
@@ -1227,7 +1220,9 @@
                 sales.push(newSale);
                 saveSales(sales);
                 
-                addTransaction(`${selectedSaleType} Satış`, `Satış #${newSale.id} - ${customerName}`, initialPayment);
+                if (initialPayment > 0) {
+                    addTransaction(`${selectedSaleType} Satış`, `Satış #${newSale.id} - ${customerName}`, initialPayment);
+                }
                 
                 alert('Satış uğurla tamamlandı!');
                 initializeSalePage();
@@ -1351,7 +1346,8 @@
                 saveProducts(products);
                 saveSuppliers(suppliers);
                 
-                addTransaction('Mal Alışı', `Alış #${newPurchase.id} - ${supplier.name}`, 0); 
+                // Alış zamanı kassadan pul çıxmır, sadəcə təchizatçıya borc yaranır
+                // addTransaction('Mal Alışı', `Alış #${newPurchase.id} - ${supplier.name}`, 0); 
                 
                 alert('Alış uğurla tamamlandı!');
                 initializePurchasePage();
@@ -1432,16 +1428,9 @@
                 financialReportView.style.display = 'none';
 
                 const reportType = button.dataset.report;
-                if (reportType === 'sales') {
-                    salesReportView.style.display = 'block';
-                    renderAllSales();
-                } else if (reportType === 'purchases') {
-                    purchasesReportView.style.display = 'block';
-                    renderPurchases();
-                } else if (reportType === 'financial') {
-                    financialReportView.style.display = 'block';
-                    renderFinancial();
-                }
+                if (reportType === 'sales') { salesReportView.style.display = 'block'; renderAllSales(); } 
+                else if (reportType === 'purchases') { purchasesReportView.style.display = 'block'; renderPurchases(); }
+                else if (reportType === 'financial') { financialReportView.style.display = 'block'; renderFinancial(); }
             });
 
             salesReportSearch.addEventListener('input', renderAllSales);
@@ -1450,54 +1439,6 @@
 
             appContainer.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
-                if (btn && btn.classList.contains('btn-details') && btn.dataset.id) {
-                    const id = parseInt(btn.dataset.id);
-                    const type = btn.dataset.type;
-                    
-                    if (type === 'sale') {
-                        const sale = getSales().find(s => s.id === id);
-                        if (!sale) return;
-                        let detailsHtml = `
-                            <p><strong>Satış ID:</strong> ${sale.id}</p>
-                            <p><strong>Müştəri:</strong> ${sale.customerName}</p>
-                            <p><strong>Satış Növü:</strong> ${sale.type}</p>
-                            <p><strong>Yekun Məbləğ:</strong> ${sale.totalAmount.toFixed(2)} ₼</p>
-                            <p><strong>Ödənilmiş Məbləğ:</strong> ${sale.initialPayment.toFixed(2)} ₼</p>
-                            <p><strong>Borc:</strong> ${(sale.totalAmount - sale.initialPayment).toFixed(2)} ₼</p>
-                            <hr style="border-color:var(--border-color); margin: 15px 0;">
-                            <h4 style="margin-bottom:10px;">Satılan Məhsullar</h4>
-                            <table class="data-table" style="width:100%;">
-                                <thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead>
-                                <tbody>
-                        `;
-                        sale.items.forEach(i => {
-                            detailsHtml += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.salePrice.toFixed(2)} ₼</td><td>${(i.quantity * i.salePrice).toFixed(2)} ₼</td></tr>`;
-                        });
-                        detailsHtml += '</tbody></table>';
-                        document.getElementById('saleDetailsContent').innerHTML = detailsHtml;
-                        openModal(saleDetailsModal);
-                    } else if (type === 'purchase') {
-                        const purchase = getPurchases().find(p => p.id === id);
-                        if (!purchase) return;
-                        let detailsHtml = `
-                            <p><strong>Alış ID:</strong> ${purchase.id}</p>
-                            <p><strong>Təchizatçı:</strong> ${purchase.supplierName}</p>
-                            <p><strong>Yekun Məbləğ:</strong> ${purchase.totalAmount.toFixed(2)} ₼</p>
-                            <hr style="border-color:var(--border-color); margin: 15px 0;">
-                            <h4 style="margin-bottom:10px;">Alınan Məhsullar</h4>
-                            <table class="data-table" style="width:100%;">
-                                <thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead>
-                                <tbody>
-                        `;
-                        purchase.items.forEach(i => {
-                            detailsHtml += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.purchasePrice.toFixed(2)} ₼</td><td>${(i.quantity * i.purchasePrice).toFixed(2)} ₼</td></tr>`;
-                        });
-                        detailsHtml += '</tbody></table>';
-                        document.getElementById('purchaseDetailsContent').innerHTML = detailsHtml;
-                        openModal(purchaseDetailsModal);
-                    }
-                }
-                
                 if (btn && btn.classList.contains('finance-delete-btn')) {
                     const id = parseInt(btn.dataset.id);
                     if (confirm('Bu əməliyyatı silməyə əminsiniz? Bu əməliyyatın təsir etdiyi borc və ya anbar məlumatları geri qayıtmayacaq!')) {
@@ -1542,10 +1483,7 @@
             };
 
             btnBackupData.addEventListener('click', () => {
-                const backupData = {
-                    products: getProducts(), customers: getCustomers(), suppliers: getSuppliers(),
-                    sales: getSales(), purchases: getPurchases(), transactions: getTransactions()
-                };
+                const backupData = { products: getProducts(), customers: getCustomers(), suppliers: getSuppliers(), sales: getSales(), purchases: getPurchases(), transactions: getTransactions() };
                 const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
                 const a = document.createElement('a');
                 a.href = URL.createObjectURL(blob);
@@ -1555,13 +1493,8 @@
                 document.body.removeChild(a);
             });
             
-            btnIncome.addEventListener('click', () => {
-                openModal(incomeTypeModal);
-            });
-            
-            btnExpense.addEventListener('click', () => {
-                openModal(expenseTypeModal);
-            });
+            btnIncome.addEventListener('click', () => { openModal(incomeTypeModal); });
+            btnExpense.addEventListener('click', () => { openModal(expenseTypeModal); });
             
             document.getElementById('btnAcceptPayment').addEventListener('click', () => {
                 closeModal(incomeTypeModal);
@@ -1573,12 +1506,7 @@
                 openModal(acceptPaymentModal);
             });
             
-            document.getElementById('btnOtherIncome').addEventListener('click', () => {
-                closeModal(incomeTypeModal);
-                otherIncomeForm.reset();
-                openModal(otherIncomeModal);
-            });
-
+            document.getElementById('btnOtherIncome').addEventListener('click', () => { closeModal(incomeTypeModal); otherIncomeForm.reset(); openModal(otherIncomeModal); });
             document.getElementById('btnPaySupplier').addEventListener('click', () => {
                 closeModal(expenseTypeModal);
                 const sBal = getSuppliers().filter(s => (s.balance || 0) > 0);
@@ -1589,11 +1517,7 @@
                 openModal(paySupplierModal);
             });
             
-            document.getElementById('btnOtherExpense').addEventListener('click', () => {
-                closeModal(expenseTypeModal);
-                addExpenseForm.reset();
-                openModal(addExpenseModal);
-            });
+            document.getElementById('btnOtherExpense').addEventListener('click', () => { closeModal(expenseTypeModal); addExpenseForm.reset(); openModal(addExpenseModal); });
             
             transactionsTableBody.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
@@ -1610,6 +1534,7 @@
             renderFinancePage();
         }
 
+        // YENİLƏNMİŞ BORCLAR SƏHİFƏSİ FUNKSİYASI
         function setupDebtsPage() {
             const debtTabs = appContainer.querySelector('#debt-tabs');
             const debtTableBody = appContainer.querySelector('#debtTableBody');
@@ -1618,7 +1543,8 @@
 
             const renderDebts = (type) => {
                 const sales = getSales();
-                let filteredSales = sales.filter(s => s.type === type && (s.totalAmount - s.initialPayment) > 0);
+                // Yalnız ödənilməmiş borcu olan satışları göstər
+                let filteredSales = sales.filter(s => s.type === type && (s.totalAmount - s.initialPayment) > 0.001);
                 
                 const query = debtSearch.value.toLowerCase();
                 if(query) {
@@ -1627,7 +1553,7 @@
 
                 debtTableBody.innerHTML = '';
                 if (filteredSales.length === 0) {
-                    debtTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Bu növ borc tapılmadı.</td></tr>';
+                    debtTableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">Bu növ borc tapılmadı.</td></tr>';
                     return;
                 }
 
@@ -1640,9 +1566,12 @@
                             <td>${sale.customerName}</td>
                             <td>${sale.totalAmount.toFixed(2)} ₼</td>
                             <td>${sale.initialPayment.toFixed(2)} ₼</td>
-                            <td>${debt.toFixed(2)} ₼</td>
+                            <td class="negative">${debt.toFixed(2)} ₼</td>
                             <td class="actions-cell">
                                 <button class="btn-details view-sale-details" data-id="${sale.id}">Detallar</button>
+                            </td>
+                            <td class="actions-cell">
+                                <button class="btn btn-success pay-debt-btn" data-id="${sale.id}" style="padding: 0.5rem 1rem;">Ödəniş et</button>
                             </td>
                         </tr>
                     `;
@@ -1660,10 +1589,13 @@
                 renderDebts(currentDebtType);
             });
 
-            appContainer.addEventListener('click', (e) => {
+            // Borclar səhifəsindəki düymələr üçün event listener
+            debtTableBody.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
-                if (btn && btn.classList.contains('view-sale-details')) {
-                    const saleId = parseInt(btn.dataset.id);
+                if (!btn) return;
+                const saleId = parseInt(btn.dataset.id);
+
+                if (btn.classList.contains('view-sale-details')) {
                     const sale = getSales().find(s => s.id === saleId);
                     if (!sale) return;
                     
@@ -1676,6 +1608,22 @@
                     document.getElementById('productsInSaleContent').innerHTML = productsHtml;
                     openModal(productsInSaleModal);
                 }
+
+                if (btn.classList.contains('pay-debt-btn')) {
+                    const sale = getSales().find(s => s.id === saleId);
+                    if (!sale) return;
+
+                    const remainingDebt = sale.totalAmount - sale.initialPayment;
+                    document.getElementById('debtSaleId').value = sale.id;
+                    document.getElementById('debtCustomerName').value = sale.customerName;
+                    document.getElementById('debtSaleAmount').value = remainingDebt.toFixed(2) + ' ₼';
+                    const paymentInput = document.getElementById('debtPaymentAmount');
+                    paymentInput.value = '';
+                    paymentInput.max = remainingDebt;
+                    paymentInput.placeholder = `Max: ${remainingDebt.toFixed(2)}`;
+                    
+                    openModal(payDebtModal);
+                }
             });
 
             debtSearch.addEventListener('input', () => {
@@ -1685,7 +1633,7 @@
             renderDebts(currentDebtType);
         }
 
-        // Event listener for global detail buttons
+        // Bütün səhifələrdə işləyən detallara baxış
         appContainer.addEventListener('click', (e) => {
             const btn = e.target.closest('button');
             if (btn && btn.classList.contains('btn-details') && btn.dataset.id && btn.dataset.type) {
@@ -1695,41 +1643,16 @@
                 if (type === 'sale') {
                     const sale = getSales().find(s => s.id === id);
                     if (!sale) return;
-                    let detailsHtml = `
-                        <p><strong>Satış ID:</strong> ${sale.id}</p>
-                        <p><strong>Müştəri:</strong> ${sale.customerName}</p>
-                        <p><strong>Satış Növü:</strong> ${sale.type}</p>
-                        <p><strong>Yekun Məbləğ:</strong> ${sale.totalAmount.toFixed(2)} ₼</p>
-                        <p><strong>Ödənilmiş Məbləğ:</strong> ${sale.initialPayment.toFixed(2)} ₼</p>
-                        <p><strong>Borc:</strong> ${(sale.totalAmount - sale.initialPayment).toFixed(2)} ₼</p>
-                        <hr style="border-color:var(--border-color); margin: 15px 0;">
-                        <h4 style="margin-bottom:10px;">Satılan Məhsullar</h4>
-                        <table class="data-table" style="width:100%;">
-                            <thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead>
-                            <tbody>
-                    `;
-                    sale.items.forEach(i => {
-                        detailsHtml += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.salePrice.toFixed(2)} ₼</td><td>${(i.quantity * i.salePrice).toFixed(2)} ₼</td></tr>`;
-                    });
+                    let detailsHtml = `<p><strong>Satış ID:</strong> ${sale.id}</p><p><strong>Müştəri:</strong> ${sale.customerName}</p><p><strong>Satış Növü:</strong> ${sale.type}</p><p><strong>Yekun Məbləğ:</strong> ${sale.totalAmount.toFixed(2)} ₼</p><p><strong>Ödənilmiş Məbləğ:</strong> ${sale.initialPayment.toFixed(2)} ₼</p><p><strong>Borc:</strong> ${(sale.totalAmount - sale.initialPayment).toFixed(2)} ₼</p><hr style="border-color:var(--border-color); margin: 15px 0;"><h4 style="margin-bottom:10px;">Satılan Məhsullar</h4><table class="data-table" style="width:100%;"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead><tbody>`;
+                    sale.items.forEach(i => { detailsHtml += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.salePrice.toFixed(2)} ₼</td><td>${(i.quantity * i.salePrice).toFixed(2)} ₼</td></tr>`; });
                     detailsHtml += '</tbody></table>';
                     document.getElementById('saleDetailsContent').innerHTML = detailsHtml;
                     openModal(saleDetailsModal);
                 } else if (type === 'purchase') {
                     const purchase = getPurchases().find(p => p.id === id);
                     if (!purchase) return;
-                    let detailsHtml = `
-                        <p><strong>Alış ID:</strong> ${purchase.id}</p>
-                        <p><strong>Təchizatçı:</strong> ${purchase.supplierName}</p>
-                        <p><strong>Yekun Məbləğ:</strong> ${purchase.totalAmount.toFixed(2)} ₼</p>
-                        <hr style="border-color:var(--border-color); margin: 15px 0;">
-                        <h4 style="margin-bottom:10px;">Alınan Məhsullar</h4>
-                        <table class="data-table" style="width:100%;">
-                            <thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead>
-                            <tbody>
-                    `;
-                    purchase.items.forEach(i => {
-                        detailsHtml += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.purchasePrice.toFixed(2)} ₼</td><td>${(i.quantity * i.purchasePrice).toFixed(2)} ₼</td></tr>`;
-                    });
+                    let detailsHtml = `<p><strong>Alış ID:</strong> ${purchase.id}</p><p><strong>Təchizatçı:</strong> ${purchase.supplierName}</p><p><strong>Yekun Məbləğ:</strong> ${purchase.totalAmount.toFixed(2)} ₼</p><hr style="border-color:var(--border-color); margin: 15px 0;"><h4 style="margin-bottom:10px;">Alınan Məhsullar</h4><table class="data-table" style="width:100%;"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead><tbody>`;
+                    purchase.items.forEach(i => { detailsHtml += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.purchasePrice.toFixed(2)} ₼</td><td>${(i.quantity * i.purchasePrice).toFixed(2)} ₼</td></tr>`; });
                     detailsHtml += '</tbody></table>';
                     document.getElementById('purchaseDetailsContent').innerHTML = detailsHtml;
                     openModal(purchaseDetailsModal);
@@ -1737,7 +1660,7 @@
             }
         });
 
-        // Initial page load
+        // İlkin səhifənin yüklənməsi
         renderPage('finance');
     });
     </script>
