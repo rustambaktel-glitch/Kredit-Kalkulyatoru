@@ -575,20 +575,41 @@
         const appContainer = document.getElementById('app-container');
         const sidebarNav = document.getElementById('sidebar-nav');
         const allModals = document.querySelectorAll('.modal');
-        const productsInSaleModal = document.getElementById('productsInSaleModal');
         const saleDetailsModal = document.getElementById('saleDetailsModal');
         const customerSalesHistoryModal = document.getElementById('customerSalesHistoryModal');
         const otherIncomeModal = document.getElementById('otherIncomeModal');
         const otherIncomeForm = document.getElementById('otherIncomeForm');
+        const purchaseDetailsModal = document.getElementById('purchaseDetailsModal');
+
+        // Modallar
+        const addProductModal = document.getElementById('addProductModal');
+        const editProductModal = document.getElementById('editProductModal');
+        const addCustomerModal = document.getElementById('addCustomerModal');
+        const editCustomerModal = document.getElementById('editCustomerModal');
+        const addSupplierModal = document.getElementById('addSupplierModal');
+        const editSupplierModal = document.getElementById('editSupplierModal');
+        const acceptPaymentModal = document.getElementById('acceptPaymentModal');
+        const addExpenseModal = document.getElementById('addExpenseModal');
+        const paySupplierModal = document.getElementById('paySupplierModal');
+        const incomeTypeModal = document.getElementById('incomeTypeModal');
+        const expenseTypeModal = document.getElementById('expenseTypeModal');
+        
+        // Formlar
+        const addProductForm = document.getElementById('addProductForm');
+        const editProductForm = document.getElementById('editProductForm');
+        const addCustomerForm = document.getElementById('addCustomerForm');
+        const editCustomerForm = document.getElementById('editCustomerForm');
+        const addSupplierForm = document.getElementById('addSupplierForm');
+        const editSupplierForm = document.getElementById('editSupplierForm');
+        const acceptPaymentForm = document.getElementById('acceptPaymentForm');
+        const addExpenseForm = document.getElementById('addExpenseForm');
+        const paySupplierForm = document.getElementById('paySupplierForm');
 
         const getFromStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
         const saveToStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
         
         const openModal = (modal) => {
             modal.style.display = 'flex';
-            modal.style.zIndex = '1000';
-            modal.style.position = 'fixed';
-            modal.style.animation = 'modal-open 0.3s ease-out';
         };
 
         const closeModal = (modal) => {
@@ -641,14 +662,154 @@
             saveTransactions(transactions);
         }
 
+        // Global Event Listeners (Təkrarlanan dinləyicilərin qarşısını almaq üçün buraya köçürüldü)
+        addProductForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const products = getProducts();
+            const newProduct = {
+                id: Date.now(),
+                name: document.getElementById('productNameModal').value,
+                purchasePrice: parseFloat(document.getElementById('purchasePriceModal').value),
+                salePrice: parseFloat(document.getElementById('salePriceModal').value),
+                stock: parseInt(document.getElementById('stockQuantityModal').value)
+            };
+            products.push(newProduct);
+            saveProducts(products);
+            closeModal(addProductModal);
+            renderPage('products');
+        });
+
+        editProductForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editProductId').value);
+            const updatedProducts = getProducts().map(p => p.id === id ? {
+                id,
+                name: document.getElementById('editProductName').value,
+                purchasePrice: parseFloat(document.getElementById('editPurchasePrice').value),
+                salePrice: parseFloat(document.getElementById('editSalePrice').value),
+                stock: parseInt(document.getElementById('editStockQuantity').value)
+            } : p);
+            saveProducts(updatedProducts);
+            closeModal(editProductModal);
+            renderPage('products');
+        });
+
+        addCustomerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const customers = getCustomers();
+            customers.push({
+                id: Date.now(),
+                name: document.getElementById('customerNameModal').value,
+                phone: document.getElementById('customerPhoneModal').value,
+                debt: 0
+            });
+            saveCustomers(customers);
+            closeModal(addCustomerModal);
+            renderPage('customers');
+        });
+
+        editCustomerForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editCustomerId').value);
+            const updatedCustomers = getCustomers().map(c => c.id === id ? {
+                ...c,
+                name: document.getElementById('editCustomerName').value,
+                phone: document.getElementById('editCustomerPhone').value
+            } : c);
+            saveCustomers(updatedCustomers);
+            closeModal(editCustomerModal);
+            renderPage('customers');
+        });
+
+        addSupplierForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const suppliers = getSuppliers();
+            suppliers.push({
+                id: Date.now(),
+                name: document.getElementById('supplierNameModal').value,
+                phone: document.getElementById('supplierPhoneModal').value,
+                balance: 0
+            });
+            saveSuppliers(suppliers);
+            closeModal(addSupplierModal);
+            renderPage('suppliers');
+        });
+
+        editSupplierForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const id = parseInt(document.getElementById('editSupplierId').value);
+            const updatedSuppliers = getSuppliers().map(s => s.id === id ? {
+                ...s,
+                name: document.getElementById('editSupplierName').value,
+                phone: document.getElementById('editSupplierPhone').value
+            } : s);
+            saveSuppliers(updatedSuppliers);
+            closeModal(editSupplierModal);
+            renderPage('suppliers');
+        });
+
+        otherIncomeForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const desc = document.getElementById('otherIncomeDescription').value;
+            const amount = parseFloat(document.getElementById('otherIncomeAmount').value);
+            if (amount <= 0) { alert('Məbləğ müsbət olmalıdır.'); return; }
+            addTransaction('Digər Mədaxil', desc, amount);
+            closeModal(otherIncomeModal);
+            renderPage('finance');
+        });
+
+        acceptPaymentForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const customerId = parseInt(document.getElementById('paymentCustomerSelect').value);
+            if (!customerId) { alert("Müştəri seçin."); return; }
+            const amount = parseFloat(document.getElementById('paymentAmount').value);
+            const paymentType = document.getElementById('paymentType').value;
+            let customers = getCustomers();
+            const customer = customers.find(c => c.id === customerId);
+            if (!customer || amount > customer.debt || amount <= 0) {
+                alert('Ödəniş məbləği düzgün deyil!');
+                return;
+            }
+            customer.debt -= amount;
+            saveCustomers(customers);
+            addTransaction(`Müştəri Ödənişi (${paymentType})`, `${customer.name} tərəfindən ödəniş`, amount);
+            closeModal(acceptPaymentModal);
+            renderPage('finance');
+        });
+
+        addExpenseForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const expenseType = document.getElementById('expenseType').value;
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            if(amount <= 0) { alert("Məbləğ müsbət olmalıdır."); return; }
+            addTransaction(expenseType, `Xərc: ${expenseType}`, -amount);
+            closeModal(addExpenseModal);
+            renderPage('finance');
+        });
+
+        paySupplierForm.addEventListener('submit', e => {
+            e.preventDefault();
+            const supplierId = parseInt(document.getElementById('paymentSupplierSelect').value);
+            if(!supplierId){ alert("Təchizatçı seçin."); return; }
+            const amount = parseFloat(document.getElementById('supplierPaymentAmount').value);
+            let suppliers = getSuppliers();
+            const supplier = suppliers.find(s => s.id === supplierId);
+            if (!supplier || amount > supplier.balance || amount <= 0) {
+                alert('Ödəniş məbləği düzgün deyil!');
+                return;
+            }
+            supplier.balance -= amount;
+            saveSuppliers(suppliers);
+            addTransaction('Təchizatçıya Ödəniş', `${supplier.name} üçün ödəniş`, -amount);
+            closeModal(paySupplierModal);
+            renderPage('finance');
+        });
+
+
         function setupProductsPage() {
             const productTableBody = appContainer.querySelector('#productTableBody');
             const addProductBtn = appContainer.querySelector('#addProductBtn');
             const productSearch = appContainer.querySelector('#productSearch');
-            const addProductModal = document.getElementById('addProductModal');
-            const editProductModal = document.getElementById('editProductModal');
-            const addProductForm = document.getElementById('addProductForm');
-            const editProductForm = document.getElementById('editProductForm');
 
             const renderProducts = () => {
                 const query = productSearch.value.toLowerCase();
@@ -667,22 +828,7 @@
             };
 
             addProductBtn.addEventListener('click', () => { addProductForm.reset(); openModal(addProductModal); });
-            addProductForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const products = getProducts();
-                const newProduct = {
-                    id: Date.now(),
-                    name: document.getElementById('productNameModal').value,
-                    purchasePrice: parseFloat(document.getElementById('purchasePriceModal').value),
-                    salePrice: parseFloat(document.getElementById('salePriceModal').value),
-                    stock: parseInt(document.getElementById('stockQuantityModal').value)
-                };
-                products.push(newProduct);
-                saveProducts(products);
-                renderProducts();
-                closeModal(addProductModal);
-            });
-
+            
             productTableBody.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
                 if (!btn) return;
@@ -707,21 +853,6 @@
                 }
             });
 
-            editProductForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const id = parseInt(document.getElementById('editProductId').value);
-                const updatedProducts = getProducts().map(p => p.id === id ? {
-                    id,
-                    name: document.getElementById('editProductName').value,
-                    purchasePrice: parseFloat(document.getElementById('editPurchasePrice').value),
-                    salePrice: parseFloat(document.getElementById('editSalePrice').value),
-                    stock: parseInt(document.getElementById('editStockQuantity').value)
-                } : p);
-                saveProducts(updatedProducts);
-                renderProducts();
-                closeModal(editProductModal);
-            });
-
             productSearch.addEventListener('input', renderProducts);
             renderProducts();
         }
@@ -730,13 +861,8 @@
             const customerTableBody = appContainer.querySelector('#customerTableBody');
             const addCustomerBtn = appContainer.querySelector('#addCustomerBtn');
             const customerSearch = appContainer.querySelector('#customerSearch');
-            const addCustomerModal = document.getElementById('addCustomerModal');
-            const editCustomerModal = document.getElementById('editCustomerModal');
-            const addCustomerForm = document.getElementById('addCustomerForm');
-            const editCustomerForm = document.getElementById('editCustomerForm');
-            const customerSalesHistoryModal = document.getElementById('customerSalesHistoryModal');
             const productsInSaleModal = document.getElementById('productsInSaleModal');
-
+            
             const renderCustomers = () => {
                 const query = customerSearch.value.toLowerCase();
                 let customers = getCustomers();
@@ -752,23 +878,8 @@
                     customerTableBody.innerHTML += `<tr><td>${c.id}</td><td>${c.name}</td><td>${c.phone}</td><td>${c.debt.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-details customer-details-btn" data-id="${c.id}">Detallar</button><button class="btn-edit" data-id="${c.id}">✏️</button><button class="btn-delete" data-id="${c.id}">🗑️</button></td></tr>`;
                 });
             };
-            
-            const addCustomerFormSubmitHandler = (e) => {
-                e.preventDefault();
-                const customers = getCustomers();
-                customers.push({
-                    id: Date.now(),
-                    name: document.getElementById('customerNameModal').value,
-                    phone: document.getElementById('customerPhoneModal').value,
-                    debt: 0
-                });
-                saveCustomers(customers);
-                renderCustomers();
-                closeModal(addCustomerModal);
-            };
 
             addCustomerBtn.addEventListener('click', () => { addCustomerForm.reset(); openModal(addCustomerModal); });
-            addCustomerForm.addEventListener('submit', addCustomerFormSubmitHandler);
 
             customerTableBody.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
@@ -826,19 +937,6 @@
                 }
             });
 
-            editCustomerForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const id = parseInt(document.getElementById('editCustomerId').value);
-                const updatedCustomers = getCustomers().map(c => c.id === id ? {
-                    ...c,
-                    name: document.getElementById('editCustomerName').value,
-                    phone: document.getElementById('editCustomerPhone').value
-                } : c);
-                saveCustomers(updatedCustomers);
-                renderCustomers();
-                closeModal(editCustomerModal);
-            });
-            
             customerSalesHistoryModal.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
                 if (btn && btn.classList.contains('view-sale-details')) {
@@ -865,10 +963,6 @@
             const supplierTableBody = appContainer.querySelector('#supplierTableBody');
             const addSupplierBtn = appContainer.querySelector('#addSupplierBtn');
             const supplierSearch = appContainer.querySelector('#supplierSearch');
-            const addSupplierModal = document.getElementById('addSupplierModal');
-            const editSupplierModal = document.getElementById('editSupplierModal');
-            const addSupplierForm = document.getElementById('addSupplierForm');
-            const editSupplierForm = document.getElementById('editSupplierForm');
 
             const renderSuppliers = () => {
                 const query = supplierSearch.value.toLowerCase();
@@ -887,19 +981,6 @@
             };
 
             addSupplierBtn.addEventListener('click', () => { addSupplierForm.reset(); openModal(addSupplierModal); });
-            addSupplierForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const suppliers = getSuppliers();
-                suppliers.push({
-                    id: Date.now(),
-                    name: document.getElementById('supplierNameModal').value,
-                    phone: document.getElementById('supplierPhoneModal').value,
-                    balance: 0
-                });
-                saveSuppliers(suppliers);
-                renderSuppliers();
-                closeModal(addSupplierModal);
-            });
 
             supplierTableBody.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
@@ -926,19 +1007,6 @@
                         openModal(editSupplierModal);
                     }
                 }
-            });
-
-            editSupplierForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const id = parseInt(document.getElementById('editSupplierId').value);
-                const updatedSuppliers = getSuppliers().map(s => s.id === id ? {
-                    ...s,
-                    name: document.getElementById('editSupplierName').value,
-                    phone: document.getElementById('editSupplierPhone').value
-                } : s);
-                saveSuppliers(updatedSuppliers);
-                renderSuppliers();
-                closeModal(editSupplierModal);
             });
 
             supplierSearch.addEventListener('input', renderSuppliers);
@@ -1145,7 +1213,6 @@
             const cartTableBody = appContainer.querySelector('#purchaseCartTableBody');
             const purchaseTotalEl = appContainer.querySelector('#purchaseTotal');
             let currentPurchaseCart = [];
-            const purchaseDetailsModal = document.getElementById('purchaseDetailsModal');
 
             const initializePurchasePage = () => {
                 const suppliers = getSuppliers();
@@ -1274,8 +1341,6 @@
             const purchasesReportSearch = appContainer.querySelector('#purchasesReportSearch');
             const financialHistoryTableBody = appContainer.querySelector('#financialHistoryTableBody');
             const financialReportSearch = appContainer.querySelector('#financialReportSearch');
-            const saleDetailsModal = document.getElementById('saleDetailsModal');
-            const purchaseDetailsModal = document.getElementById('purchaseDetailsModal');
             
             const renderAllSales = () => {
                 const query = salesReportSearch.value.toLowerCase();
@@ -1349,12 +1414,10 @@
                 }
             });
 
-            // Report search listeners
             salesReportSearch.addEventListener('input', renderAllSales);
             purchasesReportSearch.addEventListener('input', renderPurchases);
             financialReportSearch.addEventListener('input', renderFinancial);
 
-            // Detail modal logic
             appContainer.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
                 if (btn && btn.classList.contains('btn-details') && btn.dataset.id) {
@@ -1406,8 +1469,6 @@
                 }
             });
             
-            // İlk dəfə səhifə yüklənəndə "Satışlar" hesabatını göstər
-            reportTabs.querySelector('[data-report="sales"]').classList.add('active');
             renderAllSales();
         }
 
@@ -1419,13 +1480,7 @@
             const btnIncome = appContainer.querySelector('#btnIncome');
             const btnExpense = appContainer.querySelector('#btnExpense');
             const btnBackupData = appContainer.querySelector('#btnBackupData');
-            const acceptPaymentModal = document.getElementById('acceptPaymentModal');
-            const addExpenseModal = document.getElementById('addExpenseModal');
-            const paySupplierModal = document.getElementById('paySupplierModal');
-            const otherIncomeModal = document.getElementById('otherIncomeModal');
-            const incomeTypeModal = document.getElementById('incomeTypeModal');
-            const expenseTypeModal = document.getElementById('expenseTypeModal');
-
+            
             const renderFinancePage = () => {
                 const transactions = getTransactions();
                 const customers = getCustomers();
@@ -1464,7 +1519,11 @@
             btnIncome.addEventListener('click', () => {
                 openModal(incomeTypeModal);
             });
-
+            
+            btnExpense.addEventListener('click', () => {
+                openModal(expenseTypeModal);
+            });
+            
             document.getElementById('btnAcceptPayment').addEventListener('click', () => {
                 closeModal(incomeTypeModal);
                 const cDebt = getCustomers().filter(c => c.debt > 0);
@@ -1481,20 +1540,6 @@
                 openModal(otherIncomeModal);
             });
 
-            document.getElementById('otherIncomeForm').addEventListener('submit', e => {
-                e.preventDefault();
-                const desc = document.getElementById('otherIncomeDescription').value;
-                const amount = parseFloat(document.getElementById('otherIncomeAmount').value);
-                if (amount <= 0) { alert('Məbləğ müsbət olmalıdır.'); return; }
-                addTransaction('Digər Mədaxil', desc, amount);
-                renderFinancePage();
-                closeModal(otherIncomeModal);
-            });
-
-            btnExpense.addEventListener('click', () => {
-                openModal(expenseTypeModal);
-            });
-
             document.getElementById('btnPaySupplier').addEventListener('click', () => {
                 closeModal(expenseTypeModal);
                 const sBal = getSuppliers().filter(s => (s.balance || 0) > 0);
@@ -1509,54 +1554,6 @@
                 closeModal(expenseTypeModal);
                 addExpenseForm.reset();
                 openModal(addExpenseModal);
-            });
-
-
-            acceptPaymentForm.addEventListener('submit', e => {
-                e.preventDefault();
-                const customerId = parseInt(document.getElementById('paymentCustomerSelect').value);
-                if (!customerId) { alert("Müştəri seçin."); return; }
-                const amount = parseFloat(document.getElementById('paymentAmount').value);
-                const paymentType = document.getElementById('paymentType').value;
-                let customers = getCustomers();
-                const customer = customers.find(c => c.id === customerId);
-                if (!customer || amount > customer.debt || amount <= 0) {
-                    alert('Ödəniş məbləği düzgün deyil!');
-                    return;
-                }
-                customer.debt -= amount;
-                saveCustomers(customers);
-                addTransaction(`Müştəri Ödənişi (${paymentType})`, `${customer.name} tərəfindən ödəniş`, amount);
-                renderFinancePage();
-                closeModal(acceptPaymentModal);
-            });
-
-            addExpenseForm.addEventListener('submit', e => {
-                e.preventDefault();
-                const expenseType = document.getElementById('expenseType').value;
-                const amount = parseFloat(document.getElementById('expenseAmount').value);
-                if(amount <= 0) { alert("Məbləğ müsbət olmalıdır."); return; }
-                addTransaction(expenseType, `Xərc: ${expenseType}`, -amount);
-                renderFinancePage();
-                closeModal(addExpenseModal);
-            });
-
-            paySupplierForm.addEventListener('submit', e => {
-                e.preventDefault();
-                const supplierId = parseInt(document.getElementById('paymentSupplierSelect').value);
-                if(!supplierId){ alert("Təchizatçı seçin."); return; }
-                const amount = parseFloat(document.getElementById('supplierPaymentAmount').value);
-                let suppliers = getSuppliers();
-                const supplier = suppliers.find(s => s.id === supplierId);
-                if (!supplier || amount > supplier.balance || amount <= 0) {
-                    alert('Ödəniş məbləği düzgün deyil!');
-                    return;
-                }
-                supplier.balance -= amount;
-                saveSuppliers(suppliers);
-                addTransaction('Təchizatçıya Ödəniş', `${supplier.name} üçün ödəniş`, -amount);
-                renderFinancePage();
-                closeModal(paySupplierModal);
             });
 
             renderFinancePage();
