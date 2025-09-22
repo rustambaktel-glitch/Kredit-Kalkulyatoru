@@ -242,6 +242,10 @@
             font-size: 0.75rem;
             background-color: #f9fafb;
         }
+        .data-table tfoot tr {
+            font-weight: 700;
+            background-color: #f9fafb;
+        }
         .data-table tbody tr {
             background: #ffffff;
             transition: background-color 0.2s;
@@ -600,12 +604,13 @@
                         <tr><th>#</th><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th><th></th></tr>
                     </thead>
                     <tbody id="transactionsTableBody"></tbody>
+                    <tfoot></tfoot>
                 </table>
             </div>
         </div>
     </template>
 
-    <template id="reports-page-template"><div class="page-container"><div class="page-header"><h1>Hesabatlar</h1></div><div class="content-area"><div class="report-actions" id="report-tabs"><button class="btn btn-primary active" data-report="sales">Satışlar</button><button class="btn btn-primary" data-report="purchases">Alışlar</button><button class="btn btn-primary" data-report="financial">Maliyyə</button></div><div id="sales-report-view" class="report-view"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#</th><th>#ID</th><th>Tarix</th><th>Müştəri</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="salesHistoryTableBody"></tbody></table></div><div id="purchases-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#</th><th>#ID</th><th>Tarix</th><th>Təchizatçı</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="purchasesHistoryTableBody"></tbody></table></div><div id="financial-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="financialReportSearch" class="search-input" placeholder="Növ və ya açıqlamaya görə axtar..."></div></div><table class="data-table"><thead><tr><th>#</th><th>#ID</th><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th><th></th></tr></thead><tbody id="financialHistoryTableBody"></tbody></table></div></div></div></template>
+    <template id="reports-page-template"><div class="page-container"><div class="page-header"><h1>Hesabatlar</h1></div><div class="content-area"><div class="report-actions" id="report-tabs"><button class="btn btn-primary active" data-report="sales">Satışlar</button><button class="btn btn-primary" data-report="purchases">Alışlar</button><button class="btn btn-primary" data-report="financial">Maliyyə</button></div><div id="sales-report-view" class="report-view"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#</th><th>#ID</th><th>Tarix</th><th>Müştəri</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="salesHistoryTableBody"></tbody><tfoot></tfoot></table></div><div id="purchases-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#</th><th>#ID</th><th>Tarix</th><th>Təchizatçı</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="purchasesHistoryTableBody"></tbody><tfoot></tfoot></table></div><div id="financial-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="financialReportSearch" class="search-input" placeholder="Növ və ya açıqlamaya görə axtar..."></div></div><table class="data-table"><thead><tr><th>#</th><th>#ID</th><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th><th></th></tr></thead><tbody id="financialHistoryTableBody"></tbody><tfoot></tfoot></table></div></div></div></template>
     
     <template id="sales-page-template">
         <div class="page-container">
@@ -633,6 +638,7 @@
                                 <table class="data-table">
                                     <thead><tr><th>#</th><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th></th></tr></thead>
                                     <tbody class="cart-table-body"></tbody>
+                                    <tfoot></tfoot>
                                 </table>
                             </div>
                             <div>
@@ -668,6 +674,7 @@
                                 <table class="data-table">
                                     <thead><tr><th>#</th><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th></th></tr></thead>
                                     <tbody class="cart-table-body"></tbody>
+                                    <tfoot></tfoot>
                                 </table>
                             </div>
                             <div>
@@ -707,6 +714,7 @@
                                 <table class="data-table">
                                     <thead><tr><th>#</th><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th></th></tr></thead>
                                     <tbody class="cart-table-body"></tbody>
+                                    <tfoot></tfoot>
                                 </table>
                             </div>
                             <div>
@@ -723,11 +731,11 @@
         </div>
     </template>
 
-    <template id="purchases-page-template"><div class="page-container"><div class="page-header"><h1>Yeni Mal Alışı</h1></div><form id="purchaseForm"><div class="sale-container"><div class="content-area"><h4>Təchizatçı və Məhsul seçimi</h4><div class="form-group"><label>Təchizatçı Seçin</label><select id="purchaseSupplierSelect" required></select></div><div class="form-group"><label>Məhsul Əlavə Et</label><select id="purchaseProductSelect"></select></div><table class="data-table"><thead><tr><th>#</th><th>Məhsul</th><th>Say</th><th>Alış Qiyməti</th><th>Toplam</th><th></th></tr></thead><tbody id="purchaseCartTableBody"></tbody></table></div><div class="content-area"><h4>Alışı Yekunlaşdır</h4><div class="summary-row total" style="margin-top: 1.5rem;"><span>Yekun Məbləğ:</span><span id="purchaseTotal">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;"><span>Alışı Tamamla</span></button></div></div></div></form></div></template>
-    <template id="products-page-template"><div class="page-container"><div class="page-header"><h1>Məhsullar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="productSearch" class="search-input" placeholder="Məhsul adı və ya ID ilə axtar..."></div><button id="addProductBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Məhsul</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#</th><th>#ID</th><th>Ad</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th></th></tr></thead><tbody id="productTableBody"></tbody></table></div></div></template>
-    <template id="customers-page-template"><div class="page-container"><div class="page-header"><h1>Müştərilər</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="customerSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addCustomerBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Müştəri</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#</th><th>#ID</th><th>Tam Adı</th><th>Telefon</th><th>Borc</th><th></th></tr></thead><tbody id="customerTableBody"></tbody></table></div></div></template>
-    <template id="suppliers-page-template"><div class="page-container"><div class="page-header"><h1>Təchizatçılar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="supplierSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addSupplierBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Təchizatçı</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#</th><th>#ID</th><th>Ad</th><th>Telefon</th><th>Bizim Borcumuz</th><th></th></tr></thead><tbody id="supplierTableBody"></tbody></table></div></div></template>
-    <template id="debts-page-template"><div class="page-container"><div class="page-header"><h1>Borclar</h1></div><div class="content-area"><div class="report-actions" id="debt-tabs"><button class="btn btn-primary active" data-debt-type="Kredit">Kredit Borcları</button><button class="btn btn-primary" data-debt-type="Korporativ">Korporativ Borclar</button><button class="btn btn-primary" data-debt-type="Açıq Qaimə">Açıq Qaimələr</button></div><div class="debt-view"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="debtSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#</th><th>Satış ID</th><th>Tarix</th><th>Müştəri</th><th>Toplam Məbləğ</th><th>Ödənilən</th><th>Borc Qalığı</th><th></th><th></th></tr></thead><tbody id="debtTableBody"></tbody></table></div></div></div></template>
+    <template id="purchases-page-template"><div class="page-container"><div class="page-header"><h1>Yeni Mal Alışı</h1></div><form id="purchaseForm"><div class="sale-container"><div class="content-area"><h4>Təchizatçı və Məhsul seçimi</h4><div class="form-group"><label>Təchizatçı Seçin</label><select id="purchaseSupplierSelect" required></select></div><div class="form-group"><label>Məhsul Əlavə Et</label><select id="purchaseProductSelect"></select></div><table class="data-table"><thead><tr><th>#</th><th>Məhsul</th><th>Say</th><th>Alış Qiyməti</th><th>Toplam</th><th></th></tr></thead><tbody id="purchaseCartTableBody"></tbody><tfoot></tfoot></table></div><div class="content-area"><h4>Alışı Yekunlaşdır</h4><div class="summary-row total" style="margin-top: 1.5rem;"><span>Yekun Məbləğ:</span><span id="purchaseTotal">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;"><span>Alışı Tamamla</span></button></div></div></div></form></div></template>
+    <template id="products-page-template"><div class="page-container"><div class="page-header"><h1>Məhsullar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="productSearch" class="search-input" placeholder="Məhsul adı və ya ID ilə axtar..."></div><button id="addProductBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Məhsul</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#</th><th>#ID</th><th>Ad</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th></th></tr></thead><tbody id="productTableBody"></tbody><tfoot></tfoot></table></div></div></template>
+    <template id="customers-page-template"><div class="page-container"><div class="page-header"><h1>Müştərilər</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="customerSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addCustomerBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Müştəri</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#</th><th>#ID</th><th>Tam Adı</th><th>Telefon</th><th>Borc</th><th></th></tr></thead><tbody id="customerTableBody"></tbody><tfoot></tfoot></table></div></div></template>
+    <template id="suppliers-page-template"><div class="page-container"><div class="page-header"><h1>Təchizatçılar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="supplierSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addSupplierBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Təchizatçı</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#</th><th>#ID</th><th>Ad</th><th>Telefon</th><th>Bizim Borcumuz</th><th></th></tr></thead><tbody id="supplierTableBody"></tbody><tfoot></tfoot></table></div></div></template>
+    <template id="debts-page-template"><div class="page-container"><div class="page-header"><h1>Borclar</h1></div><div class="content-area"><div class="report-actions" id="debt-tabs"><button class="btn btn-primary active" data-debt-type="Kredit">Kredit Borcları</button><button class="btn btn-primary" data-debt-type="Korporativ">Korporativ Borclar</button><button class="btn btn-primary" data-debt-type="Açıq Qaimə">Açıq Qaimələr</button></div><div class="debt-view"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="debtSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#</th><th>Satış ID</th><th>Tarix</th><th>Müştəri</th><th>Toplam Məbləğ</th><th>Ödənilən</th><th>Borc Qalığı</th><th></th><th></th></tr></thead><tbody id="debtTableBody"></tbody><tfoot></tfoot></table></div></div></div></template>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -1021,6 +1029,8 @@
             const productTableBody = appContainer.querySelector('#productTableBody');
             const addProductBtn = appContainer.querySelector('#addProductBtn');
             const productSearch = appContainer.querySelector('#productSearch');
+            const tfoot = productTableBody.nextElementSibling;
+
             const renderProducts = () => {
                 const query = productSearch.value.toLowerCase();
                 let products = getProducts();
@@ -1030,11 +1040,16 @@
                 productTableBody.innerHTML = '';
                 if (products.length === 0) {
                     productTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Məhsul tapılmadı.</td></tr>';
+                    tfoot.innerHTML = '';
                     return;
                 }
+                let totalStock = 0;
                 products.forEach((p, index) => {
+                    totalStock += p.stock;
                     productTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${p.id}</td><td>${p.name}</td><td>${p.purchasePrice.toFixed(2)} ₼</td><td>${p.salePrice.toFixed(2)} ₼</td><td>${p.stock} ədəd</td><td class="actions-cell"><button class="btn-edit" data-id="${p.id}">✏️</button><button class="btn-delete" data-id="${p.id}">🗑️</button></td></tr>`;
                 });
+
+                tfoot.innerHTML = `<tr><td colspan="5" style="text-align:right;">CƏMİ:</td><td>${totalStock} ədəd</td><td></td></tr>`;
             };
             addProductBtn.addEventListener('click', () => { addProductForm.reset(); openModal(addProductModal); });
             productTableBody.addEventListener('click', (e) => {
@@ -1067,6 +1082,8 @@
             const customerTableBody = appContainer.querySelector('#customerTableBody');
             const addCustomerBtn = appContainer.querySelector('#addCustomerBtn');
             const customerSearch = appContainer.querySelector('#customerSearch');
+            const tfoot = customerTableBody.nextElementSibling;
+            
             const populateGuarantorSelects = () => {
                 const customers = getCustomers();
                 const addGuarantorSelect = document.getElementById('customerGuarantorModal');
@@ -1088,9 +1105,12 @@
                 customerTableBody.innerHTML = '';
                 if (customers.length === 0) {
                     customerTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Müştəri tapılmadı.</td></tr>';
+                    tfoot.innerHTML = '';
                     return;
                 }
+                let totalDebt = 0;
                 customers.forEach((c, index) => {
+                    totalDebt += c.debt;
                     customerTableBody.innerHTML += `
                         <tr>
                             <td>${index + 1}</td>
@@ -1105,6 +1125,7 @@
                             </td>
                         </tr>`;
                 });
+                tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">CƏMİ BORC:</td><td>${totalDebt.toFixed(2)} ₼</td><td></td></tr>`;
             };
             addCustomerBtn.addEventListener('click', () => {
                 addCustomerForm.reset();
@@ -1124,9 +1145,26 @@
                         const guarantor = getCustomers().find(g => g.id === customer.guarantorId);
                         if(guarantor) guarantorName = guarantor.name;
                     }
+                    
+                    // Dövriyyə və balans hesabatları
+                    const totalSalesAmount = sales.reduce((sum, s) => sum + s.totalAmount, 0);
+                    const totalPaidAmount = sales.reduce((sum, s) => sum + s.initialPayment, 0);
+                    const creditTurnover = sales.filter(s => ['Kredit', 'Korporativ'].includes(s.type)).reduce((sum, s) => sum + s.totalAmount, 0);
+                    const cashTurnover = sales.filter(s => ['Nağd', 'POS Terminal', 'Açıq Qaimə'].includes(s.type)).reduce((sum, s) => sum + s.totalAmount, 0);
+
                     const historyTitle = document.getElementById('customer-history-title');
                     const historyContent = document.getElementById('customerSalesHistoryContent');
                     historyTitle.textContent = `${customer.name} - Ətraflı Məlumat`;
+
+                    let summaryCardsHtml = `
+                        <div class="summary-cards" style="margin-bottom: 2rem;">
+                            <div class="card"><h3>Ümumi Alış Məbləği</h3><p>${totalSalesAmount.toFixed(2)} ₼</p></div>
+                            <div class="card"><h3>Cəmi Ödənilən</h3><p class="positive">${totalPaidAmount.toFixed(2)} ₼</p></div>
+                            <div class="card"><h3>Ümumi Qalıq Borc</h3><p class="negative">${customer.debt.toFixed(2)} ₼</p></div>
+                            <div class="card"><h3>Kredit Dövriyyəsi</h3><p>${creditTurnover.toFixed(2)} ₼</p></div>
+                            <div class="card"><h3>Nağd Dövriyyəsi</h3><p>${cashTurnover.toFixed(2)} ₼</p></div>
+                        </div>`;
+
                     let customerInfoHtml = `
                         <div style="background: #f9fafb; padding: 1.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); margin-bottom: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
                             <p><strong><span style="color: var(--text-secondary);">Ş/V Seriya:</span></strong><br>${customer.sv_seria || 'Qeyd edilməyib'}</p>
@@ -1139,11 +1177,7 @@
                     let salesHistoryHtml = `
                         <h4>Satış Tarixçəsi</h4>
                         <table class="data-table" style="margin-top: 1rem; font-size: 0.8rem;">
-                            <thead>
-                                <tr>
-                                    <th>#</th><th>Satış ID</th><th>Tarix</th><th>Növ</th><th>Müddət</th><th>Aylıq Ödəniş</th><th>Yekun Məbləğ</th><th>Ödənilib</th><th>Qalıq Borc</th><th></th>
-                                </tr>
-                            </thead>
+                            <thead><tr><th>#</th><th>Satış ID</th><th>Tarix</th><th>Növ</th><th>Müddət</th><th>Aylıq Ödəniş</th><th>Yekun Məbləğ</th><th>Ödənilib</th><th>Qalıq Borc</th><th></th></tr></thead>
                             <tbody>`;
                     if (sales.length === 0) {
                         salesHistoryHtml += '<tr><td colspan="10" style="text-align:center;">Bu müştərinin satış tarixçəsi yoxdur.</td></tr>';
@@ -1152,24 +1186,21 @@
                             const debt = (sale.totalAmount - sale.initialPayment);
                             salesHistoryHtml += `
                                 <tr>
-                                    <td>${index + 1}</td>
-                                    <td>${sale.id}</td>
-                                    <td>${sale.date}</td>
-                                    <td>${sale.type}</td>
-                                    <td>${sale.loanTerm ? sale.loanTerm + ' ay' : '-'}</td>
-                                    <td>${sale.monthlyPayment ? sale.monthlyPayment.toFixed(2) + ' ₼' : '-'}</td>
-                                    <td>${sale.totalAmount.toFixed(2)} ₼</td>
-                                    <td class="positive">${sale.initialPayment.toFixed(2)} ₼</td>
-                                    <td class="${debt > 0.01 ? 'negative' : ''}">${debt.toFixed(2)} ₼</td>
+                                    <td>${index + 1}</td><td>${sale.id}</td><td>${sale.date}</td><td>${sale.type}</td><td>${sale.loanTerm ? sale.loanTerm + ' ay' : '-'}</td><td>${sale.monthlyPayment ? sale.monthlyPayment.toFixed(2) + ' ₼' : '-'}</td><td>${sale.totalAmount.toFixed(2)} ₼</td><td class="positive">${sale.initialPayment.toFixed(2)} ₼</td><td class="${debt > 0.01 ? 'negative' : ''}">${debt.toFixed(2)} ₼</td>
                                     <td class="actions-cell">
-                                        ${debt > 0.01 ? `<button class="btn btn-warning payment-history-btn" data-id="${sale.id}" style="padding: 0.5rem; color: #212121;">Tarixçə</button>` : ''}
+                                        ${debt > 0.01 ? `<button class="btn btn-warning payment-history-btn" data-id="${sale.id}" style="padding: 0.5rem; color:#212121;">Tarixçə</button>` : 'Bağlanıb'}
                                     </td>
                                 </tr>`;
                         });
                     }
-                    salesHistoryHtml += `</tbody></table>`;
+                    const totalSale = sales.reduce((sum, s) => sum + s.totalAmount, 0);
+                    const totalPaid = sales.reduce((sum, s) => sum + s.initialPayment, 0);
+                    const totalDebtRem = sales.reduce((sum, s) => sum + (s.totalAmount - s.initialPayment), 0);
+                    salesHistoryHtml += `</tbody>
+                        <tfoot><tr><td colspan="6" style="text-align:right;">CƏMİ:</td><td>${totalSale.toFixed(2)} ₼</td><td>${totalPaid.toFixed(2)} ₼</td><td>${totalDebtRem.toFixed(2)} ₼</td><td></td></tr></tfoot>
+                    </table>`;
                     
-                    historyContent.innerHTML = customerInfoHtml + salesHistoryHtml;
+                    historyContent.innerHTML = summaryCardsHtml + customerInfoHtml + salesHistoryHtml;
                     
                     historyContent.querySelector('tbody')?.addEventListener('click', e => {
                         const historyBtn = e.target.closest('.payment-history-btn');
@@ -1190,12 +1221,12 @@
                                     paymentsHtml += `<tr><td>${index + 1}</td><td>${p.date}</td><td>${p.type}</td><td>${p.amount.toFixed(2)} ₼</td></tr>`;
                                 });
                             }
-                            paymentsHtml += `</tbody></table>`;
+                            const totalPayments = (sale.payments || []).reduce((sum, p) => sum + p.amount, 0);
+                            paymentsHtml += `</tbody><tfoot><tr><td colspan="3" style="text-align:right;">CƏMİ ÖDƏNİŞ:</td><td>${totalPayments.toFixed(2)} ₼</td></tr></tfoot></table>`;
                             paymentHistoryContent.innerHTML = paymentsHtml;
                             openModal(paymentHistoryModal);
                         }
                     });
-
                     openModal(customerSalesHistoryModal);
                     return;
                 }
@@ -1233,6 +1264,7 @@
             const supplierTableBody = appContainer.querySelector('#supplierTableBody');
             const addSupplierBtn = appContainer.querySelector('#addSupplierBtn');
             const supplierSearch = appContainer.querySelector('#supplierSearch');
+            const tfoot = supplierTableBody.nextElementSibling;
             const renderSuppliers = () => {
                 const query = supplierSearch.value.toLowerCase();
                 let suppliers = getSuppliers();
@@ -1242,11 +1274,16 @@
                 supplierTableBody.innerHTML = '';
                 if (suppliers.length === 0) {
                     supplierTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Təchizatçı tapılmadı.</td></tr>';
+                    tfoot.innerHTML = '';
                     return;
                 }
+                let totalBalance = 0;
                 suppliers.forEach((s, index) => {
-                    supplierTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${s.id}</td><td>${s.name}</td><td>${s.phone || '-'}</td><td>${(s.balance || 0).toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-edit" data-id="${s.id}">✏️</button><button class="btn-delete" data-id="${s.id}">🗑️</button></td></tr>`;
+                    const balance = s.balance || 0;
+                    totalBalance += balance;
+                    supplierTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${s.id}</td><td>${s.name}</td><td>${s.phone || '-'}</td><td>${balance.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-edit" data-id="${s.id}">✏️</button><button class="btn-delete" data-id="${s.id}">🗑️</button></td></tr>`;
                 });
+                tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">CƏMİ BORCUMUZ:</td><td>${totalBalance.toFixed(2)} ₼</td><td></td></tr>`;
             };
             addSupplierBtn.addEventListener('click', () => { addSupplierForm.reset(); openModal(addSupplierModal); });
             supplierTableBody.addEventListener('click', (e) => {
@@ -1311,6 +1348,9 @@
                 const total = cart.reduce((sum, item) => sum + (item.quantity * item.price), 0);
                 view.querySelector('.summary-total').textContent = `${total.toFixed(2)} ₼`;
                 
+                const tfoot = view.querySelector('.cart-table-body').nextElementSibling;
+                tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">CƏMİ:</td><td>${total.toFixed(2)} ₼</td><td></td></tr>`;
+
                 if (view.id === 'corporate-sale-view') {
                     const initialPayment = parseFloat(view.querySelector('.initial-payment').value) || 0;
                     const debt = total - initialPayment;
@@ -1596,6 +1636,7 @@
             const purchaseProductSelect = appContainer.querySelector('#purchaseProductSelect');
             const cartTableBody = appContainer.querySelector('#purchaseCartTableBody');
             const purchaseTotalEl = appContainer.querySelector('#purchaseTotal');
+            const tfoot = cartTableBody.nextElementSibling;
             let currentPurchaseCart = [];
             const initializePurchasePage = () => {
                 const suppliers = getSuppliers();
@@ -1611,6 +1652,7 @@
             const calculatePurchaseTotal = () => {
                 const total = currentPurchaseCart.reduce((sum, item) => sum + (item.quantity * item.purchasePrice), 0);
                 purchaseTotalEl.textContent = `${total.toFixed(2)} ₼`;
+                tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">CƏMİ:</td><td>${total.toFixed(2)} ₼</td><td></td></tr>`;
                 return total;
             };
             const renderPurchaseCart = () => {
@@ -1702,13 +1744,11 @@
             const salesReportView = appContainer.querySelector('#sales-report-view');
             const purchasesReportView = appContainer.querySelector('#purchases-report-view');
             const financialReportView = appContainer.querySelector('#financial-report-view');
-            const salesHistoryTableBody = appContainer.querySelector('#salesHistoryTableBody');
-            const salesReportSearch = appContainer.querySelector('#salesReportSearch');
-            const purchasesHistoryTableBody = appContainer.querySelector('#purchasesHistoryTableBody');
-            const purchasesReportSearch = appContainer.querySelector('#purchasesReportSearch');
-            const financialHistoryTableBody = appContainer.querySelector('#financialHistoryTableBody');
-            const financialReportSearch = appContainer.querySelector('#financialReportSearch');
+            
             const renderAllSales = () => {
+                const salesHistoryTableBody = appContainer.querySelector('#salesHistoryTableBody');
+                const tfoot = salesHistoryTableBody.nextElementSibling;
+                const salesReportSearch = appContainer.querySelector('#salesReportSearch');
                 const query = salesReportSearch.value.toLowerCase();
                 let sales = getSales().reverse();
                 if (query) {
@@ -1717,13 +1757,19 @@
                 salesHistoryTableBody.innerHTML = '';
                 if (sales.length === 0) {
                     salesHistoryTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Satış tapılmadı.</td></tr>';
-                    return;
+                    tfoot.innerHTML = ''; return;
                 }
+                let totalSales = 0;
                 sales.forEach((sale, index) => {
+                    totalSales += sale.totalAmount;
                     salesHistoryTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${sale.id}</td><td>${sale.date}</td><td>${sale.customerName}</td><td><span style="background:${['Kredit', 'Korporativ', 'Açıq Qaimə'].includes(sale.type) ? 'var(--warning-color)' : 'var(--success-color)'}; color:white; padding: 4px 10px; border-radius:6px; font-size:12px;">${sale.type}</span></td><td>${sale.totalAmount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-details" data-id="${sale.id}" data-type="sale">Detallar</button></td></tr>`;
                 });
+                tfoot.innerHTML = `<tr><td colspan="5" style="text-align:right;">CƏMİ:</td><td>${totalSales.toFixed(2)} ₼</td><td></td></tr>`;
             };
             const renderPurchases = () => {
+                const purchasesHistoryTableBody = appContainer.querySelector('#purchasesHistoryTableBody');
+                const tfoot = purchasesHistoryTableBody.nextElementSibling;
+                const purchasesReportSearch = appContainer.querySelector('#purchasesReportSearch');
                 const query = purchasesReportSearch.value.toLowerCase();
                 let purchases = getPurchases().reverse();
                 if (query) {
@@ -1732,13 +1778,19 @@
                 purchasesHistoryTableBody.innerHTML = '';
                 if (purchases.length === 0) {
                     purchasesHistoryTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Alış tapılmadı.</td></tr>';
-                    return;
+                    tfoot.innerHTML = ''; return;
                 }
+                let totalPurchases = 0;
                 purchases.forEach((purchase, index) => {
+                    totalPurchases += purchase.totalAmount;
                     purchasesHistoryTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${purchase.id}</td><td>${purchase.date}</td><td>${purchase.supplierName}</td><td>${purchase.totalAmount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-details" data-id="${purchase.id}" data-type="purchase">Detallar</button></td></tr>`;
                 });
+                tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">CƏMİ:</td><td>${totalPurchases.toFixed(2)} ₼</td><td></td></tr>`;
             };
             const renderFinancial = () => {
+                const financialHistoryTableBody = appContainer.querySelector('#financialHistoryTableBody');
+                const tfoot = financialHistoryTableBody.nextElementSibling;
+                const financialReportSearch = appContainer.querySelector('#financialReportSearch');
                 const query = financialReportSearch.value.toLowerCase();
                 let transactions = getTransactions().reverse();
                 if (query) {
@@ -1747,11 +1799,14 @@
                 financialHistoryTableBody.innerHTML = '';
                 if (transactions.length === 0) {
                     financialHistoryTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Əməliyyat tapılmadı.</td></tr>';
-                    return;
+                    tfoot.innerHTML = ''; return;
                 }
+                let totalAmount = 0;
                 transactions.forEach((tr, index) => {
+                    totalAmount += tr.amount;
                     financialHistoryTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${tr.id}</td><td>${tr.date}</td><td>${tr.type}</td><td>${tr.description}</td><td class="${tr.amount >= 0 ? 'positive' : 'negative'}">${tr.amount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-delete finance-delete-btn" data-id="${tr.id}">🗑️</button></td></tr>`;
                 });
+                tfoot.innerHTML = `<tr><td colspan="5" style="text-align:right;">YEKUN BALANS:</td><td class="${totalAmount >= 0 ? 'positive' : 'negative'}">${totalAmount.toFixed(2)} ₼</td><td></td></tr>`;
             };
             reportTabs.addEventListener('click', (e) => {
                 const button = e.target.closest('button');
@@ -1766,16 +1821,15 @@
                 else if (reportType === 'purchases') { purchasesReportView.style.display = 'block'; renderPurchases(); }
                 else if (reportType === 'financial') { financialReportView.style.display = 'block'; renderFinancial(); }
             });
-            salesReportSearch.addEventListener('input', renderAllSales);
-            purchasesReportSearch.addEventListener('input', renderPurchases);
-            financialReportSearch.addEventListener('input', renderFinancial);
+            appContainer.querySelector('#salesReportSearch').addEventListener('input', renderAllSales);
+            appContainer.querySelector('#purchasesReportSearch').addEventListener('input', renderPurchases);
+            appContainer.querySelector('#financialReportSearch').addEventListener('input', renderFinancial);
             appContainer.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
                 if (btn && btn.classList.contains('finance-delete-btn')) {
                     const id = parseInt(btn.dataset.id);
                     if (confirm('Bu əməliyyatı silməyə əminsiniz? Bu əməliyyatın təsir etdiyi borc və ya anbar məlumatları geri qayıtmayacaq!')) {
-                        const transactions = getTransactions().filter(t => t.id !== id);
-                        saveTransactions(transactions);
+                        saveTransactions(getTransactions().filter(t => t.id !== id));
                         renderFinancial();
                     }
                 }
@@ -1788,6 +1842,7 @@
             const totalReceivablesEl = appContainer.querySelector('#total-receivables');
             const totalPayablesEl = appContainer.querySelector('#total-payables');
             const transactionsTableBody = appContainer.querySelector('#transactionsTableBody');
+            const tfoot = transactionsTableBody.nextElementSibling;
             const btnIncome = appContainer.querySelector('#btnIncome');
             const btnExpense = appContainer.querySelector('#btnExpense');
             const btnBackupData = appContainer.querySelector('#btnBackupData');
@@ -1807,6 +1862,7 @@
                 transactions.slice().reverse().forEach((tr, index) => {
                     transactionsTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${tr.date}</td><td>${tr.type}</td><td>${tr.description}</td><td class="${tr.amount >= 0 ? 'positive' : 'negative'}">${tr.amount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-delete finance-delete-btn" data-id="${tr.id}">🗑️</button></td></tr>`;
                 });
+                 tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">YEKUN BALANS:</td><td class="${cashBalance >= 0 ? 'positive' : 'negative'}">${cashBalance.toFixed(2)} ₼</td><td></td></tr>`;
             };
             btnBackupData.addEventListener('click', () => {
                 const backupData = { products: getProducts(), customers: getCustomers(), suppliers: getSuppliers(), sales: getSales(), purchases: getPurchases(), transactions: getTransactions() };
@@ -1852,8 +1908,7 @@
                 if (btn && btn.classList.contains('finance-delete-btn')) {
                     const id = parseInt(btn.dataset.id);
                     if (confirm('Bu əməliyyatı silməyə əminsiniz? Bu əməliyyatın təsir etdiyi borc və ya anbar məlumatları geri qayıtmayacaq!')) {
-                        const transactions = getTransactions().filter(t => t.id !== id);
-                        saveTransactions(transactions);
+                        saveTransactions(getTransactions().filter(t => t.id !== id));
                         renderFinancePage();
                     }
                 }
@@ -1865,6 +1920,7 @@
             const debtTabs = appContainer.querySelector('#debt-tabs');
             const debtTableBody = appContainer.querySelector('#debtTableBody');
             const debtSearch = appContainer.querySelector('#debtSearch');
+            const tfoot = debtTableBody.nextElementSibling;
             let currentDebtType = 'Kredit';
             const renderDebts = (type) => {
                 const sales = getSales();
@@ -1876,28 +1932,22 @@
                 debtTableBody.innerHTML = '';
                 if (filteredSales.length === 0) {
                     debtTableBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">Bu növ borc tapılmadı.</td></tr>';
-                    return;
+                    tfoot.innerHTML = ''; return;
                 }
+                let totalAmount = 0, totalPaid = 0, totalDebt = 0;
                 filteredSales.forEach((sale, index) => {
                     const debt = (sale.totalAmount - sale.initialPayment);
+                    totalAmount += sale.totalAmount;
+                    totalPaid += sale.initialPayment;
+                    totalDebt += debt;
                     debtTableBody.innerHTML += `
                         <tr>
-                            <td>${index + 1}</td>
-                            <td>${sale.id}</td>
-                            <td>${sale.date}</td>
-                            <td>${sale.customerName}</td>
-                            <td>${sale.totalAmount.toFixed(2)} ₼</td>
-                            <td>${sale.initialPayment.toFixed(2)} ₼</td>
-                            <td class="negative">${debt.toFixed(2)} ₼</td>
-                            <td class="actions-cell">
-                                <button class="btn btn-warning payment-history-btn" data-id="${sale.id}" style="padding: 0.5rem; color: #212121;">Tarixçə</button>
-                            </td>
-                            <td class="actions-cell">
-                                <button class="btn btn-primary pay-debt-btn" data-id="${sale.id}" style="padding: 0.5rem 1rem;">Ödəniş et</button>
-                            </td>
-                        </tr>
-                    `;
+                            <td>${index + 1}</td><td>${sale.id}</td><td>${sale.date}</td><td>${sale.customerName}</td><td>${sale.totalAmount.toFixed(2)} ₼</td><td>${sale.initialPayment.toFixed(2)} ₼</td><td class="negative">${debt.toFixed(2)} ₼</td>
+                            <td class="actions-cell"><button class="btn btn-warning payment-history-btn" data-id="${sale.id}" style="padding: 0.5rem; color:#212121;">Tarixçə</button></td>
+                            <td class="actions-cell"><button class="btn btn-primary pay-debt-btn" data-id="${sale.id}" style="padding: 0.5rem 1rem;">Ödəniş et</button></td>
+                        </tr>`;
                 });
+                tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">CƏMİ:</td><td>${totalAmount.toFixed(2)} ₼</td><td>${totalPaid.toFixed(2)} ₼</td><td>${totalDebt.toFixed(2)} ₼</td><td colspan="2"></td></tr>`;
             };
             debtTabs.addEventListener('click', (e) => {
                 const button = e.target.closest('button');
@@ -1927,11 +1977,9 @@
                 if (btn.classList.contains('payment-history-btn')) {
                      const sale = getSales().find(s => s.id === saleId);
                     if (!sale) return;
-
                     const paymentHistoryTitle = document.getElementById('payment-history-title');
                     const paymentHistoryContent = document.getElementById('paymentHistoryContent');
                     paymentHistoryTitle.textContent = `Satış #${sale.id} - Ödəniş Tarixçəsi`;
-
                     let paymentsHtml = `<table class="data-table"><thead><tr><th>#</th><th>Tarix</th><th>Ödəniş Növü</th><th>Məbləğ</th></tr></thead><tbody>`;
                     if (!sale.payments || sale.payments.length === 0) {
                         paymentsHtml += `<tr><td colspan="4" style="text-align:center;">Hələ ödəniş edilməyib.</td></tr>`;
@@ -1940,7 +1988,8 @@
                             paymentsHtml += `<tr><td>${index + 1}</td><td>${p.date}</td><td>${p.type}</td><td>${p.amount.toFixed(2)} ₼</td></tr>`;
                         });
                     }
-                    paymentsHtml += `</tbody></table>`;
+                    const totalPayments = (sale.payments || []).reduce((sum, p) => sum + p.amount, 0);
+                    paymentsHtml += `</tbody><tfoot><tr><td colspan="3" style="text-align:right;">CƏMİ ÖDƏNİŞ:</td><td>${totalPayments.toFixed(2)} ₼</td></tr></tfoot></table>`;
                     paymentHistoryContent.innerHTML = paymentsHtml;
                     openModal(paymentHistoryModal);
                 }
