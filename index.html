@@ -608,7 +608,7 @@
         const incomeTypeModal = document.getElementById('incomeTypeModal');
         const expenseTypeModal = document.getElementById('expenseTypeModal');
         const otherIncomeModal = document.getElementById('otherIncomeModal');
-        const payDebtModal = document.getElementById('payDebtModal'); // Yeni modal
+        const payDebtModal = document.getElementById('payDebtModal');
         
         // Formlar
         const addProductForm = document.getElementById('addProductForm');
@@ -621,7 +621,7 @@
         const addExpenseForm = document.getElementById('addExpenseForm');
         const paySupplierForm = document.getElementById('paySupplierForm');
         const otherIncomeForm = document.getElementById('otherIncomeForm');
-        const payDebtForm = document.getElementById('payDebtForm'); // Yeni form
+        const payDebtForm = document.getElementById('payDebtForm');
 
         const getFromStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
         const saveToStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
@@ -790,7 +790,6 @@
             renderPage('finance');
         });
 
-        // YENİ QAİMƏ ÜZRƏ ÖDƏNİŞ FORMU ÜÇÜN HADİSƏ
         payDebtForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const saleId = parseInt(document.getElementById('debtSaleId').value);
@@ -802,22 +801,19 @@
 
             const remainingDebt = sale.totalAmount - sale.initialPayment;
 
-            if (paymentAmount <= 0 || paymentAmount > remainingDebt) {
+            if (paymentAmount <= 0 || paymentAmount > (remainingDebt + 0.001)) { // kiçik xətaları nəzərə al
                 alert(`Ödəniş məbləği 0-dan böyük və ${remainingDebt.toFixed(2)} ₼-dən kiçik və ya bərabər olmalıdır.`);
                 return;
             }
 
-            // Satışın ödənilmiş məbləğini artırırıq
             sale.initialPayment += paymentAmount;
 
-            // Müştərinin ümumi borcunu azaldırıq
             let customers = getCustomers();
             let customer = customers.find(c => c.id === sale.customerId);
             if (customer) {
                 customer.debt -= paymentAmount;
             }
 
-            // Əməliyyatı tarixçəyə yazırıq
             addTransaction('Qaimə Ödənişi', `Satış #${saleId} üçün ödəniş`, paymentAmount);
 
             saveSales(sales);
@@ -825,7 +821,7 @@
 
             alert('Ödəniş uğurla qəbul edildi!');
             closeModal(payDebtModal);
-            renderPage('debts'); // Səhifəni yeniləyirik
+            renderPage('debts');
         });
 
         function setupProductsPage() {
@@ -1346,9 +1342,6 @@
                 saveProducts(products);
                 saveSuppliers(suppliers);
                 
-                // Alış zamanı kassadan pul çıxmır, sadəcə təchizatçıya borc yaranır
-                // addTransaction('Mal Alışı', `Alış #${newPurchase.id} - ${supplier.name}`, 0); 
-                
                 alert('Alış uğurla tamamlandı!');
                 initializePurchasePage();
             });
@@ -1534,7 +1527,6 @@
             renderFinancePage();
         }
 
-        // YENİLƏNMİŞ BORCLAR SƏHİFƏSİ FUNKSİYASI
         function setupDebtsPage() {
             const debtTabs = appContainer.querySelector('#debt-tabs');
             const debtTableBody = appContainer.querySelector('#debtTableBody');
@@ -1543,7 +1535,6 @@
 
             const renderDebts = (type) => {
                 const sales = getSales();
-                // Yalnız ödənilməmiş borcu olan satışları göstər
                 let filteredSales = sales.filter(s => s.type === type && (s.totalAmount - s.initialPayment) > 0.001);
                 
                 const query = debtSearch.value.toLowerCase();
@@ -1568,7 +1559,7 @@
                             <td>${sale.initialPayment.toFixed(2)} ₼</td>
                             <td class="negative">${debt.toFixed(2)} ₼</td>
                             <td class="actions-cell">
-                                <button class="btn-details view-sale-details" data-id="${sale.id}">Detallar</button>
+                                <button class="btn-details" data-id="${sale.id}" data-type="sale">Detallar</button>
                             </td>
                             <td class="actions-cell">
                                 <button class="btn btn-success pay-debt-btn" data-id="${sale.id}" style="padding: 0.5rem 1rem;">Ödəniş et</button>
@@ -1589,25 +1580,10 @@
                 renderDebts(currentDebtType);
             });
 
-            // Borclar səhifəsindəki düymələr üçün event listener
             debtTableBody.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
                 if (!btn) return;
                 const saleId = parseInt(btn.dataset.id);
-
-                if (btn.classList.contains('view-sale-details')) {
-                    const sale = getSales().find(s => s.id === saleId);
-                    if (!sale) return;
-                    
-                    let productsHtml = `<table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead><tbody>`;
-                    sale.items.forEach(item => {
-                        productsHtml += `<tr><td>${item.name}</td><td>${item.quantity}</td><td>${item.salePrice.toFixed(2)} ₼</td><td>${(item.quantity * item.salePrice).toFixed(2)} ₼</td></tr>`;
-                    });
-                    productsHtml += '</tbody></table>';
-                    
-                    document.getElementById('productsInSaleContent').innerHTML = productsHtml;
-                    openModal(productsInSaleModal);
-                }
 
                 if (btn.classList.contains('pay-debt-btn')) {
                     const sale = getSales().find(s => s.id === saleId);
@@ -1633,7 +1609,6 @@
             renderDebts(currentDebtType);
         }
 
-        // Bütün səhifələrdə işləyən detallara baxış
         appContainer.addEventListener('click', (e) => {
             const btn = e.target.closest('button');
             if (btn && btn.classList.contains('btn-details') && btn.dataset.id && btn.dataset.type) {
@@ -1660,7 +1635,6 @@
             }
         });
 
-        // İlkin səhifənin yüklənməsi
         renderPage('finance');
     });
     </script>
