@@ -869,7 +869,7 @@
         addProductForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const products = getProducts();
-            products.push({ id: Date.now(), name: document.getElementById('productNameModal').value, purchasePrice: parseFloat(document.getElementById('purchasePriceModal').value), salePrice: parseFloat(document.getElementById('salePriceModal').value), stock: parseInt(document.getElementById('stockQuantityModal').value) });
+            products.push({ id: Date.now(), name: document.getElementById('productNameModal').value, purchasePrice: parseFloat(document.getElementById('purchasePriceModal').value), salePrice: parseFloat(document.getElementById('salePriceModal').value), stock: parseInt(document.getElementById('stockQuantityModal').value), imeiCodes: [] });
             saveProducts(products);
             closeModal(addProductModal);
             renderPage('products');
@@ -878,7 +878,7 @@
         editProductForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const id = parseInt(document.getElementById('editProductId').value);
-            const updatedProducts = getProducts().map(p => p.id === id ? { id, name: document.getElementById('editProductName').value, purchasePrice: parseFloat(document.getElementById('editPurchasePrice').value), salePrice: parseFloat(document.getElementById('editSalePrice').value), stock: parseInt(document.getElementById('editStockQuantity').value) } : p);
+            const updatedProducts = getProducts().map(p => p.id === id ? { id, name: document.getElementById('editProductName').value, purchasePrice: parseFloat(document.getElementById('editPurchasePrice').value), salePrice: parseFloat(document.getElementById('editSalePrice').value), stock: parseInt(document.getElementById('editStockQuantity').value), imeiCodes: p.imeiCodes || [] } : p);
             saveProducts(updatedProducts);
             closeModal(editProductModal);
             renderPage('products');
@@ -1234,9 +1234,17 @@
                             const debt = (sale.totalAmount - sale.initialPayment);
                             salesHistoryHtml += `
                                 <tr>
-                                    <td>${index + 1}</td><td>${sale.id}</td><td>${sale.date}</td><td>${sale.type}</td><td>${sale.loanTerm ? sale.loanTerm + ' ay' : '-'}</td><td>${sale.monthlyPayment ? sale.monthlyPayment.toFixed(2) + ' ₼' : '-'}</td><td>${sale.totalAmount.toFixed(2)} ₼</td><td class="positive">${sale.initialPayment.toFixed(2)} ₼</td><td class="${debt > 0.01 ? 'negative' : ''}">${debt.toFixed(2)} ₼</td>
+                                    <td>${index + 1}</td>
+                                    <td>${sale.id}</td>
+                                    <td>${sale.date}</td>
+                                    <td>${sale.type}</td>
+                                    <td>${sale.loanTerm ? sale.loanTerm + ' ay' : '-'}</td>
+                                    <td>${sale.monthlyPayment ? sale.monthlyPayment.toFixed(2) + ' ₼' : '-'}</td>
+                                    <td>${sale.totalAmount.toFixed(2)} ₼</td>
+                                    <td class="positive">${sale.initialPayment.toFixed(2)} ₼</td>
+                                    <td class="${debt > 0.01 ? 'negative' : ''}">${debt.toFixed(2)} ₼</td>
                                     <td class="actions-cell">
-                                        ${debt > 0.01 ? `<button class="btn btn-warning payment-history-btn" data-id="${sale.id}" style="padding: 0.5rem; color:#212121;">Tarixçə</button>` : 'Bağlanıb'}
+                                        <button class="btn btn-primary products-in-sale-btn" data-id="${sale.id}" style="padding: 0.5rem; color: white;">Detallar</button>
                                     </td>
                                 </tr>`;
                         });
@@ -1251,28 +1259,21 @@
                     historyContent.innerHTML = summaryCardsHtml + customerInfoHtml + salesHistoryHtml;
                     
                     historyContent.querySelector('tbody')?.addEventListener('click', e => {
-                        const historyBtn = e.target.closest('.payment-history-btn');
-                        if (historyBtn) {
-                            const saleId = parseInt(historyBtn.dataset.id);
+                        const productsInSaleBtn = e.target.closest('.products-in-sale-btn');
+                        if (productsInSaleBtn) {
+                            const saleId = parseInt(productsInSaleBtn.dataset.id);
                             const sale = getSales().find(s => s.id === saleId);
                             if (!sale) return;
 
-                            const paymentHistoryTitle = document.getElementById('payment-history-title');
-                            const paymentHistoryContent = document.getElementById('paymentHistoryContent');
-                            paymentHistoryTitle.textContent = `Satış #${sale.id} - Ödəniş Tarixçəsi`;
-
-                            let paymentsHtml = `<table class="data-table"><thead><tr><th>#</th><th>Tarix</th><th>Ödəniş Növü</th><th>Məbləğ</th></tr></thead><tbody>`;
-                            if (!sale.payments || sale.payments.length === 0) {
-                                paymentsHtml += `<tr><td colspan="4" style="text-align:center;">Hələ ödəniş edilməyib.</td></tr>`;
-                            } else {
-                                sale.payments.forEach((p, index) => {
-                                    paymentsHtml += `<tr><td>${index + 1}</td><td>${p.date}</td><td>${p.type}</td><td>${p.amount.toFixed(2)} ₼</td></tr>`;
-                                });
-                            }
-                            const totalPayments = (sale.payments || []).reduce((sum, p) => sum + p.amount, 0);
-                            paymentsHtml += `</tbody><tfoot><tr><td colspan="3" style="text-align:right;">CƏMİ ÖDƏNİŞ:</td><td>${totalPayments.toFixed(2)} ₼</td></tr></tfoot></table>`;
-                            paymentHistoryContent.innerHTML = paymentsHtml;
-                            openModal(paymentHistoryModal);
+                            const productsContent = document.getElementById('productsInSaleContent');
+                            let productsHtml = `<h4>Satış #${sale.id} - Məhsul Siyahısı</h4><table class="data-table"><thead><tr><th>#</th><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th>IMEI Kodları</th></tr></thead><tbody>`;
+                            sale.items.forEach((item, index) => {
+                                const imeiList = (item.imeiCodes && item.imeiCodes.length > 0) ? item.imeiCodes.join(', ') : '-';
+                                productsHtml += `<tr><td>${index + 1}</td><td>${item.name}</td><td>${item.quantity}</td><td>${item.salePrice.toFixed(2)} ₼</td><td>${(item.quantity * item.salePrice).toFixed(2)} ₼</td><td>${imeiList}</td></tr>`;
+                            });
+                            productsHtml += '</tbody></table>';
+                            productsContent.innerHTML = productsHtml;
+                            openModal(productsInSaleModal);
                         }
                     });
                     openModal(customerSalesHistoryModal);
@@ -1482,8 +1483,11 @@
                     const existingItem = cart.find(i => i.id === productId);
 
                     if (existingItem) {
-                        if (existingItem.quantity < product.stock) existingItem.quantity++;
-                        else alert('Anbarda kifayət qədər məhsul yoxdur!');
+                        if (existingItem.quantity < product.stock) {
+                            existingItem.quantity++;
+                        } else {
+                            alert('Anbarda kifayət qədər məhsul yoxdur!');
+                        }
                     } else {
                         cart.push({ ...product, quantity: 1, price: product.salePrice });
                     }
@@ -1652,7 +1656,7 @@
                 let sales = getSales();
                 const newSale = {
                     id: Date.now(), customerId, customerName, type, totalAmount, initialPayment,
-                    items: cart.map(i => ({id: i.id, name: i.name, quantity: i.quantity, salePrice: i.price})),
+                    items: cart.map(i => ({id: i.id, name: i.name, quantity: i.quantity, salePrice: i.price, imeiCodes: i.imeiCodes || []})),
                     date: new Date().toLocaleString('az-AZ'),
                     loanTerm: loanTerm || null,
                     monthlyPayment: monthlyPayment || null,
@@ -1723,7 +1727,7 @@
                 if(existingItem) {
                     existingItem.quantity++;
                 } else {
-                    currentPurchaseCart.push({ id: product.id, name: product.name, quantity: 1, purchasePrice: product.purchasePrice });
+                    currentPurchaseCart.push({ id: product.id, name: product.name, quantity: 1, purchasePrice: product.purchasePrice, imeiCodes: [] });
                 }
                 renderPurchaseCart();
                 purchaseProductSelect.value = '';
