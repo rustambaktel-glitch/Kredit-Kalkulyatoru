@@ -1390,7 +1390,7 @@
                     return;
                 }
                 sales.forEach(sale => {
-                    salesHistoryTableBody.innerHTML += `<tr><td>${sale.id}</td><td>${sale.date}</td><td>${sale.customerName}</td><td><span style="background:${sale.type === 'Kredit' || sale.type === 'Korporativ' || sale.type === 'Açıq Qaimə' ? 'var(--warning-color)' : 'var(--success-color)'}; color:white; padding: 4px 10px; border-radius:6px; font-size:12px;">${sale.type}</span></td><td>${sale.totalAmount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-details" data-id="${sale.id}" data-type="sale">Detallar</button></td></tr>`;
+                    salesHistoryTableBody.innerHTML += `<tr><td>${sale.id}</td><td>${sale.date}</td><td>${sale.customerName}</td><td><span style="background:${['Kredit', 'Korporativ', 'Açıq Qaimə'].includes(sale.type) ? 'var(--warning-color)' : 'var(--success-color)'}; color:white; padding: 4px 10px; border-radius:6px; font-size:12px;">${sale.type}</span></td><td>${sale.totalAmount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-details" data-id="${sale.id}" data-type="sale">Detallar</button></td></tr>`;
                 });
             };
 
