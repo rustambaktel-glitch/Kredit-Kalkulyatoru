@@ -401,9 +401,13 @@
             margin-top: 1.5rem;
             border-bottom: none;
         }
+        
+        /* DƏYİŞİKLİK BURADADIR */
         #customerSalesHistoryModal .modal-content {
-            max-width: 80rem; /* Geniş pəncərə */
+            width: 90%; 
+            max-width: 95rem; 
         }
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -733,7 +737,7 @@
         const expenseTypeModal = document.getElementById('expenseTypeModal');
         const otherIncomeModal = document.getElementById('otherIncomeModal');
         const payDebtModal = document.getElementById('payDebtModal');
-        const paymentHistoryModal = document.getElementById('paymentHistoryModal'); // New modal
+        const paymentHistoryModal = document.getElementById('paymentHistoryModal');
         
         // Form definitions
         const addProductForm = document.getElementById('addProductForm');
@@ -971,10 +975,8 @@
                 return;
             }
             
-            // Ödənişi ümumi ödənilənə əlavə et
             sale.initialPayment += paymentAmount;
             
-            // Ödənişi tarixçəyə əlavə et
             if (!sale.payments) sale.payments = [];
             sale.payments.push({ date: new Date().toLocaleString('az-AZ'), amount: paymentAmount });
 
@@ -1525,7 +1527,7 @@
                     date: new Date().toLocaleString('az-AZ'),
                     loanTerm: loanTerm || null,
                     monthlyPayment: monthlyPayment || null,
-                    payments: [] // Ödəniş tarixçəsi üçün boş massiv
+                    payments: []
                 };
                 sales.push(newSale);
                 saveSales(sales);
