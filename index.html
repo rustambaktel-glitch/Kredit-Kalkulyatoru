@@ -461,6 +461,7 @@
                 <li><a data-page="products"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg> <span>Məhsullar</span></a></li>
                 <li><a data-page="customers"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-1-3.794M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span>Müştərilər</span></a></li>
                 <li><a data-page="suppliers"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg> <span>Təchizatçılar</span></a></li>
+                <li><a data-page="debts"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 4v4m0 4v2m-6-2h12a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> <span>Borclar</span></a></li>
             </ul>
         </nav>
     </div>
@@ -527,10 +528,10 @@
             </form>
         </div>
     </div>
-    <div id="customerSalesHistoryModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 id="customer-history-title">Müştəri Satış Tarixçəsi</h2><div id="customerSalesHistoryContent" style="margin-top: 20px;"></div></div></div>
-    <div id="purchaseDetailsModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Alış Detalları</h2><div id="purchaseDetailsContent" style="margin-top: 20px;"></div></div></div>
     
     <div id="productsInSaleModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Satışda olan məhsullar</h2><div id="productsInSaleContent" style="margin-top: 20px;"></div></div></div>
+    <div id="customerSalesHistoryModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 id="customer-history-title">Müştəri Satış Tarixçəsi</h2><div id="customerSalesHistoryContent" style="margin-top: 20px;"></div></div></div>
+    <div id="purchaseDetailsModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Alış Detalları</h2><div id="purchaseDetailsContent" style="margin-top: 20px;"></div></div></div>
 
     <template id="finance-page-template">
         <div class="page-container">
@@ -573,6 +574,34 @@
     <template id="products-page-template"><div class="page-container"><div class="page-header"><h1>Məhsullar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="productSearch" class="search-input" placeholder="Məhsul adı və ya ID ilə axtar..."></div><button id="addProductBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Məhsul</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th></th></tr></thead><tbody id="productTableBody"></tbody></table></div></div></template>
     <template id="customers-page-template"><div class="page-container"><div class="page-header"><h1>Müştərilər</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="customerSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addCustomerBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Müştəri</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Tam Adı</th><th>Telefon</th><th>Borc</th><th></th></tr></thead><tbody id="customerTableBody"></tbody></table></div></div></template>
     <template id="suppliers-page-template"><div class="page-container"><div class="page-header"><h1>Təchizatçılar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="supplierSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addSupplierBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Təchizatçı</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Telefon</th><th>Bizim Borcumuz</th><th></th></tr></thead><tbody id="supplierTableBody"></tbody></table></div></div></template>
+    <template id="debts-page-template">
+        <div class="page-container">
+            <div class="page-header">
+                <h1>Borclar</h1>
+            </div>
+            <div class="content-area">
+                <div class="report-actions" id="debt-tabs">
+                    <button class="btn btn-primary active" data-debt-type="Kredit">Kredit Borcları</button>
+                    <button class="btn btn-primary" data-debt-type="Korporativ">Korporativ Borclar</button>
+                </div>
+                <div class="debt-view">
+                    <div class="page-header" style="padding: 1rem 0 0 0;">
+                        <div class="search-container">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <input type="search" id="debtSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar...">
+                        </div>
+                    </div>
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Satış ID</th><th>Tarix</th><th>Müştəri</th><th>Toplam Məbləğ</th><th>Ödənilən</th><th>Borc Qalığı</th><th></th></tr>
+                        </thead>
+                        <tbody id="debtTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </template>
+
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -629,7 +658,8 @@
 
         const pageSetups = {
             'finance': setupFinancePage, 'reports': setupReportsPage, 'sales': setupSalesPage,
-            'purchases': setupPurchasesPage, 'products': setupProductsPage, 'customers': setupCustomersPage, 'suppliers': setupSuppliersPage
+            'purchases': setupPurchasesPage, 'products': setupProductsPage, 'customers': setupCustomersPage, 'suppliers': setupSuppliersPage,
+            'debts': setupDebtsPage
         };
 
         const renderPage = (pageName) => {
@@ -897,17 +927,19 @@
                     const historyContent = document.getElementById('customerSalesHistoryContent');
 
                     historyTitle.textContent = `${customer.name} - Satış Tarixçəsi`;
-                    let historyHtml = `<table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody>`;
+                    let historyHtml = `<table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Yekun Məbləğ</th><th>Borc Qalığı</th><th></th></tr></thead><tbody>`;
                     
                     if (sales.length === 0) {
-                        historyHtml += '<tr><td colspan="5" style="text-align:center;">Bu müştərinin satış tarixçəsi yoxdur.</td></tr>';
+                        historyHtml += '<tr><td colspan="6" style="text-align:center;">Bu müştərinin satış tarixçəsi yoxdur.</td></tr>';
                     } else {
                         sales.reverse().forEach(sale => {
+                            const debt = (sale.totalAmount - sale.initialPayment).toFixed(2);
                             historyHtml += `<tr>
                                 <td>${sale.id}</td>
                                 <td>${sale.date}</td>
                                 <td>${sale.type}</td>
                                 <td>${sale.totalAmount.toFixed(2)} ₼</td>
+                                <td>${debt} ₼</td>
                                 <td class="actions-cell"><button class="btn-details view-sale-details" data-id="${sale.id}">Məhsullar</button></td>
                             </tr>`;
                         });
@@ -1581,6 +1613,82 @@
             });
 
             renderFinancePage();
+        }
+
+        function setupDebtsPage() {
+            const debtTabs = appContainer.querySelector('#debt-tabs');
+            const debtTableBody = appContainer.querySelector('#debtTableBody');
+            const debtSearch = appContainer.querySelector('#debtSearch');
+            let currentDebtType = 'Kredit';
+
+            const renderDebts = (type) => {
+                const sales = getSales();
+                const customers = getCustomers();
+                let filteredSales = sales.filter(s => s.type === type && (s.totalAmount - s.initialPayment) > 0);
+                
+                const query = debtSearch.value.toLowerCase();
+                if(query) {
+                    filteredSales = filteredSales.filter(s => s.customerName.toLowerCase().includes(query) || s.totalAmount.toString().includes(query));
+                }
+
+                debtTableBody.innerHTML = '';
+                if (filteredSales.length === 0) {
+                    debtTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Bu növ borc tapılmadı.</td></tr>';
+                    return;
+                }
+
+                filteredSales.forEach(sale => {
+                    const debt = (sale.totalAmount - sale.initialPayment);
+                    debtTableBody.innerHTML += `
+                        <tr>
+                            <td>${sale.id}</td>
+                            <td>${sale.date}</td>
+                            <td>${sale.customerName}</td>
+                            <td>${sale.totalAmount.toFixed(2)} ₼</td>
+                            <td>${sale.initialPayment.toFixed(2)} ₼</td>
+                            <td>${debt.toFixed(2)} ₼</td>
+                            <td class="actions-cell">
+                                <button class="btn-details view-sale-details" data-id="${sale.id}">Detallar</button>
+                            </td>
+                        </tr>
+                    `;
+                });
+            };
+
+            debtTabs.addEventListener('click', (e) => {
+                const button = e.target.closest('button');
+                if (!button) return;
+                
+                debtTabs.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+                
+                currentDebtType = button.dataset.debtType;
+                renderDebts(currentDebtType);
+            });
+
+            appContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('button');
+                if (btn && btn.classList.contains('view-sale-details')) {
+                    const saleId = parseInt(btn.dataset.id);
+                    const sale = getSales().find(s => s.id === saleId);
+                    if (!sale) return;
+                    
+                    let productsHtml = `<table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead><tbody>`;
+                    sale.items.forEach(item => {
+                        productsHtml += `<tr><td>${item.name}</td><td>${item.quantity}</td><td>${item.salePrice.toFixed(2)} ₼</td><td>${(item.quantity * item.salePrice).toFixed(2)} ₼</td></tr>`;
+                    });
+                    productsHtml += '</tbody></table>';
+                    
+                    document.getElementById('productsInSaleContent').innerHTML = productsHtml;
+                    openModal(productsInSaleModal);
+                }
+            });
+
+            debtSearch.addEventListener('input', () => {
+                renderDebts(currentDebtType);
+            });
+
+            renderDebts(currentDebtType);
         }
 
         renderPage('finance');
