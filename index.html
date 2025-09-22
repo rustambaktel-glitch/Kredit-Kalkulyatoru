@@ -553,7 +553,6 @@
         </div>
     </template>
 
-
     <script>
     document.addEventListener('DOMContentLoaded', () => {
         const appContainer = document.getElementById('app-container');
@@ -763,7 +762,7 @@
             saveCustomers(customers);
             addTransaction(`Müştəri Ödənişi (${paymentType})`, `${customer.name} tərəfindən ödəniş`, amount);
             closeModal(acceptPaymentModal);
-            renderPage('finance'); // Yenilənmiş səhifəni yüklə
+            renderPage('finance');
         });
 
         addExpenseForm.addEventListener('submit', e => {
@@ -1696,6 +1695,7 @@
             }
         });
 
+        // Initial page load
         renderPage('finance');
     });
     </script>
