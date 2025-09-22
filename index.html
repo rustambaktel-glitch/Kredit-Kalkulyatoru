@@ -527,6 +527,10 @@
             </form>
         </div>
     </div>
+    <div id="customerSalesHistoryModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 id="customer-history-title">Müştəri Satış Tarixçəsi</h2><div id="customerSalesHistoryContent" style="margin-top: 20px;"></div></div></div>
+    <div id="purchaseDetailsModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Alış Detalları</h2><div id="purchaseDetailsContent" style="margin-top: 20px;"></div></div></div>
+    
+    <div id="productsInSaleModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Satışda olan məhsullar</h2><div id="productsInSaleContent" style="margin-top: 20px;"></div></div></div>
 
     <template id="finance-page-template">
         <div class="page-container">
@@ -580,6 +584,7 @@
         const otherIncomeModal = document.getElementById('otherIncomeModal');
         const otherIncomeForm = document.getElementById('otherIncomeForm');
         const purchaseDetailsModal = document.getElementById('purchaseDetailsModal');
+        const productsInSaleModal = document.getElementById('productsInSaleModal');
         
         // Modallar
         const addProductModal = document.getElementById('addProductModal');
@@ -892,7 +897,7 @@
                     const historyContent = document.getElementById('customerSalesHistoryContent');
 
                     historyTitle.textContent = `${customer.name} - Satış Tarixçəsi`;
-                    let historyHtml = `<table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Məbləğ</th><th></th></tr></thead><tbody>`;
+                    let historyHtml = `<table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody>`;
                     
                     if (sales.length === 0) {
                         historyHtml += '<tr><td colspan="5" style="text-align:center;">Bu müştərinin satış tarixçəsi yoxdur.</td></tr>';
