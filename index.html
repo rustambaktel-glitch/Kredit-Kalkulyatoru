@@ -555,7 +555,7 @@
                 </div>
                 <table class="data-table">
                     <thead>
-                        <tr><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th></tr>
+                        <tr><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th><th></th></tr>
                     </thead>
                     <tbody id="transactionsTableBody"></tbody>
                 </table>
@@ -563,7 +563,7 @@
         </div>
     </template>
 
-    <template id="reports-page-template"><div class="page-container"><div class="page-header"><h1>Hesabatlar</h1></div><div class="content-area"><div class="report-actions" id="report-tabs"><button class="btn btn-primary active" data-report="sales">Satışlar</button><button class="btn btn-primary" data-report="purchases">Alışlar</button><button class="btn btn-primary" data-report="financial">Maliyyə</button></div><div id="sales-report-view" class="report-view"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Müştəri</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="salesHistoryTableBody"></tbody></table></div><div id="purchases-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Təchizatçı</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="purchasesHistoryTableBody"></tbody></table></div><div id="financial-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="financialReportSearch" class="search-input" placeholder="Növ və ya açıqlamaya görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th></tr></thead><tbody id="financialHistoryTableBody"></tbody></table></div></div></div></template>
+    <template id="reports-page-template"><div class="page-container"><div class="page-header"><h1>Hesabatlar</h1></div><div class="content-area"><div class="report-actions" id="report-tabs"><button class="btn btn-primary active" data-report="sales">Satışlar</button><button class="btn btn-primary" data-report="purchases">Alışlar</button><button class="btn btn-primary" data-report="financial">Maliyyə</button></div><div id="sales-report-view" class="report-view"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Müştəri</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="salesHistoryTableBody"></tbody></table></div><div id="purchases-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Təchizatçı</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="purchasesHistoryTableBody"></tbody></table></div><div id="financial-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="financialReportSearch" class="search-input" placeholder="Növ və ya açıqlamaya görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th><th></th></tr></thead><tbody id="financialHistoryTableBody"></tbody></table></div></div></div></template>
     <template id="sales-page-template"><div class="page-container"><div class="page-header"><h1>Satış Etmək</h1></div><form id="saleForm"><div class="sale-container"><div class="content-area"><h4>Müştəri və Məhsul seçimi</h4><div class="form-group"><label for="saleCustomer">Müştəri Seçin</label><select id="saleCustomer" required></select></div><div class="form-group"><label for="saleProduct">Məhsul Əlavə Et</label><select id="saleProduct"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th></th></tr></thead><tbody id="cartTableBody"></tbody></table></div><div class="content-area"><h4>Satışı Yekunlaşdır</h4><div class="form-group"><label>Satış Növünü Seçin</label><div class="sale-type-buttons" style="display:flex; gap: 0.5rem;"><button type="button" class="btn sale-type-btn active" data-type="Nağd">Nağd</button><button type="button" class="btn sale-type-btn" data-type="POS Terminal">POS</button><button type="button" class="btn sale-type-btn" data-type="Kredit">Kredit</button><button type="button" class="btn sale-type-btn" data-type="Korporativ">Korporativ</button></div></div><div class="form-group" id="initialPaymentGroup" style="display:none;"><label for="initialPayment">İlkin Ödəniş (₼)</label><input type="number" id="initialPayment" value="0" step="0.01"></div><div class="summary-row"><span>Yekun Məbləğ:</span><span id="summaryTotal">0.00 ₼</span></div><div class="summary-row" id="debt-row" style="display:none;"><span>Borc qalığı:</span><span id="debt-total">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;"><span>Satışı Tamamla</span></button></div></div></div></form></div></template>
     <template id="purchases-page-template"><div class="page-container"><div class="page-header"><h1>Yeni Mal Alışı</h1></div><form id="purchaseForm"><div class="sale-container"><div class="content-area"><h4>Təchizatçı və Məhsul seçimi</h4><div class="form-group"><label>Təchizatçı Seçin</label><select id="purchaseSupplierSelect" required></select></div><div class="form-group"><label>Məhsul Əlavə Et</label><select id="purchaseProductSelect"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Alış Qiyməti</th><th>Toplam</th><th></th></tr></thead><tbody id="purchaseCartTableBody"></tbody></table></div><div class="content-area"><h4>Alışı Yekunlaşdır</h4><div class="summary-row total" style="margin-top: 1.5rem;"><span>Yekun Məbləğ:</span><span id="purchaseTotal">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;"><span>Alışı Tamamla</span></button></div></div></div></form></div></template>
     <template id="products-page-template"><div class="page-container"><div class="page-header"><h1>Məhsullar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="productSearch" class="search-input" placeholder="Məhsul adı və ya ID ilə axtar..."></div><button id="addProductBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Məhsul</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th></th></tr></thead><tbody id="productTableBody"></tbody></table></div></div></template>
@@ -580,7 +580,7 @@
         const otherIncomeModal = document.getElementById('otherIncomeModal');
         const otherIncomeForm = document.getElementById('otherIncomeForm');
         const purchaseDetailsModal = document.getElementById('purchaseDetailsModal');
-
+        
         // Modallar
         const addProductModal = document.getElementById('addProductModal');
         const editProductModal = document.getElementById('editProductModal');
@@ -621,7 +621,7 @@
             if(closeButton) closeButton.addEventListener('click', () => closeModal(modal));
             window.addEventListener('click', (event) => { if (event.target === modal) closeModal(modal); });
         });
-        
+
         const pageSetups = {
             'finance': setupFinancePage, 'reports': setupReportsPage, 'sales': setupSalesPage,
             'purchases': setupPurchasesPage, 'products': setupProductsPage, 'customers': setupCustomersPage, 'suppliers': setupSuppliersPage
@@ -662,7 +662,7 @@
             saveTransactions(transactions);
         }
 
-        // Global Event Listeners (Təkrarlanan dinləyicilərin qarşısını almaq üçün buraya köçürüldü)
+        // Global Event Listeners
         addProductForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const products = getProducts();
@@ -805,7 +805,6 @@
             renderPage('finance');
         });
 
-
         function setupProductsPage() {
             const productTableBody = appContainer.querySelector('#productTableBody');
             const addProductBtn = appContainer.querySelector('#addProductBtn');
@@ -861,7 +860,6 @@
             const customerTableBody = appContainer.querySelector('#customerTableBody');
             const addCustomerBtn = appContainer.querySelector('#addCustomerBtn');
             const customerSearch = appContainer.querySelector('#customerSearch');
-            const productsInSaleModal = document.getElementById('productsInSaleModal');
             
             const renderCustomers = () => {
                 const query = customerSearch.value.toLowerCase();
@@ -948,7 +946,7 @@
                     sale.items.forEach(item => {
                         productsHtml += `<tr><td>${item.name}</td><td>${item.quantity}</td><td>${item.salePrice.toFixed(2)} ₼</td><td>${(item.quantity * item.salePrice).toFixed(2)} ₼</td></tr>`;
                     });
-                    productsHtml += `</tbody></table>`;
+                    productsHtml += '</tbody></table>';
                     
                     document.getElementById('productsInSaleContent').innerHTML = productsHtml;
                     openModal(productsInSaleModal);
@@ -1386,7 +1384,7 @@
                     return;
                 }
                 transactions.forEach(tr => {
-                    financialHistoryTableBody.innerHTML += `<tr><td>${tr.id}</td><td>${tr.date}</td><td>${tr.type}</td><td>${tr.description}</td><td class="${tr.amount >= 0 ? 'positive' : 'negative'}">${tr.amount.toFixed(2)} ₼</td></tr>`;
+                    financialHistoryTableBody.innerHTML += `<tr><td>${tr.id}</td><td>${tr.date}</td><td>${tr.type}</td><td>${tr.description}</td><td class="${tr.amount >= 0 ? 'positive' : 'negative'}">${tr.amount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-delete finance-delete-btn" data-id="${tr.id}">🗑️</button></td></tr>`;
                 });
             };
             
@@ -1467,6 +1465,15 @@
                         openModal(purchaseDetailsModal);
                     }
                 }
+                
+                if (btn && btn.classList.contains('finance-delete-btn')) {
+                    const id = parseInt(btn.dataset.id);
+                    if (confirm('Bu əməliyyatı silməyə əminsiniz?')) {
+                        const transactions = getTransactions().filter(t => t.id !== id);
+                        saveTransactions(transactions);
+                        renderFinancial();
+                    }
+                }
             });
             
             renderAllSales();
@@ -1498,7 +1505,7 @@
 
                 transactionsTableBody.innerHTML = '';
                 transactions.slice().reverse().forEach(tr => {
-                    transactionsTableBody.innerHTML += `<tr><td>${tr.date}</td><td>${tr.type}</td><td>${tr.description}</td><td class="${tr.amount >= 0 ? 'positive' : 'negative'}">${tr.amount.toFixed(2)} ₼</td></tr>`;
+                    transactionsTableBody.innerHTML += `<tr><td>${tr.date}</td><td>${tr.type}</td><td>${tr.description}</td><td class="${tr.amount >= 0 ? 'positive' : 'negative'}">${tr.amount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-delete finance-delete-btn" data-id="${tr.id}">🗑️</button></td></tr>`;
                 });
             };
 
@@ -1554,6 +1561,18 @@
                 closeModal(expenseTypeModal);
                 addExpenseForm.reset();
                 openModal(addExpenseModal);
+            });
+            
+            transactionsTableBody.addEventListener('click', (e) => {
+                const btn = e.target.closest('button');
+                if (btn && btn.classList.contains('finance-delete-btn')) {
+                    const id = parseInt(btn.dataset.id);
+                    if (confirm('Bu əməliyyatı silməyə əminsiniz?')) {
+                        const transactions = getTransactions().filter(t => t.id !== id);
+                        saveTransactions(transactions);
+                        renderFinancePage();
+                    }
+                }
             });
 
             renderFinancePage();
