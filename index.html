@@ -249,7 +249,6 @@
         .data-table tbody tr:hover {
             background-color: #f0f4f7;
         }
-        /* DƏYİŞİKLİK: Pəncərə stilləri yeniləndi */
         .modal {
             display: none;
             position: fixed;
@@ -261,9 +260,9 @@
             background-color: rgba(33, 33, 33, 0.6);
             backdrop-filter: blur(5px);
             justify-content: center;
-            align-items: flex-start; /* Pəncərə yuxarıdan başlasın */
-            overflow-y: auto; /* Bütün səhifənin scroll olması üçün */
-            padding: 5vh 0; /* Yuxarıdan boşluq */
+            align-items: flex-start;
+            overflow-y: auto;
+            padding: 5vh 0;
         }
         .modal-content {
             background: var(--bg-content);
@@ -275,7 +274,6 @@
             box-shadow: var(--shadow-md);
             animation: modal-open 0.3s ease-out;
             z-index: 1001;
-            /* max-height və overflow-y ləğv edildi */
         }
         @keyframes modal-open {
             from { transform: translateY(-50px); opacity: 0; }
@@ -403,11 +401,9 @@
             margin-top: 1.5rem;
             border-bottom: none;
         }
-        
         #customerSalesHistoryModal .modal-content {
-            max-width: 70rem; /* Pəncərənin enini daha da artırdıq */
+            max-width: 70rem;
         }
-
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -600,7 +596,105 @@
     </template>
 
     <template id="reports-page-template"><div class="page-container"><div class="page-header"><h1>Hesabatlar</h1></div><div class="content-area"><div class="report-actions" id="report-tabs"><button class="btn btn-primary active" data-report="sales">Satışlar</button><button class="btn btn-primary" data-report="purchases">Alışlar</button><button class="btn btn-primary" data-report="financial">Maliyyə</button></div><div id="sales-report-view" class="report-view"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Müştəri</th><th>Növ</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="salesHistoryTableBody"></tbody></table></div><div id="purchases-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Təchizatçı</th><th>Yekun Məbləğ</th><th></th></tr></thead><tbody id="purchasesHistoryTableBody"></tbody></table></div><div id="financial-report-view" class="report-view" style="display:none;"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="financialReportSearch" class="search-input" placeholder="Növ və ya açıqlamaya görə axtar..."></div></div><table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Açıqlama</th><th>Məbləğ</th><th></th></tr></thead><tbody id="financialHistoryTableBody"></tbody></table></div></div></div></template>
-    <template id="sales-page-template"><div class="page-container"><div class="page-header"><h1>Satış Etmək</h1></div><form id="saleForm"><div class="sale-container"><div class="content-area"><h4>Müştəri və Məhsul seçimi</h4><div class="form-group"><label for="saleCustomer">Müştəri Seçin</label><select id="saleCustomer" required></select></div><div class="form-group"><label for="saleProduct">Məhsul Əlavə Et</label><select id="saleProduct"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th></th></tr></thead><tbody id="cartTableBody"></tbody></table></div><div class="content-area"><h4>Satışı Yekunlaşdır</h4><div class="form-group"><label>Satış Növünü Seçin</label><div class="sale-type-buttons" style="display:flex; gap: 0.5rem;"><button type="button" class="btn sale-type-btn active" data-type="Nağd">Nağd</button><button type="button" class="btn sale-type-btn" data-type="POS Terminal">POS</button><button type="button" class="btn sale-type-btn" data-type="Kredit">Kredit</button><button type="button" class="btn sale-type-btn" data-type="Korporativ">Korporativ</button><button type="button" class="btn sale-type-btn" data-type="Açıq Qaimə">Açıq Qaimə</button></div></div><div class="form-group" id="initialPaymentGroup" style="display:none;"><label for="initialPayment">İlkin Ödəniş (₼)</label><input type="number" id="initialPayment" value="0" step="0.01"></div><div class="summary-row"><span>Yekun Məbləğ:</span><span id="summaryTotal">0.00 ₼</span></div><div class="summary-row" id="debt-row" style="display:none;"><span>Borc qalığı:</span><span id="debt-total">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;"><span>Satışı Tamamla</span></button></div></div></div></form></div></template>
+    
+    <template id="sales-page-template">
+        <div class="page-container">
+            <div class="page-header"><h1>Satış Etmək</h1></div>
+            <div class="content-area">
+                <div class="report-actions" id="sale-tabs">
+                    <button class="btn btn-primary active" data-sale-type="cash">Nağd Satış</button>
+                    <button class="btn btn-primary" data-sale-type="credit">Kredit Satışı</button>
+                    <button class="btn btn-primary" data-sale-type="corporate">Korporativ Satış</button>
+                </div>
+
+                <div id="cash-sale-view" class="sale-view">
+                    <form id="cashSaleForm">
+                        <div class="sale-container">
+                            <div>
+                                <h4>Müştəri və Məhsul seçimi</h4>
+                                <div class="form-group"><label>Müştəri Seçin</label><select class="sale-customer" required></select></div>
+                                <div class="form-group"><label>Məhsul Əlavə Et</label><select class="sale-product"></select></div>
+                                <table class="data-table">
+                                    <thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th></th></tr></thead>
+                                    <tbody class="cart-table-body"></tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <h4>Satışı Yekunlaşdır</h4>
+                                <div class="form-group">
+                                    <label>Ödəmə Növü</label>
+                                    <select class="payment-type">
+                                        <option value="Nağd">Nağd</option>
+                                        <option value="POS Terminal">POS Terminal</option>
+                                        <option value="Açıq Qaimə">Açıq Qaimə</option>
+                                    </select>
+                                </div>
+                                <div class="summary-row total"><span>Yekun Məbləğ:</span><span class="summary-total">0.00 ₼</span></div>
+                                <div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;">Satışı Tamamla</button></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div id="credit-sale-view" class="sale-view" style="display:none;">
+                    <form id="creditSaleForm">
+                        <div class="sale-container">
+                            <div>
+                                <h4>Müştəri və Məhsul seçimi</h4>
+                                <div class="form-group"><label>Müştəri Seçin</label><select class="sale-customer" required></select></div>
+                                <div class="form-group"><label>Məhsul Əlavə Et</label><select class="sale-product"></select></div>
+                                <table class="data-table">
+                                    <thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th></th></tr></thead>
+                                    <tbody class="cart-table-body"></tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <h4>Kredit Məlumatları</h4>
+                                <div class="form-group"><label>İlkin Ödəniş (₼)</label><input type="number" class="initial-payment" value="0" step="0.01" required></div>
+                                <div class="form-group"><label>Ayların Sayı</label>
+                                    <select class="loan-term">
+                                        <option value="3">3 ay</option>
+                                        <option value="6">6 ay</option>
+                                        <option value="9">9 ay</option>
+                                        <option value="12">12 ay</option>
+                                        <option value="18">18 ay</option>
+                                        <option value="24">24 ay</option>
+                                    </select>
+                                </div>
+                                <div class="summary-row total"><span>Yekun Məbləğ:</span><span class="summary-total">0.00 ₼</span></div>
+                                <div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;">Krediti Rəsmiləşdir</button></div>
+                            </div>
+                        </div>
+                        <div id="payment-schedule" style="margin-top: 2rem;"></div>
+                    </form>
+                </div>
+
+                <div id="corporate-sale-view" class="sale-view" style="display:none;">
+                     <form id="corporateSaleForm">
+                        <div class="sale-container">
+                            <div>
+                                <h4>Müştəri və Məhsul seçimi</h4>
+                                <div class="form-group"><label>Korporativ Müştəri Seçin</label><select class="sale-customer" required></select></div>
+                                <div class="form-group"><label>Məhsul Əlavə Et</label><select class="sale-product"></select></div>
+                                <table class="data-table">
+                                    <thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th><th></th></tr></thead>
+                                    <tbody class="cart-table-body"></tbody>
+                                </table>
+                            </div>
+                            <div>
+                                <h4>Satışı Yekunlaşdır</h4>
+                                <div class="form-group"><label>İlkin Ödəniş (₼)</label><input type="number" class="initial-payment" value="0" step="0.01"></div>
+                                <div class="summary-row total"><span>Yekun Məbləğ:</span><span class="summary-total">0.00 ₼</span></div>
+                                <div class="summary-row"><span>Qalıq Borc:</span><span class="debt-total">0.00 ₼</span></div>
+                                <div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;">Satışı Tamamla</button></div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </template>
+
     <template id="purchases-page-template"><div class="page-container"><div class="page-header"><h1>Yeni Mal Alışı</h1></div><form id="purchaseForm"><div class="sale-container"><div class="content-area"><h4>Təchizatçı və Məhsul seçimi</h4><div class="form-group"><label>Təchizatçı Seçin</label><select id="purchaseSupplierSelect" required></select></div><div class="form-group"><label>Məhsul Əlavə Et</label><select id="purchaseProductSelect"></select></div><table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Alış Qiyməti</th><th>Toplam</th><th></th></tr></thead><tbody id="purchaseCartTableBody"></tbody></table></div><div class="content-area"><h4>Alışı Yekunlaşdır</h4><div class="summary-row total" style="margin-top: 1.5rem;"><span>Yekun Məbləğ:</span><span id="purchaseTotal">0.00 ₼</span></div><div class="form-actions"><button type="submit" class="btn btn-success" style="width: 100%; padding: 1rem; font-size: 1rem;"><span>Alışı Tamamla</span></button></div></div></div></form></div></template>
     <template id="products-page-template"><div class="page-container"><div class="page-header"><h1>Məhsullar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="productSearch" class="search-input" placeholder="Məhsul adı və ya ID ilə axtar..."></div><button id="addProductBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Məhsul</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th></th></tr></thead><tbody id="productTableBody"></tbody></table></div></div></template>
     <template id="customers-page-template"><div class="page-container"><div class="page-header"><h1>Müştərilər</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="customerSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addCustomerBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Müştəri</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Tam Adı</th><th>Telefon</th><th>Borc</th><th></th></tr></thead><tbody id="customerTableBody"></tbody></table></div></div></template>
@@ -925,27 +1019,22 @@
             renderProducts();
         }
 
-        // SON DƏYİŞİKLİKLƏRLƏ YENİLƏNMİŞ TAM setupCustomersPage FUNKSİYASI
         function setupCustomersPage() {
             const customerTableBody = appContainer.querySelector('#customerTableBody');
             const addCustomerBtn = appContainer.querySelector('#addCustomerBtn');
             const customerSearch = appContainer.querySelector('#customerSearch');
-            
             const populateGuarantorSelects = () => {
                 const customers = getCustomers();
                 const addGuarantorSelect = document.getElementById('customerGuarantorModal');
                 const editGuarantorSelect = document.getElementById('editCustomerGuarantor');
-                
                 addGuarantorSelect.innerHTML = '<option value="">-- Zamin Seçin --</option>';
                 editGuarantorSelect.innerHTML = '<option value="">-- Zamin Seçin --</option>';
-
                 customers.forEach(c => {
                     const option = `<option value="${c.id}">${c.name}</option>`;
                     addGuarantorSelect.innerHTML += option;
                     editGuarantorSelect.innerHTML += option;
                 });
             };
-
             const renderCustomers = () => {
                 const query = customerSearch.value.toLowerCase();
                 let customers = getCustomers();
@@ -972,35 +1061,27 @@
                         </tr>`;
                 });
             };
-
             addCustomerBtn.addEventListener('click', () => {
                 addCustomerForm.reset();
                 populateGuarantorSelects();
                 openModal(addCustomerModal); 
             });
-
             customerTableBody.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
                 if (!btn) return;
                 const id = parseInt(btn.dataset.id);
-
                 if (btn.classList.contains('customer-details-btn')) {
                     const customer = getCustomers().find(c => c.id === id);
                     if (!customer) return;
-
                     const sales = getSales().filter(s => s.customerId === id);
-                    
                     let guarantorName = "Seçilməyib";
                     if(customer.guarantorId) {
                         const guarantor = getCustomers().find(g => g.id === customer.guarantorId);
                         if(guarantor) guarantorName = guarantor.name;
                     }
-
                     const historyTitle = document.getElementById('customer-history-title');
                     const historyContent = document.getElementById('customerSalesHistoryContent');
-
                     historyTitle.textContent = `${customer.name} - Ətraflı Məlumat`;
-                    
                     let customerInfoHtml = `
                         <div style="background: #f9fafb; padding: 1.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); margin-bottom: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
                             <p><strong><span style="color: var(--text-secondary);">Ş/V Seriya:</span></strong><br>${customer.sv_seria || 'Qeyd edilməyib'}</p>
@@ -1010,7 +1091,6 @@
                             <p style="grid-column: 1 / -1;"><strong><span style="color: var(--text-secondary);">Ünvan:</span></strong><br>${customer.unvan || 'Qeyd edilməyib'}</p>
                         </div>
                     `;
-                    
                     let allItems = [];
                     sales.forEach(sale => {
                         sale.items.forEach(item => {
@@ -1021,7 +1101,6 @@
                             });
                         });
                     });
-
                     let productHistoryHtml = `
                         <h4>Alınan Məhsullar</h4>
                         <table class="data-table" style="margin-top: 1rem;">
@@ -1036,7 +1115,6 @@
                                 </tr>
                             </thead>
                             <tbody>`;
-                    
                     if (allItems.length === 0) {
                         productHistoryHtml += '<tr><td colspan="6" style="text-align:center;">Müştərinin məhsul alışı olmayıb.</td></tr>';
                     } else {
@@ -1053,12 +1131,10 @@
                         });
                     }
                     productHistoryHtml += `</tbody></table>`;
-                    
                     historyContent.innerHTML = customerInfoHtml + productHistoryHtml;
                     openModal(customerSalesHistoryModal);
                     return;
                 }
-
                 if (btn.classList.contains('btn-delete')) {
                     const customer = getCustomers().find(c => c.id === id);
                     if (customer.debt > 0) {
@@ -1085,7 +1161,6 @@
                     }
                 }
             });
-
             customerSearch.addEventListener('input', renderCustomers);
             renderCustomers();
         }
@@ -1139,177 +1214,287 @@
             renderSuppliers();
         }
         
+        // YENİLƏNMİŞ TAM setupSalesPage FUNKSİYASI
         function setupSalesPage() {
-            const saleForm = appContainer.querySelector('#saleForm');
-            const saleCustomerSelect = appContainer.querySelector('#saleCustomer');
-            const saleProductSelect = appContainer.querySelector('#saleProduct');
-            const cartTableBody = appContainer.querySelector('#cartTableBody');
-            const summaryTotal = appContainer.querySelector('#summaryTotal');
-            const initialPaymentGroup = appContainer.querySelector('#initialPaymentGroup');
-            const initialPaymentInput = appContainer.querySelector('#initialPayment');
-            const debtRow = appContainer.querySelector('#debt-row');
-            const debtTotal = appContainer.querySelector('#debt-total');
-            let currentCart = [];
-            const saleTypeButtonsContainer = appContainer.querySelector('.sale-type-buttons');
-            let selectedSaleType = 'Nağd';
-            const initializeSalePage = () => {
+            const saleTabs = appContainer.querySelector('#sale-tabs');
+            const saleViews = appContainer.querySelectorAll('.sale-view');
+            const forms = {
+                cash: appContainer.querySelector('#cashSaleForm'),
+                credit: appContainer.querySelector('#creditSaleForm'),
+                corporate: appContainer.querySelector('#corporateSaleForm')
+            };
+            const carts = { cash: [], credit: [], corporate: [] };
+            let activeTab = 'cash';
+
+            const populateDropdowns = (view) => {
                 const customers = getCustomers();
-                saleCustomerSelect.innerHTML = '<option value="">-- Müştəri Seçin --</option><option value="0">Nağd Alıcı</option>';
-                customers.forEach(c => { saleCustomerSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
                 const products = getProducts();
-                saleProductSelect.innerHTML = '<option value="">-- Məhsul Əlavə Et --</option>';
-                products.forEach(p => { if (p.stock > 0) { saleProductSelect.innerHTML += `<option value="${p.id}">${p.name} (Stok: ${p.stock})</option>`; }});
-                currentCart = [];
-                renderCart();
-                saleForm.reset();
-                initialPaymentGroup.style.display = 'none';
-                debtRow.style.display = 'none';
-                saleTypeButtonsContainer.querySelectorAll('.sale-type-btn').forEach(b => b.classList.remove('active'));
-                saleTypeButtonsContainer.querySelector('.sale-type-btn[data-type="Nağd"]').classList.add('active');
-                selectedSaleType = 'Nağd';
+                const customerSelect = view.querySelector('.sale-customer');
+                const productSelect = view.querySelector('.sale-product');
+                
+                customerSelect.innerHTML = '<option value="">-- Müştəri Seçin --</option>';
+                if (activeTab === 'cash') {
+                    customerSelect.innerHTML += '<option value="0">Nağd Alıcı</option>';
+                }
+                customers.forEach(c => { customerSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
+
+                productSelect.innerHTML = '<option value="">-- Məhsul Əlavə Et --</option>';
+                products.forEach(p => { if (p.stock > 0) { productSelect.innerHTML += `<option value="${p.id}">${p.name} (Stok: ${p.stock})</option>`; }});
             };
-            const calculateTotals = () => {
-                const totalAmount = currentCart.reduce((s, i) => s + (i.quantity * i.salePrice), 0);
-                summaryTotal.textContent = `${totalAmount.toFixed(2)} ₼`;
-                return totalAmount;
+
+            const calculateTotal = (cart, view) => {
+                const total = cart.reduce((sum, item) => sum + (item.quantity * item.price), 0);
+                view.querySelector('.summary-total').textContent = `${total.toFixed(2)} ₼`;
+                
+                if (view.id === 'corporate-sale-view') {
+                    const initialPayment = parseFloat(view.querySelector('.initial-payment').value) || 0;
+                    const debt = total - initialPayment;
+                    view.querySelector('.debt-total').textContent = `${debt.toFixed(2)} ₼`;
+                }
+                return total;
             };
-            const renderCart = () => {
-                cartTableBody.innerHTML = '';
-                if (currentCart.length === 0) {
-                    cartTableBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Səbət boşdur</td></tr>';
+
+            const renderCart = (cart, view) => {
+                const cartBody = view.querySelector('.cart-table-body');
+                cartBody.innerHTML = '';
+                if (cart.length === 0) {
+                    cartBody.innerHTML = '<tr><td colspan="5" style="text-align:center;">Səbət boşdur</td></tr>';
                 } else {
-                    currentCart.forEach(i => {
-                        const itemTotal = i.quantity * i.salePrice;
-                        cartTableBody.innerHTML += `<tr><td>${i.name}</td><td><input type="number" class="cart-quantity-input" data-id="${i.id}" value="${i.quantity}" min="1" max="${i.stock}"></td><td>${i.salePrice.toFixed(2)} ₼</td><td>${itemTotal.toFixed(2)} ₼</td><td class="actions-cell"><button type="button" class="btn-delete cart-remove-btn" data-id="${i.id}">🗑️</button></td></tr>`;
+                    cart.forEach(item => {
+                        const itemTotal = item.quantity * item.price;
+                        cartBody.innerHTML += `<tr>
+                            <td>${item.name}</td>
+                            <td><input type="number" class="cart-quantity-input" data-id="${item.id}" value="${item.quantity}" min="1" max="${item.stock}"></td>
+                            <td><input type="number" class="cart-price-input" data-id="${item.id}" value="${item.price.toFixed(2)}" step="0.01" min="0"></td>
+                            <td>${itemTotal.toFixed(2)} ₼</td>
+                            <td class="actions-cell"><button type="button" class="btn-delete cart-remove-btn" data-id="${item.id}">🗑️</button></td>
+                        </tr>`;
                     });
                 }
-                calculateTotals();
+                calculateTotal(cart, view);
+                if (activeTab === 'credit') generatePaymentSchedule();
             };
-            saleProductSelect.addEventListener('change', () => {
-                const productId = parseInt(saleProductSelect.value);
-                if (!productId) return;
-                const product = getProducts().find(p => p.id === productId);
-                if (!product) return;
-                const existingItem = currentCart.find(i => i.id === productId);
-                if (existingItem) {
-                    if (existingItem.quantity < product.stock) {
-                        existingItem.quantity++;
+            
+            const generatePaymentSchedule = () => {
+                const view = forms.credit;
+                const scheduleDiv = view.querySelector('#payment-schedule');
+                const total = calculateTotal(carts.credit, view);
+                const initialPayment = parseFloat(view.querySelector('.initial-payment').value) || 0;
+                const loanTerm = parseInt(view.querySelector('.loan-term').value);
+
+                if (total <= 0 || total < initialPayment) {
+                    scheduleDiv.innerHTML = '';
+                    return;
+                }
+
+                const loanAmount = total - initialPayment;
+                const monthlyPayment = loanAmount / loanTerm;
+
+                let scheduleHtml = '<h4>Ödəniş Cədvəli</h4><table class="data-table" style="margin-top: 1rem;"><thead><tr><th>Ay #</th><th>Ödəniş Tarixi</th><th>Aylıq Ödəniş</th></tr></thead><tbody>';
+                let currentDate = new Date();
+                for (let i = 1; i <= loanTerm; i++) {
+                    currentDate.setMonth(currentDate.getMonth() + 1);
+                    scheduleHtml += `<tr><td>${i}</td><td>${currentDate.toLocaleDateString('az-AZ')}</td><td>${monthlyPayment.toFixed(2)} ₼</td></tr>`;
+                }
+                scheduleHtml += '</tbody></table>';
+                scheduleDiv.innerHTML = scheduleHtml;
+            };
+
+            saleTabs.addEventListener('click', (e) => {
+                const button = e.target.closest('button');
+                if (!button) return;
+                
+                saleTabs.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                activeTab = button.dataset.saleType;
+
+                saleViews.forEach(view => {
+                    view.style.display = view.id.startsWith(activeTab) ? 'block' : 'none';
+                });
+
+                populateDropdowns(forms[activeTab]);
+                renderCart(carts[activeTab], forms[activeTab]);
+            });
+
+            appContainer.addEventListener('change', (e) => {
+                if (e.target.classList.contains('sale-product')) {
+                    const productId = parseInt(e.target.value);
+                    if (!productId) return;
+                    const product = getProducts().find(p => p.id === productId);
+                    if (!product) return;
+                    
+                    const cart = carts[activeTab];
+                    const existingItem = cart.find(i => i.id === productId);
+
+                    if (existingItem) {
+                        if (existingItem.quantity < product.stock) existingItem.quantity++;
+                        else alert('Anbarda kifayət qədər məhsul yoxdur!');
                     } else {
-                        alert('Anbarda kifayət qədər məhsul yoxdur!');
+                        cart.push({ ...product, quantity: 1, price: product.salePrice });
                     }
-                } else {
-                    currentCart.push({ ...product, quantity: 1 });
+                    renderCart(cart, forms[activeTab]);
+                    e.target.value = '';
                 }
-                renderCart();
-                saleProductSelect.value = '';
             });
-            cartTableBody.addEventListener('input', (e) => {
-                if (e.target.classList.contains('cart-quantity-input')) {
+
+            appContainer.addEventListener('input', (e) => {
+                if (e.target.classList.contains('cart-quantity-input') || e.target.classList.contains('cart-price-input')) {
                     const productId = parseInt(e.target.dataset.id);
-                    let newQuantity = parseInt(e.target.value);
-                    const item = currentCart.find(i => i.id === productId);
+                    const cart = carts[activeTab];
+                    const item = cart.find(i => i.id === productId);
                     if (!item) return;
-                    if (newQuantity > item.stock) {
-                        alert(`Anbarda yalnız ${item.stock} ədəd var!`);
-                        newQuantity = item.stock;
-                        e.target.value = newQuantity;
+
+                    if (e.target.classList.contains('cart-quantity-input')) {
+                        let newQuantity = parseInt(e.target.value) || 1;
+                        if (newQuantity > item.stock) {
+                            alert(`Anbarda yalnız ${item.stock} ədəd var!`);
+                            newQuantity = item.stock;
+                            e.target.value = newQuantity;
+                        }
+                        item.quantity = newQuantity;
                     }
-                    if (newQuantity < 1) {
-                        newQuantity = 1;
-                        e.target.value = newQuantity;
+                    if (e.target.classList.contains('cart-price-input')) {
+                        item.price = parseFloat(e.target.value) || 0;
                     }
-                    item.quantity = newQuantity;
-                    renderCart();
+                    renderCart(cart, forms[activeTab]);
+                }
+                if (e.target.classList.contains('initial-payment') || e.target.classList.contains('loan-term')) {
+                    if (activeTab === 'credit') generatePaymentSchedule();
+                    if (activeTab === 'corporate') calculateTotal(carts.corporate, forms.corporate);
                 }
             });
-            cartTableBody.addEventListener('click', (e) => {
-                const btn = e.target.closest('button');
-                if(btn && btn.classList.contains('cart-remove-btn')) {
-                    currentCart = currentCart.filter(i => i.id !== parseInt(btn.dataset.id));
-                    renderCart();
+            
+            appContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('button.cart-remove-btn');
+                if (btn) {
+                    const productId = parseInt(btn.dataset.id);
+                    carts[activeTab] = carts[activeTab].filter(i => i.id !== productId);
+                    renderCart(carts[activeTab], forms[activeTab]);
                 }
             });
-            saleTypeButtonsContainer.addEventListener('click', (e) => {
-                const clickedButton = e.target.closest('.sale-type-btn');
-                if (!clickedButton) return;
-                saleTypeButtonsContainer.querySelectorAll('.sale-type-btn').forEach(btn => btn.classList.remove('active'));
-                clickedButton.classList.add('active');
-                selectedSaleType = clickedButton.dataset.type;
-                const totalAmount = calculateTotals();
-                if (['Kredit', 'Korporativ', 'Açıq Qaimə'].includes(selectedSaleType)) {
-                    initialPaymentGroup.style.display = 'block';
-                    debtRow.style.display = 'flex';
-                    initialPaymentInput.value = (selectedSaleType === 'Açıq Qaimə') ? 0 : 0;
-                    debtTotal.textContent = `${totalAmount.toFixed(2)} ₼`;
-                } else {
-                    initialPaymentGroup.style.display = 'none';
-                    debtRow.style.display = 'none';
-                    initialPaymentInput.value = totalAmount;
-                }
-            });
-            initialPaymentInput.addEventListener('input', () => {
-                const totalAmount = calculateTotals();
-                const initialPayment = parseFloat(initialPaymentInput.value) || 0;
-                const debt = totalAmount - initialPayment;
-                debtTotal.textContent = `${debt.toFixed(2)} ₼`;
-            });
-            saleForm.addEventListener('submit', (e) => {
+
+            forms.cash.addEventListener('submit', (e) => {
                 e.preventDefault();
-                if (currentCart.length === 0 || !saleCustomerSelect.value) {
+                const cart = carts.cash;
+                const view = forms.cash;
+                const customerId = parseInt(view.querySelector('.sale-customer').value);
+                const paymentType = view.querySelector('.payment-type').value;
+                if (cart.length === 0 || (customerId !== 0 && !customerId)) {
                     alert('Müştəri seçin və səbətə məhsul əlavə edin!');
                     return;
                 }
-                const totalAmount = calculateTotals();
-                const isCreditType = ['Kredit', 'Korporativ', 'Açıq Qaimə'].includes(selectedSaleType);
-                const customerId = parseInt(saleCustomerSelect.value);
-                const initialPayment = isCreditType ? parseFloat(initialPaymentInput.value || 0) : totalAmount;
+                
+                const totalAmount = calculateTotal(cart, view);
+                const isDebt = paymentType === 'Açıq Qaimə';
+                const initialPayment = isDebt ? 0 : totalAmount;
                 const debt = totalAmount - initialPayment;
-                if (isCreditType && customerId === 0) {
-                    alert(`${selectedSaleType} satışı üçün "Nağd Alıcı" seçilə bilməz!`);
+
+                if (isDebt && customerId === 0) {
+                    alert('Açıq Qaimə satışı üçün "Nağd Alıcı" seçilə bilməz!');
                     return;
                 }
-                if (isCreditType && initialPayment > totalAmount) {
+                
+                const customer = getCustomers().find(c => c.id === customerId);
+                const customerName = customerId === 0 ? "Nağd Alıcı" : (customer ? customer.name : "Silinmiş Müştəri");
+
+                saveSale(cart, customerId, customerName, paymentType, totalAmount, initialPayment, debt);
+                alert('Satış uğurla tamamlandı!');
+                carts.cash = [];
+                renderCart(carts.cash, view);
+                view.reset();
+            });
+
+            forms.credit.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const cart = carts.credit;
+                const view = forms.credit;
+                const customerId = parseInt(view.querySelector('.sale-customer').value);
+                if (cart.length === 0 || !customerId) {
+                    alert('Müştəri seçin və səbətə məhsul əlavə edin!');
+                    return;
+                }
+
+                const totalAmount = calculateTotal(cart, view);
+                const initialPayment = parseFloat(view.querySelector('.initial-payment').value) || 0;
+                const debt = totalAmount - initialPayment;
+
+                if (initialPayment >= totalAmount) {
+                    alert('İlkin ödəniş ümumi məbləğdən kiçik olmalıdır!');
+                    return;
+                }
+
+                const customer = getCustomers().find(c => c.id === customerId);
+                const customerName = customer ? customer.name : "Silinmiş Müştəri";
+
+                saveSale(cart, customerId, customerName, "Kredit", totalAmount, initialPayment, debt);
+                alert('Kredit satışı uğurla rəsmiləşdirildi!');
+                carts.credit = [];
+                renderCart(carts.credit, view);
+                view.reset();
+                generatePaymentSchedule();
+            });
+
+            forms.corporate.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const cart = carts.corporate;
+                const view = forms.corporate;
+                const customerId = parseInt(view.querySelector('.sale-customer').value);
+                if (cart.length === 0 || !customerId) {
+                    alert('Müştəri seçin və səbətə məhsul əlavə edin!');
+                    return;
+                }
+
+                const totalAmount = calculateTotal(cart, view);
+                const initialPayment = parseFloat(view.querySelector('.initial-payment').value) || 0;
+                const debt = totalAmount - initialPayment;
+                
+                if (initialPayment > totalAmount) {
                     alert('İlkin ödəniş ümumi məbləğdən çox ola bilməz!');
                     return;
                 }
+
+                const customer = getCustomers().find(c => c.id === customerId);
+                const customerName = customer ? customer.name : "Silinmiş Müştəri";
+
+                saveSale(cart, customerId, customerName, "Korporativ", totalAmount, initialPayment, debt);
+                alert('Korporativ satış uğurla tamamlandı!');
+                carts.corporate = [];
+                renderCart(carts.corporate, view);
+                view.reset();
+            });
+
+            const saveSale = (cart, customerId, customerName, type, totalAmount, initialPayment, debt) => {
                 let products = getProducts();
-                currentCart.forEach(item => {
+                cart.forEach(item => {
                     let product = products.find(p => p.id === item.id);
                     if (product) product.stock -= item.quantity;
                 });
                 saveProducts(products);
-                if (isCreditType && debt > 0) {
+
+                if (debt > 0) {
                     let customers = getCustomers();
                     let customer = customers.find(c => c.id === customerId);
                     if (customer) customer.debt += debt;
                     saveCustomers(customers);
                 }
+                
                 let sales = getSales();
-                let customerName = "Nağd Alıcı";
-                if (customerId !== 0) {
-                    const customer = getCustomers().find(c => c.id === customerId);
-                    if (customer) customerName = customer.name;
-                    else customerName = "Silinmiş Müştəri";
-                }
                 const newSale = {
-                    id: Date.now(),
-                    customerId,
-                    customerName,
-                    items: currentCart,
-                    totalAmount,
-                    type: selectedSaleType,
-                    initialPayment,
+                    id: Date.now(), customerId, customerName, type, totalAmount, initialPayment,
+                    items: cart.map(i => ({id: i.id, name: i.name, quantity: i.quantity, salePrice: i.price})),
                     date: new Date().toLocaleString('az-AZ')
                 };
                 sales.push(newSale);
                 saveSales(sales);
+                
                 if (initialPayment > 0) {
-                    addTransaction(`${selectedSaleType} Satış`, `Satış #${newSale.id} - ${customerName}`, initialPayment);
+                    addTransaction(`${type} Satış`, `Satış #${newSale.id} - ${customerName}`, initialPayment);
                 }
-                alert('Satış uğurla tamamlandı!');
-                initializeSalePage();
-            });
-            initializeSalePage();
+            };
+            
+            // İlk açılış
+            populateDropdowns(forms.cash);
         }
 
         function setupPurchasesPage() {
