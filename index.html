@@ -249,6 +249,7 @@
         .data-table tbody tr:hover {
             background-color: #f0f4f7;
         }
+        /* DƏYİŞİKLİK: Pəncərə stilləri yeniləndi */
         .modal {
             display: none;
             position: fixed;
@@ -260,7 +261,9 @@
             background-color: rgba(33, 33, 33, 0.6);
             backdrop-filter: blur(5px);
             justify-content: center;
-            align-items: center;
+            align-items: flex-start; /* Pəncərə yuxarıdan başlasın */
+            overflow-y: auto; /* Bütün səhifənin scroll olması üçün */
+            padding: 5vh 0; /* Yuxarıdan boşluq */
         }
         .modal-content {
             background: var(--bg-content);
@@ -269,11 +272,10 @@
             width: 45rem;
             max-width: 90%;
             position: relative;
-            max-height: 90vh;
-            overflow-y: auto;
             box-shadow: var(--shadow-md);
             animation: modal-open 0.3s ease-out;
             z-index: 1001;
+            /* max-height və overflow-y ləğv edildi */
         }
         @keyframes modal-open {
             from { transform: translateY(-50px); opacity: 0; }
@@ -402,9 +404,8 @@
             border-bottom: none;
         }
         
-        /* YENİ STİL KODU */
         #customerSalesHistoryModal .modal-content {
-            max-width: 60rem;
+            max-width: 70rem; /* Pəncərənin enini daha da artırdıq */
         }
 
         @media (max-width: 768px) {
@@ -500,12 +501,9 @@
             </div>
             <div class="form-group">
                 <label for="customerGuarantorModal">Zamin</label>
-                <div style="display: flex; gap: 0.5rem; align-items: center;">
-                    <select id="customerGuarantorModal" style="flex-grow: 1;">
-                        <option value="">-- Zamin Seçin --</option>
-                    </select>
-                    <button type="button" id="addGuarantorBtn" class="btn btn-primary" style="padding: 0.5rem; line-height: 1;">+</button>
-                </div>
+                <select id="customerGuarantorModal">
+                    <option value="">-- Zamin Seçin --</option>
+                </select>
             </div>
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Yadda Saxla</button>
@@ -927,6 +925,7 @@
             renderProducts();
         }
 
+        // SON DƏYİŞİKLİKLƏRLƏ YENİLƏNMİŞ TAM setupCustomersPage FUNKSİYASI
         function setupCustomersPage() {
             const customerTableBody = appContainer.querySelector('#customerTableBody');
             const addCustomerBtn = appContainer.querySelector('#addCustomerBtn');
@@ -946,12 +945,6 @@
                     editGuarantorSelect.innerHTML += option;
                 });
             };
-            
-            document.getElementById('addGuarantorBtn').addEventListener('click', () => {
-                alert("Yeni zamin yaratmaq üçün müştəri əlavə etmə pəncərəsi açılır. Məlumatları daxil edib yadda saxlayın, sonra bu müştərini zamin kimi seçə bilərsiniz.");
-                addCustomerForm.reset();
-                openModal(addCustomerModal);
-            });
 
             const renderCustomers = () => {
                 const query = customerSearch.value.toLowerCase();
@@ -995,7 +988,7 @@
                     const customer = getCustomers().find(c => c.id === id);
                     if (!customer) return;
 
-                    const sales = getSales().filter(s => s.customerId === id).reverse();
+                    const sales = getSales().filter(s => s.customerId === id);
                     
                     let guarantorName = "Seçilməyib";
                     if(customer.guarantorId) {
@@ -1018,42 +1011,50 @@
                         </div>
                     `;
                     
-                    let salesHistoryHtml = `
-                        <h4>Satış Tarixçəsi</h4>
+                    let allItems = [];
+                    sales.forEach(sale => {
+                        sale.items.forEach(item => {
+                            allItems.push({
+                                ...item,
+                                saleId: sale.id,
+                                saleDate: sale.date
+                            });
+                        });
+                    });
+
+                    let productHistoryHtml = `
+                        <h4>Alınan Məhsullar</h4>
                         <table class="data-table" style="margin-top: 1rem;">
                             <thead>
                                 <tr>
                                     <th>Satış ID</th>
-                                    <th>Alış Tarixi</th>
-                                    <th>Alış Növü</th>
-                                    <th>Məbləğ</th>
-                                    <th>Ödənilmiş</th>
-                                    <th>Qalıq Borc</th>
-                                    <th></th>
+                                    <th>Tarix</th>
+                                    <th>Məhsul Adı</th>
+                                    <th>Say</th>
+                                    <th>Vahid Qiymət</th>
+                                    <th>Toplam</th>
                                 </tr>
                             </thead>
                             <tbody>`;
                     
-                    if (sales.length === 0) {
-                        salesHistoryHtml += '<tr><td colspan="7" style="text-align:center;">Bu müştərinin satış tarixçəsi yoxdur.</td></tr>';
+                    if (allItems.length === 0) {
+                        productHistoryHtml += '<tr><td colspan="6" style="text-align:center;">Müştərinin məhsul alışı olmayıb.</td></tr>';
                     } else {
-                        sales.forEach(sale => {
-                            const debt = (sale.totalAmount - sale.initialPayment);
-                            salesHistoryHtml += `
+                        allItems.reverse().forEach(item => {
+                            productHistoryHtml += `
                                 <tr>
-                                    <td>${sale.id}</td>
-                                    <td>${sale.date}</td>
-                                    <td>${sale.type}</td>
-                                    <td>${sale.totalAmount.toFixed(2)} ₼</td>
-                                    <td class="positive">${sale.initialPayment.toFixed(2)} ₼</td>
-                                    <td class="${debt > 0 ? 'negative' : ''}">${debt.toFixed(2)} ₼</td>
-                                    <td class="actions-cell"><button class="btn-details view-sale-details" data-id="${sale.id}" style="padding: 0.5rem;">Məhsullar</button></td>
+                                    <td>${item.saleId}</td>
+                                    <td>${item.saleDate}</td>
+                                    <td>${item.name}</td>
+                                    <td>${item.quantity}</td>
+                                    <td>${item.salePrice.toFixed(2)} ₼</td>
+                                    <td>${(item.quantity * item.salePrice).toFixed(2)} ₼</td>
                                 </tr>`;
                         });
                     }
-                    salesHistoryHtml += `</tbody></table>`;
+                    productHistoryHtml += `</tbody></table>`;
                     
-                    historyContent.innerHTML = customerInfoHtml + salesHistoryHtml;
+                    historyContent.innerHTML = customerInfoHtml + productHistoryHtml;
                     openModal(customerSalesHistoryModal);
                     return;
                 }
@@ -1082,24 +1083,6 @@
                         document.getElementById('editCustomerGuarantor').value = customer.guarantorId || '';
                         openModal(editCustomerModal);
                     }
-                }
-            });
-
-            customerSalesHistoryModal.addEventListener('click', (e) => {
-                const btn = e.target.closest('button');
-                if (btn && btn.classList.contains('view-sale-details')) {
-                    const saleId = parseInt(btn.dataset.id);
-                    const sale = getSales().find(s => s.id === saleId);
-                    if (!sale) return;
-                    
-                    let productsHtml = `<table class="data-table"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead><tbody>`;
-                    sale.items.forEach(item => {
-                        productsHtml += `<tr><td>${item.name}</td><td>${item.quantity}</td><td>${item.salePrice.toFixed(2)} ₼</td><td>${(item.quantity * item.salePrice).toFixed(2)} ₼</td></tr>`;
-                    });
-                    productsHtml += '</tbody></table>';
-                    
-                    document.getElementById('productsInSaleContent').innerHTML = productsHtml;
-                    openModal(productsInSaleModal);
                 }
             });
 
