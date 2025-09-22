@@ -375,7 +375,6 @@
             color: white;
             box-shadow: var(--shadow-sm);
         }
-
         .sale-type-buttons button {
             background-color: #e9ecef;
             color: var(--text-secondary);
@@ -387,7 +386,6 @@
             color: white;
             border-color: var(--primary-color);
         }
-
         .summary-row {
             display: flex;
             justify-content: space-between;
@@ -472,8 +470,78 @@
 
     <div id="addProductModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Yeni Məhsul</h2><form id="addProductForm"><div class="form-group"><label for="productNameModal">Məhsul Adı</label><input type="text" id="productNameModal" required></div><div class="form-group"><label for="purchasePriceModal">Alış Qiyməti (₼)</label><input type="number" id="purchasePriceModal" step="0.01" required></div><div class="form-group"><label for="salePriceModal">Satış Qiyməti (₼)</label><input type="number" id="salePriceModal" step="0.01" required></div><div class="form-group"><label for="stockQuantityModal">Anbar Sayı</label><input type="number" id="stockQuantityModal" required></div><div class="form-actions"><button type="submit" class="btn btn-primary">Yadda Saxla</button></div></form></div></div>
     <div id="editProductModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Məhsulu Redaktə Et</h2><form id="editProductForm"><input type="hidden" id="editProductId"><div class="form-group"><label for="editProductName">Məhsul Adı</label><input type="text" id="editProductName" required></div><div class="form-group"><label for="editPurchasePrice">Alış Qiyməti (₼)</label><input type="number" id="editPurchasePrice" step="0.01" required></div><div class="form-group"><label for="editSalePrice">Satış Qiyməti (₼)</label><input type="number" id="editSalePrice" step="0.01" required></div><div class="form-group"><label for="editStockQuantity">Anbar Sayı</label><input type="number" id="editStockQuantity" required></div><div class="form-actions"><button type="submit" class="btn btn-primary">Dəyişikliyi Saxla</button></div></form></div></div>
-    <div id="addCustomerModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Yeni Müştəri</h2><form id="addCustomerForm"><div class="form-group"><label for="customerNameModal">Tam Adı</label><input type="text" id="customerNameModal" required></div><div class="form-group"><label for="customerPhoneModal">Telefon Nömrəsi</label><input type="text" id="customerPhoneModal" required></div><div class="form-actions"><button type="submit" class="btn btn-primary">Yadda Saxla</button></div></form></div></div>
-    <div id="editCustomerModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Müştərini Redaktə Et</h2><form id="editCustomerForm"><input type="hidden" id="editCustomerId"><div class="form-group"><label for="editCustomerName">Tam Adı</label><input type="text" id="editCustomerName" required></div><div class="form-group"><label for="editCustomerPhone">Telefon Nömrəsi</label><input type="text" id="editCustomerPhone" required></div><div class="form-actions"><button type="submit" class="btn btn-primary">Dəyişikliyi Saxla</button></div></form></div></div>
+    
+    <div id="addCustomerModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Yeni Müştəri</h2>
+        <form id="addCustomerForm">
+            <div class="form-group">
+                <label for="customerNameModal">Tam Adı (A.S.A)</label>
+                <input type="text" id="customerNameModal" required>
+            </div>
+            <div class="form-group">
+                <label for="customerSvModal">Ş/V Seriya və Nömrəsi</label>
+                <input type="text" id="customerSvModal">
+            </div>
+            <div class="form-group">
+                <label for="customerFinModal">FİN Kodu</label>
+                <input type="text" id="customerFinModal">
+            </div>
+            <div class="form-group">
+                <label for="customerAddressModal">Ünvan</label>
+                <input type="text" id="customerAddressModal">
+            </div>
+            <div class="form-group">
+                <label for="customerPhoneModal">Telefon Nömrəsi</label>
+                <input type="text" id="customerPhoneModal" required>
+            </div>
+            <div class="form-group">
+                <label for="customerGuarantorModal">Zamin</label>
+                <div style="display: flex; gap: 0.5rem; align-items: center;">
+                    <select id="customerGuarantorModal" style="flex-grow: 1;">
+                        <option value="">-- Zamin Seçin --</option>
+                    </select>
+                    <button type="button" id="addGuarantorBtn" class="btn btn-primary" style="padding: 0.5rem; line-height: 1;">+</button>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Yadda Saxla</button>
+            </div>
+        </form>
+    </div></div>
+    <div id="editCustomerModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Müştərini Redaktə Et</h2>
+        <form id="editCustomerForm">
+            <input type="hidden" id="editCustomerId">
+            <div class="form-group">
+                <label for="editCustomerName">Tam Adı (A.S.A)</label>
+                <input type="text" id="editCustomerName" required>
+            </div>
+            <div class="form-group">
+                <label for="editCustomerSv">Ş/V Seriya və Nömrəsi</label>
+                <input type="text" id="editCustomerSv">
+            </div>
+            <div class="form-group">
+                <label for="editCustomerFin">FİN Kodu</label>
+                <input type="text" id="editCustomerFin">
+            </div>
+            <div class="form-group">
+                <label for="editCustomerAddress">Ünvan</label>
+                <input type="text" id="editCustomerAddress">
+            </div>
+            <div class="form-group">
+                <label for="editCustomerPhone">Telefon Nömrəsi</label>
+                <input type="text" id="editCustomerPhone" required>
+            </div>
+            <div class="form-group">
+                <label for="editCustomerGuarantor">Zamin</label>
+                <select id="editCustomerGuarantor">
+                    <option value="">-- Zamin Seçin --</option>
+                </select>
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">Dəyişikliyi Saxla</button>
+            </div>
+        </form>
+    </div></div>
+
     <div id="addSupplierModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Yeni Təchizatçı</h2><form id="addSupplierForm"><div class="form-group"><label for="supplierNameModal">Təchizatçı Adı</label><input type="text" id="supplierNameModal" required></div><div class="form-group"><label for="supplierPhoneModal">Telefon</label><input type="text" id="supplierPhoneModal"></div><div class="form-actions"><button type="submit" class="btn btn-primary">Yadda Saxla</button></div></form></div></div>
     <div id="editSupplierModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Təchizatçını Redaktə Et</h2><form id="editSupplierForm"><input type="hidden" id="editSupplierId"><div class="form-group"><label for="editSupplierName">Təchizatçı Adı</label><input type="text" id="editSupplierName" required></div><div class="form-group"><label for="editSupplierPhone">Telefon</label><input type="text" id="editSupplierPhone"></div><div class="form-actions"><button type="submit" class="btn btn-primary">Dəyişikliyi Saxla</button></div></form></div></div>
     <div id="saleDetailsModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Satış Detalları</h2><div id="saleDetailsContent" style="margin-top: 20px;"></div></div></div>
@@ -483,36 +551,10 @@
     <div id="productsInSaleModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Satışda olan məhsullar</h2><div id="productsInSaleContent" style="margin-top: 20px;"></div></div></div>
     <div id="customerSalesHistoryModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2 id="customer-history-title">Müştəri Satış Tarixçəsi</h2><div id="customerSalesHistoryContent" style="margin-top: 20px;"></div></div></div>
     <div id="purchaseDetailsModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Alış Detalları</h2><div id="purchaseDetailsContent" style="margin-top: 20px;"></div></div></div>
-    
     <div id="incomeTypeModal" class="modal"><div class="modal-content" style="width: 30rem;"><span class="modal-close">&times;</span><h2>Mədaxil Növünü Seçin</h2><div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;"><button id="btnAcceptPayment" class="btn btn-success" style="width: 100%;">Ümumi Müştəri Ödənişi</button><button id="btnOtherIncome" class="btn btn-primary" style="width: 100%;">Digər Mədaxil</button></div></div></div>
     <div id="expenseTypeModal" class="modal"><div class="modal-content" style="width: 30rem;"><span class="modal-close">&times;</span><h2>Məxaric Növünü Seçin</h2><div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1.5rem;"><button id="btnPaySupplier" class="btn btn-warning" style="width: 100%;">Təchizatçıya Ödəniş Et</button><button id="btnOtherExpense" class="btn btn-danger" style="width: 100%;">Digər Xərc</button></div></div></div>
     <div id="otherIncomeModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Digər Mədaxil Əlavə Et</h2><form id="otherIncomeForm"><div class="form-group"><label for="otherIncomeDescription">Açıqlama</label><input type="text" id="otherIncomeDescription" required></div><div class="form-group"><label>Məbləğ (₼)</label><input type="number" id="otherIncomeAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-success">Mədaxili Əlavə Et</button></div></form></div></div>
-    
-    <div id="payDebtModal" class="modal">
-        <div class="modal-content">
-            <span class="modal-close">&times;</span>
-            <h2>Qaimə Üzrə Ödəniş</h2>
-            <form id="payDebtForm">
-                <input type="hidden" id="debtSaleId">
-                <div class="form-group">
-                    <label>Müştəri</label>
-                    <input type="text" id="debtCustomerName" disabled>
-                </div>
-                 <div class="form-group">
-                    <label>Qaimə Borcu</label>
-                    <input type="text" id="debtSaleAmount" disabled>
-                </div>
-                <div class="form-group">
-                    <label for="debtPaymentAmount">Ödəniləcək Məbləğ (₼)</label>
-                    <input type="number" id="debtPaymentAmount" step="0.01" required>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-success">Ödənişi Təsdiqlə</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
+    <div id="payDebtModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Qaimə Üzrə Ödəniş</h2><form id="payDebtForm"><input type="hidden" id="debtSaleId"><div class="form-group"><label>Müştəri</label><input type="text" id="debtCustomerName" disabled></div><div class="form-group"><label>Qaimə Borcu</label><input type="text" id="debtSaleAmount" disabled></div><div class="form-group"><label for="debtPaymentAmount">Ödəniləcək Məbləğ (₼)</label><input type="number" id="debtPaymentAmount" step="0.01" required></div><div class="form-actions"><button type="submit" class="btn btn-success">Ödənişi Təsdiqlə</button></div></form></div></div>
 
     <template id="finance-page-template">
         <div class="page-container">
@@ -560,35 +602,7 @@
     <template id="products-page-template"><div class="page-container"><div class="page-header"><h1>Məhsullar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="productSearch" class="search-input" placeholder="Məhsul adı və ya ID ilə axtar..."></div><button id="addProductBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Məhsul</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Alış Qiyməti</th><th>Satış Qiyməti</th><th>Anbar Sayı</th><th></th></tr></thead><tbody id="productTableBody"></tbody></table></div></div></template>
     <template id="customers-page-template"><div class="page-container"><div class="page-header"><h1>Müştərilər</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="customerSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addCustomerBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Müştəri</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Tam Adı</th><th>Telefon</th><th>Borc</th><th></th></tr></thead><tbody id="customerTableBody"></tbody></table></div></div></template>
     <template id="suppliers-page-template"><div class="page-container"><div class="page-header"><h1>Təchizatçılar</h1><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="supplierSearch" class="search-input" placeholder="Ad və ya telefonla axtar..."></div><button id="addSupplierBtn" class="btn btn-primary"><span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"></path></svg> Yeni Təchizatçı</span></button></div><div class="content-area"><table class="data-table"><thead><tr><th>#ID</th><th>Ad</th><th>Telefon</th><th>Bizim Borcumuz</th><th></th></tr></thead><tbody id="supplierTableBody"></tbody></table></div></div></template>
-    
-    <template id="debts-page-template">
-        <div class="page-container">
-            <div class="page-header">
-                <h1>Borclar</h1>
-            </div>
-            <div class="content-area">
-                <div class="report-actions" id="debt-tabs">
-                    <button class="btn btn-primary active" data-debt-type="Kredit">Kredit Borcları</button>
-                    <button class="btn btn-primary" data-debt-type="Korporativ">Korporativ Borclar</button>
-                    <button class="btn btn-primary" data-debt-type="Açıq Qaimə">Açıq Qaimələr</button>
-                </div>
-                <div class="debt-view">
-                    <div class="page-header" style="padding: 1rem 0 0 0;">
-                        <div class="search-container">
-                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <input type="search" id="debtSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar...">
-                        </div>
-                    </div>
-                    <table class="data-table">
-                        <thead>
-                            <tr><th>Satış ID</th><th>Tarix</th><th>Müştəri</th><th>Toplam Məbləğ</th><th>Ödənilən</th><th>Borc Qalığı</th><th></th><th>Ödəniş</th></tr>
-                        </thead>
-                        <tbody id="debtTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </template>
+    <template id="debts-page-template"><div class="page-container"><div class="page-header"><h1>Borclar</h1></div><div class="content-area"><div class="report-actions" id="debt-tabs"><button class="btn btn-primary active" data-debt-type="Kredit">Kredit Borcları</button><button class="btn btn-primary" data-debt-type="Korporativ">Korporativ Borclar</button><button class="btn btn-primary" data-debt-type="Açıq Qaimə">Açıq Qaimələr</button></div><div class="debt-view"><div class="page-header" style="padding: 1rem 0 0 0;"><div class="search-container"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg><input type="search" id="debtSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar..."></div></div><table class="data-table"><thead><tr><th>Satış ID</th><th>Tarix</th><th>Müştəri</th><th>Toplam Məbləğ</th><th>Ödənilən</th><th>Borc Qalığı</th><th></th><th>Ödəniş</th></tr></thead><tbody id="debtTableBody"></tbody></table></div></div></div></template>
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -645,7 +659,6 @@
             window.addEventListener('click', (event) => { if (event.target === modal) closeModal(modal); });
         });
         
-        // MƏNFİ BORCU DÜZƏLTMƏK ÜÇÜN FUNKSİYA
         function recalculateAllCustomerDebts() {
             let allSales = getSales();
             let allCustomers = getCustomers();
@@ -712,7 +725,6 @@
             saveTransactions(transactions);
         }
 
-        // ===== BÜTÜN GLOBAL FORM HADİSƏLƏRİ =====
         addProductForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const products = getProducts();
@@ -731,19 +743,49 @@
             renderPage('products');
         });
 
+        // YENİLƏNMİŞ MÜŞTƏRİ FORM SUBMIT LOGIC
         addCustomerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const customers = getCustomers();
-            customers.push({ id: Date.now(), name: document.getElementById('customerNameModal').value, phone: document.getElementById('customerPhoneModal').value, debt: 0 });
+            
+            const newCustomer = {
+                id: Date.now(),
+                name: document.getElementById('customerNameModal').value,
+                sv_seria: document.getElementById('customerSvModal').value,
+                fin: document.getElementById('customerFinModal').value,
+                unvan: document.getElementById('customerAddressModal').value,
+                phone: document.getElementById('customerPhoneModal').value,
+                guarantorId: parseInt(document.getElementById('customerGuarantorModal').value) || null,
+                debt: 0
+            };
+
+            customers.push(newCustomer);
             saveCustomers(customers);
             closeModal(addCustomerModal);
-            renderPage('customers');
+            if(document.querySelector('.sidebar nav a.active').dataset.page === 'customers') {
+                renderPage('customers');
+            }
         });
 
         editCustomerForm.addEventListener('submit', (e) => {
             e.preventDefault();
             const id = parseInt(document.getElementById('editCustomerId').value);
-            const updatedCustomers = getCustomers().map(c => c.id === id ? { ...c, name: document.getElementById('editCustomerName').value, phone: document.getElementById('editCustomerPhone').value } : c);
+            
+            const updatedCustomers = getCustomers().map(c => {
+                if (c.id === id) {
+                    return {
+                        ...c,
+                        name: document.getElementById('editCustomerName').value,
+                        sv_seria: document.getElementById('editCustomerSv').value,
+                        fin: document.getElementById('editCustomerFin').value,
+                        unvan: document.getElementById('editCustomerAddress').value,
+                        phone: document.getElementById('editCustomerPhone').value,
+                        guarantorId: parseInt(document.getElementById('editCustomerGuarantor').value) || null
+                    };
+                }
+                return c;
+            });
+
             saveCustomers(updatedCustomers);
             closeModal(editCustomerModal);
             renderPage('customers');
@@ -825,31 +867,23 @@
             e.preventDefault();
             const saleId = parseInt(document.getElementById('debtSaleId').value);
             const paymentAmount = parseFloat(document.getElementById('debtPaymentAmount').value);
-
             let sales = getSales();
             let sale = sales.find(s => s.id === saleId);
             if (!sale) return;
-
             const remainingDebt = sale.totalAmount - sale.initialPayment;
-
-            if (paymentAmount <= 0 || paymentAmount > (remainingDebt + 0.001)) { // kiçik xətaları nəzərə al
+            if (paymentAmount <= 0 || paymentAmount > (remainingDebt + 0.001)) {
                 alert(`Ödəniş məbləği 0-dan böyük və ${remainingDebt.toFixed(2)} ₼-dən kiçik və ya bərabər olmalıdır.`);
                 return;
             }
-
             sale.initialPayment += paymentAmount;
-
             let customers = getCustomers();
             let customer = customers.find(c => c.id === sale.customerId);
             if (customer) {
                 customer.debt -= paymentAmount;
             }
-
             addTransaction('Qaimə Ödənişi', `Satış #${saleId} üçün ödəniş`, paymentAmount);
-
             saveSales(sales);
             saveCustomers(customers);
-
             alert('Ödəniş uğurla qəbul edildi!');
             closeModal(payDebtModal);
             renderPage('debts');
@@ -906,11 +940,33 @@
             renderProducts();
         }
 
+        // YENİLƏNMİŞ setupCustomersPage FUNKSİYASI
         function setupCustomersPage() {
             const customerTableBody = appContainer.querySelector('#customerTableBody');
             const addCustomerBtn = appContainer.querySelector('#addCustomerBtn');
             const customerSearch = appContainer.querySelector('#customerSearch');
             
+            const populateGuarantorSelects = () => {
+                const customers = getCustomers();
+                const addGuarantorSelect = document.getElementById('customerGuarantorModal');
+                const editGuarantorSelect = document.getElementById('editCustomerGuarantor');
+                
+                addGuarantorSelect.innerHTML = '<option value="">-- Zamin Seçin --</option>';
+                editGuarantorSelect.innerHTML = '<option value="">-- Zamin Seçin --</option>';
+
+                customers.forEach(c => {
+                    const option = `<option value="${c.id}">${c.name}</option>`;
+                    addGuarantorSelect.innerHTML += option;
+                    editGuarantorSelect.innerHTML += option;
+                });
+            };
+            
+            document.getElementById('addGuarantorBtn').addEventListener('click', () => {
+                alert("Yeni zamin yaratmaq üçün müştəri əlavə etmə pəncərəsi açılır. Məlumatları daxil edib yadda saxlayın, sonra bu müştərini zamin kimi seçə bilərsiniz.");
+                addCustomerForm.reset();
+                openModal(addCustomerModal);
+            });
+
             const renderCustomers = () => {
                 const query = customerSearch.value.toLowerCase();
                 let customers = getCustomers();
@@ -927,7 +983,11 @@
                 });
             };
 
-            addCustomerBtn.addEventListener('click', () => { addCustomerForm.reset(); openModal(addCustomerModal); });
+            addCustomerBtn.addEventListener('click', () => {
+                addCustomerForm.reset();
+                populateGuarantorSelects();
+                openModal(addCustomerModal); 
+            });
 
             customerTableBody.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
@@ -935,14 +995,29 @@
                 const id = parseInt(btn.dataset.id);
 
                 if (btn.classList.contains('customer-details-btn')) {
-                    const sales = getSales().filter(s => s.customerId === id);
                     const customer = getCustomers().find(c => c.id === id);
+                    const sales = getSales().filter(s => s.customerId === id);
                     
+                    let guarantorName = "Seçilməyib";
+                    if(customer.guarantorId) {
+                        const guarantor = getCustomers().find(g => g.id === customer.guarantorId);
+                        if(guarantor) guarantorName = guarantor.name;
+                    }
+
                     const historyTitle = document.getElementById('customer-history-title');
                     const historyContent = document.getElementById('customerSalesHistoryContent');
 
-                    historyTitle.textContent = `${customer.name} - Satış Tarixçəsi`;
-                    let historyHtml = `<table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Yekun Məbləğ</th><th>Borc Qalığı</th><th></th></tr></thead><tbody>`;
+                    historyTitle.textContent = `${customer.name} - Ətraflı Məlumat`;
+                    let detailsHtml = `
+                        <div style="margin-bottom: 2rem;">
+                            <p><strong>Ş/V Seriya və Nömrə:</strong> ${customer.sv_seria || 'Qeyd edilməyib'}</p>
+                            <p><strong>FİN Kod:</strong> ${customer.fin || 'Qeyd edilməyib'}</p>
+                            <p><strong>Ünvan:</strong> ${customer.unvan || 'Qeyd edilməyib'}</p>
+                            <p><strong>Zamin:</strong> ${guarantorName}</p>
+                        </div>
+                        <h4>Satış Tarixçəsi</h4>`;
+                    
+                    let historyHtml = detailsHtml + `<table class="data-table"><thead><tr><th>#ID</th><th>Tarix</th><th>Növ</th><th>Yekun Məbləğ</th><th>Borc Qalığı</th><th></th></tr></thead><tbody>`;
                     
                     if (sales.length === 0) {
                         historyHtml += '<tr><td colspan="6" style="text-align:center;">Bu müştərinin satış tarixçəsi yoxdur.</td></tr>';
@@ -979,9 +1054,14 @@
                 if (btn.classList.contains('btn-edit')) {
                     const customer = getCustomers().find(c => c.id === id);
                     if (customer) {
+                        populateGuarantorSelects();
                         document.getElementById('editCustomerId').value = customer.id;
                         document.getElementById('editCustomerName').value = customer.name;
+                        document.getElementById('editCustomerSv').value = customer.sv_seria || '';
+                        document.getElementById('editCustomerFin').value = customer.fin || '';
+                        document.getElementById('editCustomerAddress').value = customer.unvan || '';
                         document.getElementById('editCustomerPhone').value = customer.phone;
+                        document.getElementById('editCustomerGuarantor').value = customer.guarantorId || '';
                         openModal(editCustomerModal);
                     }
                 }
