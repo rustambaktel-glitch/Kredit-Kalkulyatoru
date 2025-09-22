@@ -401,8 +401,6 @@
             margin-top: 1.5rem;
             border-bottom: none;
         }
-        
-        /* DƏYİŞİKLİK BURADADIR */
         #customerSalesHistoryModal .modal-content {
             width: 90%; 
             max-width: 95rem; 
@@ -978,7 +976,11 @@
             sale.initialPayment += paymentAmount;
             
             if (!sale.payments) sale.payments = [];
-            sale.payments.push({ date: new Date().toLocaleString('az-AZ'), amount: paymentAmount });
+            sale.payments.push({ 
+                date: new Date().toLocaleString('az-AZ'), 
+                amount: paymentAmount,
+                type: 'Aylıq ödəniş' 
+            });
 
             let customers = getCustomers();
             let customer = customers.find(c => c.id === sale.customerId);
@@ -1156,12 +1158,12 @@
                             const paymentHistoryContent = document.getElementById('paymentHistoryContent');
                             paymentHistoryTitle.textContent = `Satış #${sale.id} - Ödəniş Tarixçəsi`;
 
-                            let paymentsHtml = `<table class="data-table"><thead><tr><th>Tarix</th><th>Məbləğ</th></tr></thead><tbody>`;
+                            let paymentsHtml = `<table class="data-table"><thead><tr><th>Tarix</th><th>Ödəniş Növü</th><th>Məbləğ</th></tr></thead><tbody>`;
                             if (!sale.payments || sale.payments.length === 0) {
-                                paymentsHtml += `<tr><td colspan="2" style="text-align:center;">Hələ ödəniş edilməyib.</td></tr>`;
+                                paymentsHtml += `<tr><td colspan="3" style="text-align:center;">Hələ ödəniş edilməyib.</td></tr>`;
                             } else {
                                 sale.payments.forEach(p => {
-                                    paymentsHtml += `<tr><td>${p.date}</td><td>${p.amount.toFixed(2)} ₼</td></tr>`;
+                                    paymentsHtml += `<tr><td>${p.date}</td><td>${p.type}</td><td>${p.amount.toFixed(2)} ₼</td></tr>`;
                                 });
                             }
                             paymentsHtml += `</tbody></table>`;
@@ -1529,6 +1531,15 @@
                     monthlyPayment: monthlyPayment || null,
                     payments: []
                 };
+                
+                if (initialPayment > 0) {
+                    newSale.payments.push({
+                        date: new Date().toLocaleString('az-AZ'),
+                        amount: initialPayment,
+                        type: 'İlkin ödəniş'
+                    });
+                }
+
                 sales.push(newSale);
                 saveSales(sales);
                 
