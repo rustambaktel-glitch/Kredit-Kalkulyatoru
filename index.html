@@ -515,6 +515,7 @@
                 <li><a data-page="customers"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-1-3.794M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span>Müştərilər</span></a></li>
                 <li><a data-page="suppliers"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg> <span>Təchizatçılar</span></a></li>
                 <li><a data-page="debts"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 4v4m0 4v2m-6-2h12a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> <span>Borclar</span></a></li>
+                <li id="admin-button-container" style="display:none;"><a id="admin-login-btn"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2v2m-4-6a2 2 0 012 2v2m-6-6a2 2 0 012 2v2M3 13a2 2 0 012-2h4m5-2h-4a2 2 0 00-2 2v4a2 2 0 002 2h4m-2 2H9a2 2 0 01-2-2v-4a2 2 0 012-2h2m-4 2h4m-4 2h4m-4-4a2 2 0 01-2 2v4a2 2 0 012 2h4m-2-2h2m-2-2h2m-2-4h2m-2-2h2"></path></svg> <span>Admin</span></a></li>
             </ul>
         </nav>
     </div>
@@ -722,7 +723,7 @@
             </div>
             <div class="content-area">
                 <p>Xoş gəlmisiniz! Bu proqramın idarəetmə panelidir. Yan menyudan istədiyiniz bölməni seçə bilərsiniz.</p>
-                <p>Admin funksiyalarına daxil olmaq üçün brauzerin konsolunda `showAdminLogin()` əmrini yazın.</p>
+                <p id="admin-info">Admin funksiyalarına daxil olmaq üçün naviqasiya panelindəki "Admin" düyməsinə klikləyin.</p>
             </div>
         </div>
     </template>
@@ -785,7 +786,7 @@
                     <div class="page-header" style="padding: 1rem 0 0 0;">
                         <div class="search-container">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri, məbləğ və ya tarixə görə axtar...">
+                            <input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri, məbləğ, tarixə görə axtar...">
                         </div>
                     </div>
                     <table class="data-table">
@@ -798,7 +799,7 @@
                     <div class="page-header" style="padding: 1rem 0 0 0;">
                         <div class="search-container">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı, məbləğ və ya tarixə görə axtar...">
+                            <input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı, məbləğ, tarixə görə axtar...">
                         </div>
                     </div>
                     <table class="data-table">
@@ -1352,7 +1353,7 @@
             
             let customers = getCustomers();
             let customer = customers.find(c => c.id === customerId);
-            if (!customer) { alert('Müştəri tapılmadı.'); return; }
+            if (!customer) { alert('Müştəri tapıldı.'); return; }
 
             let sales = getSales();
             let sale = sales.find(s => s.id === saleId);
@@ -2900,8 +2901,10 @@
 
                     if(remainingDebt > 0.01) {
                         if (!consolidatedDebts[p.supplierId]) {
+                            const supplier = suppliers.find(s => s.id === p.supplierId);
                             consolidatedDebts[p.supplierId] = {
-                                supplierName: p.supplierName,
+                                id: p.supplierId,
+                                supplierName: supplier.name,
                                 totalPurchases: 0,
                                 totalPaid: 0,
                                 totalDebt: 0
@@ -2914,8 +2917,7 @@
                 });
 
                 const query = supplierDebtSearch.value.toLowerCase();
-                let filteredConsolidatedDebts = Object.keys(consolidatedDebts)
-                    .map(key => ({ id: key, ...consolidatedDebts[key] }))
+                let filteredConsolidatedDebts = Object.values(consolidatedDebts)
                     .filter(s => s.supplierName.toLowerCase().includes(query) || s.totalDebt.toFixed(2).includes(query))
                     .sort((a,b) => b.totalDebt - a.totalDebt);
                 
@@ -3038,7 +3040,6 @@
                 }
             });
             
-            // Təchizatçı borc detalları pəncərəsindəki düymələrə click
             supplierDebtDetailsModal.addEventListener('click', (e) => {
                 const btn = e.target.closest('button.pay-supplier-debt-btn');
                  if(btn) {
@@ -3095,7 +3096,8 @@
                  }
             });
 
-            renderCustomerDebts(currentDebtType);
+            // Səhifə ilk açıldıqda render etmək
+            debtTabs.querySelector(`[data-debt-type="${currentDebtType}"]`).click();
         }
 
         appContainer.addEventListener('click', (e) => {
