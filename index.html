@@ -679,12 +679,21 @@
             <div id="paymentHistoryContent" style="margin-top: 20px;"></div>
         </div>
     </div>
+    
+    <div id="supplierDebtDetailsModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close">&times;</span>
+            <h2 id="supplier-debt-details-title">Təchizatçı Borc Detalları</h2>
+            <div id="supplierDebtDetailsContent" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
 
     <template id="finance-page-template">
         <div class="page-container">
             <div class="page-header">
                 <h1>Maliyyə</h1>
-                <div id="admin-actions" style="display:flex; gap: 1rem; flex-wrap: wrap;">
+                <div id="admin-actions" style="display:none; gap: 1rem; flex-wrap: wrap;">
                     <button id="btnBackupData" class="btn btn-primary">
                         <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Məlumatları Yüklə (Backup)</span>
                     </button>
@@ -994,13 +1003,13 @@
             <div class="page-header"><h1>Borclar</h1></div>
             <div class="content-area">
                 <div class="report-actions" id="debt-tabs">
-                    <button class="btn btn-primary active" data-debt-type="customer-credit">Kredit Borcları</button>
+                    <button class="btn btn-primary" data-debt-type="customer-credit">Kredit Borcları</button>
                     <button class="btn btn-primary" data-debt-type="customer-corporate">Korporativ Borclar</button>
                     <button class="btn btn-primary" data-debt-type="customer-invoice">Açıq Qaimə Borcları</button>
-                    <button class="btn btn-primary" data-debt-type="supplier">Təchizatçı Borcları</button>
+                    <button class="btn btn-primary active" data-debt-type="supplier">Təchizatçı Borcları</button>
                 </div>
                 
-                <div id="customer-debts-view" class="debt-view">
+                <div id="customer-debts-view" class="debt-view" style="display:none;">
                     <div class="page-header" style="padding: 1rem 0 0 0;">
                         <div class="search-container">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -1016,7 +1025,7 @@
                     </table>
                 </div>
 
-                <div id="supplier-debts-view" class="debt-view" style="display:none;">
+                <div id="supplier-debts-view" class="debt-view">
                     <div class="page-header" style="padding: 1rem 0 0 0;">
                         <div class="search-container">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -1025,7 +1034,7 @@
                     </div>
                     <table class="data-table">
                         <thead>
-                            <tr><th>#</th><th>Alış ID</th><th>Tarix</th><th>Təchizatçı</th><th>Toplam Məbləğ</th><th>Ödənilən</th><th>Borc Qalığı</th><th></th><th></th></tr>
+                            <tr><th>#</th><th>Təchizatçı</th><th>Toplam Borc</th><th>Ödənilən</th><th>Qalıq Borc</th><th></th><th></th></tr>
                         </thead>
                         <tbody id="supplierDebtTableBody"></tbody>
                         <tfoot></tfoot>
@@ -1059,6 +1068,7 @@
         const expenseTypeModal = document.getElementById('expenseTypeModal');
         const otherIncomeModal = document.getElementById('otherIncomeModal');
         const paymentHistoryModal = document.getElementById('paymentHistoryModal');
+        const supplierDebtDetailsModal = document.getElementById('supplierDebtDetailsModal');
         
         const addProductForm = document.getElementById('addProductForm');
         const editProductForm = document.getElementById('editProductForm');
@@ -1107,7 +1117,7 @@
                     }
                 }
             });
-
+            
             purchases.forEach(purchase => {
                 const supplier = suppliers.find(s => s.id === purchase.supplierId);
                 if (supplier) {
@@ -1361,7 +1371,7 @@
             closeModal(addExpenseModal);
             renderPage('finance');
         });
-
+        
         paySupplierForm.addEventListener('submit', e => {
             e.preventDefault();
             const supplierId = parseInt(document.getElementById('paymentSupplierSelect').value);
@@ -1482,6 +1492,49 @@
             detailsHtml += '</tbody></table>';
             document.getElementById('purchaseDetailsContent').innerHTML = detailsHtml;
             openModal(purchaseDetailsModal);
+        }
+
+        function showSupplierDebtDetails(supplierId) {
+            const purchases = getPurchases();
+            const transactions = getTransactions();
+            const supplier = getSuppliers().find(s => s.id === supplierId);
+            if (!supplier) return;
+            
+            const supplierPurchases = purchases.filter(p => p.supplierId === supplierId);
+            let totalSupplierDebt = 0;
+            let detailsHtml = `
+                <h3>Təchizatçı: ${supplier.name}</h3>
+                <h4 style="margin-top: 1rem;">Alış Qaimələri</h4>
+                <table class="data-table" style="margin-top: 1rem; font-size: 0.9rem;">
+                    <thead><tr><th>Alış ID</th><th>Tarix</th><th>Məbləğ</th><th>Ödənilib</th><th>Borc Qalığı</th><th></th></tr></thead>
+                    <tbody>`;
+            
+            supplierPurchases.forEach(p => {
+                const paidAmount = transactions.filter(t => t.type === 'Təchizatçıya Ödəniş' && t.details && t.details.purchaseId === p.id).reduce((sum, t) => sum + Math.abs(t.amount), 0);
+                const remainingDebt = p.totalAmount - paidAmount;
+                if(remainingDebt > 0.01) {
+                    totalSupplierDebt += remainingDebt;
+                    detailsHtml += `
+                        <tr>
+                            <td>${p.id}</td>
+                            <td>${p.date}</td>
+                            <td>${p.totalAmount.toFixed(2)} ₼</td>
+                            <td>${paidAmount.toFixed(2)} ₼</td>
+                            <td>${remainingDebt.toFixed(2)} ₼</td>
+                            <td><button class="btn btn-warning pay-supplier-debt-btn" data-id="${p.id}" data-supplierid="${supplier.id}" style="color:white; background:var(--warning-color);">Ödəniş et</button></td>
+                        </tr>`;
+                }
+            });
+
+            detailsHtml += `
+                </tbody>
+                <tfoot>
+                    <tr><td colspan="4" style="text-align:right;">CƏMİ BORC:</td><td>${totalSupplierDebt.toFixed(2)} ₼</td><td></td></tr>
+                </tfoot>
+                </table>`;
+            
+            document.getElementById('supplierDebtDetailsContent').innerHTML = detailsHtml;
+            openModal(supplierDebtDetailsModal);
         }
         
         function deleteSale(saleId) {
@@ -2770,34 +2823,36 @@
                 const purchases = getPurchases();
                 const suppliers = getSuppliers();
                 const transactions = getTransactions();
-                
-                let allSupplierDebts = [];
-                purchases.forEach(purchase => {
-                    const paidAmount = transactions.filter(t => t.type === 'Təchizatçıya Ödəniş' && t.details && t.details.purchaseId === purchase.id).reduce((sum, t) => sum + Math.abs(t.amount), 0);
-                    const remainingDebt = purchase.totalAmount - paidAmount;
-                    if (remainingDebt > 0.001) {
-                        const supplier = suppliers.find(s => s.id === purchase.supplierId);
-                        allSupplierDebts.push({
-                            purchaseId: purchase.id,
-                            date: purchase.date,
-                            supplierName: supplier ? supplier.name : 'Silinmiş Təchizatçı',
-                            totalAmount: purchase.totalAmount,
-                            paid: paidAmount,
-                            debt: remainingDebt,
-                            supplierId: purchase.supplierId
-                        });
+
+                let consolidatedDebts = {};
+                purchases.forEach(p => {
+                    const paidAmount = transactions.filter(t => t.type === 'Təchizatçıya Ödəniş' && t.details && t.details.purchaseId === p.id).reduce((sum, t) => sum + Math.abs(t.amount), 0);
+                    const remainingDebt = p.totalAmount - paidAmount;
+
+                    if(remainingDebt > 0.01) {
+                        if (!consolidatedDebts[p.supplierId]) {
+                            consolidatedDebts[p.supplierId] = {
+                                supplierName: p.supplierName,
+                                totalPurchases: 0,
+                                totalPaid: 0,
+                                totalDebt: 0
+                            };
+                        }
+                        consolidatedDebts[p.supplierId].totalPurchases += p.totalAmount;
+                        consolidatedDebts[p.supplierId].totalPaid += paidAmount;
+                        consolidatedDebts[p.supplierId].totalDebt += remainingDebt;
                     }
                 });
 
                 const query = supplierDebtSearch.value.toLowerCase();
-                let filteredSupplierDebts = allSupplierDebts;
-                if(query) {
-                    filteredSupplierDebts = allSupplierDebts.filter(d => d.supplierName.toLowerCase().includes(query) || d.purchaseId.toString().includes(query) || d.date.includes(query));
-                }
+                let filteredConsolidatedDebts = Object.keys(consolidatedDebts)
+                    .map(key => ({ id: key, ...consolidatedDebts[key] }))
+                    .filter(s => s.supplierName.toLowerCase().includes(query) || s.totalDebt.toFixed(2).includes(query))
+                    .sort((a,b) => b.totalDebt - a.totalDebt);
                 
                 supplierDebtTableBody.innerHTML = '';
-                if (filteredSupplierDebts.length === 0) {
-                    supplierDebtTableBody.innerHTML = '<tr><td colspan="9" style="text-align:center;">Borclu təchizatçı tapılmadı.</td></tr>';
+                if (filteredConsolidatedDebts.length === 0) {
+                    supplierDebtTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Borclu təchizatçı tapılmadı.</td></tr>';
                     supplierDebtTfoot.innerHTML = '';
                     return;
                 }
@@ -2806,24 +2861,27 @@
                 let totalPaid = 0;
                 let totalDebt = 0;
 
-                filteredSupplierDebts.forEach((debt, index) => {
-                    totalAmount += debt.totalAmount;
-                    totalPaid += debt.paid;
-                    totalDebt += debt.debt;
+                filteredConsolidatedDebts.forEach((debt, index) => {
+                    totalAmount += debt.totalPurchases;
+                    totalPaid += debt.totalPaid;
+                    totalDebt += debt.totalDebt;
 
                     supplierDebtTableBody.innerHTML += `
                         <tr>
-                            <td>${index + 1}</td><td>${debt.purchaseId}</td><td>${debt.date}</td><td>${debt.supplierName}</td><td>${debt.totalAmount.toFixed(2)} ₼</td><td>${debt.paid.toFixed(2)} ₼</td><td class="negative">${debt.debt.toFixed(2)} ₼</td>
+                            <td>${index + 1}</td>
+                            <td>${debt.supplierName}</td>
+                            <td>${debt.totalPurchases.toFixed(2)} ₼</td>
+                            <td>${debt.totalPaid.toFixed(2)} ₼</td>
+                            <td class="negative">${debt.totalDebt.toFixed(2)} ₼</td>
                             <td class="actions-cell">
-                                <button class="btn btn-details" data-id="${debt.purchaseId}" data-type="purchase" title="Alış detalları">ℹ️</button>
+                                <button class="btn btn-details" data-id="${debt.id}" data-type="supplier-debt-details" title="Qaimə detalları">ℹ️</button>
                             </td>
                             <td class="actions-cell">
-                                <button class="btn btn-warning pay-supplier-debt-btn" data-id="${debt.purchaseId}" data-supplierid="${debt.supplierId}" style="color:white; background:var(--warning-color);">Ödəniş et</button>
+                                <button class="btn btn-warning pay-supplier-debt-btn" data-id="${debt.id}" style="color:white; background:var(--warning-color);">Ödəniş et</button>
                             </td>
                         </tr>`;
                 });
-                supplierDebtTfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">CƏMİ:</td><td>${totalAmount.toFixed(2)} ₼</td><td>${totalPaid.toFixed(2)} ₼</td><td>${totalDebt.toFixed(2)} ₼</td><td colspan="2"></td></tr>`;
-
+                supplierDebtTfoot.innerHTML = `<tr><td colspan="2" style="text-align:right;">CƏMİ:</td><td>${totalAmount.toFixed(2)} ₼</td><td>${totalPaid.toFixed(2)} ₼</td><td>${totalDebt.toFixed(2)} ₼</td><td colspan="2"></td></tr>`;
             };
 
             debtTabs.addEventListener('click', (e) => {
@@ -2872,48 +2930,41 @@
                 }
                 
                 if (btn.classList.contains('pay-supplier-debt-btn')) {
-                    const purchaseId = parseInt(btn.dataset.id);
-                    const supplierId = parseInt(btn.dataset.supplierid);
-
+                    const supplierId = parseInt(btn.dataset.id);
                     const supplier = getSuppliers().find(s => s.id === supplierId);
-                    const purchase = getPurchases().find(p => p.id === purchaseId);
-                    if (!supplier || !purchase) return;
+                    if (!supplier) return;
                     
-                    const paidAmount = getTransactions().filter(t => t.type === 'Təchizatçıya Ödəniş' && t.details && t.details.purchaseId === purchaseId).reduce((sum, t) => sum + Math.abs(t.amount), 0);
-                    const remainingDebt = purchase.totalAmount - paidAmount;
-
-                    if (remainingDebt <= 0.01) {
-                         alert("Bu qaimə üzrə borc yoxdur.");
-                         return;
-                    }
+                    const purchases = getPurchases().filter(p => p.supplierId === supplierId);
+                    const transactions = getTransactions();
+                    
+                    let hasDebts = false;
+                    let purchaseOptions = `<option value="">-- Ümumi Ödəniş --</option>`;
+                    purchases.forEach(p => {
+                        const paidAmount = transactions.filter(t => t.details && t.details.purchaseId === p.id).reduce((sum, t) => sum + Math.abs(t.amount), 0);
+                        const remainingDebt = p.totalAmount - paidAmount;
+                        if(remainingDebt > 0.01) {
+                            hasDebts = true;
+                            purchaseOptions += `<option value="${p.id}" data-debt="${remainingDebt.toFixed(2)}">#${p.id} - Borc: ${remainingDebt.toFixed(2)} ₼</option>`;
+                        }
+                    });
 
                     paySupplierForm.reset();
                     document.getElementById('paymentSupplierSelect').innerHTML = `<option value="${supplierId}">${supplier.name} (Borc: ${supplier.balance.toFixed(2)} ₼)</option>`;
                     document.getElementById('paymentSupplierSelect').value = supplierId;
                     
+                    document.getElementById('paymentPurchaseSelect').innerHTML = purchaseOptions;
+                    document.getElementById('payment-purchase-group').style.display = hasDebts ? 'block' : 'none';
+
                     const paymentInput = document.getElementById('supplierPaymentAmount');
-                    paymentInput.value = remainingDebt.toFixed(2);
-                    paymentInput.max = remainingDebt;
-
-                    const originalPaySupplierFormSubmit = paySupplierForm.onsubmit;
-                    paySupplierForm.onsubmit = (e) => {
-                        e.preventDefault();
-                        const amount = parseFloat(paymentInput.value);
-                        if (amount <= 0 || amount > (remainingDebt + 0.001)) {
-                            alert('Ödəniş məbləği düzgün daxil edilməyib!');
-                            return;
-                        }
-                        
-                        const currentSuppliers = getSuppliers();
-                        const currentSupplier = currentSuppliers.find(s => s.id === supplierId);
-                        if(currentSupplier) currentSupplier.balance -= amount;
-                        saveSuppliers(currentSuppliers);
-
-                        addTransaction('Təchizatçıya Ödəniş', `Alış #${purchaseId} üçün ödəniş`, -amount, { supplierId: supplierId, purchaseId: purchaseId });
-                        closeModal(paySupplierModal);
-                        renderSupplierDebts();
-                        paySupplierForm.onsubmit = originalPaySupplierFormSubmit;
-                    };
+                    if(hasDebts) {
+                        paymentInput.value = '';
+                        paymentInput.max = null;
+                        paymentInput.placeholder = 'Məbləği daxil edin';
+                    } else {
+                        paymentInput.value = supplier.balance.toFixed(2);
+                        paymentInput.max = supplier.balance;
+                    }
+                    
                     openModal(paySupplierModal);
                 }
 
@@ -2933,6 +2984,8 @@
                         showSaleDetails(id);
                     } else if (type === 'purchase') {
                         showPurchaseDetails(id);
+                    } else if (type === 'supplier-debt-details') {
+                        showSupplierDebtDetails(id);
                     }
                  }
             });
