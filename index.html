@@ -1692,7 +1692,8 @@
 
             const handleImeiSearch = (e, targetForm) => {
                 const imei = e.target.value.trim();
-                if (e.key === 'Enter' || e.type === 'change') {
+                if (e.key === 'Enter') {
+                     e.preventDefault();
                      if (imei.length > 0) { 
                         const stockItems = getStock();
                         const availableItem = stockItems.find(item => 
@@ -1730,13 +1731,13 @@
             };
             
             imeiSearchInput.addEventListener('keydown', (e) => { handleImeiSearch(e, forms.cash); });
-            imeiSearchInput.addEventListener('change', (e) => { handleImeiSearch(e, forms.cash); });
+            imeiSearchInput.addEventListener('change', (e) => { if (e.target.value.trim() !== '') handleImeiSearch(e, forms.cash); });
 
             imeiSearchInputCredit.addEventListener('keydown', (e) => { handleImeiSearch(e, forms.credit); });
-            imeiSearchInputCredit.addEventListener('change', (e) => { handleImeiSearch(e, forms.credit); });
+            imeiSearchInputCredit.addEventListener('change', (e) => { if (e.target.value.trim() !== '') handleImeiSearch(e, forms.credit); });
 
             imeiSearchInputCorporate.addEventListener('keydown', (e) => { handleImeiSearch(e, forms.corporate); });
-            imeiSearchInputCorporate.addEventListener('change', (e) => { handleImeiSearch(e, forms.corporate); });
+            imeiSearchInputCorporate.addEventListener('change', (e) => { if (e.target.value.trim() !== '') handleImeiSearch(e, forms.corporate); });
 
             appContainer.addEventListener('input', (e) => {
                 if (e.target.classList.contains('cart-price-input')) {
@@ -1749,6 +1750,21 @@
                     calculateTotal(cart, forms[activeTab]);
                 }
             });
+
+            if(forms.credit) {
+                forms.credit.querySelector('.initial-payment').addEventListener('input', (e) => {
+                    calculateTotal(carts.credit, forms.credit);
+                    generatePaymentSchedule();
+                });
+                forms.credit.querySelector('.loan-term').addEventListener('change', (e) => {
+                    generatePaymentSchedule();
+                });
+            }
+            if(forms.corporate) {
+                forms.corporate.querySelector('.initial-payment').addEventListener('input', (e) => {
+                    calculateTotal(carts.corporate, forms.corporate);
+                });
+            }
             
             appContainer.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
