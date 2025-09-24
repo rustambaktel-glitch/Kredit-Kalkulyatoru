@@ -1122,7 +1122,6 @@
             const supplier = suppliers.find(s => s.id === supplierId);
             if (!supplier || amount > supplier.balance || amount <= 0) { alert('Ödəniş məbləği düzgün deyil!'); return; }
             supplier.balance -= amount;
-            saveSuppliers(suppliers);
             addTransaction('Təchizatçıya Ödəniş', `${supplier.name} üçün ödəniş`, -amount);
             closeModal(paySupplierModal);
             renderPage('finance');
@@ -1187,6 +1186,18 @@
                             if (sale.payments) {
                                 sale.payments = sale.payments.filter(p => p.transactionId !== id);
                             }
+                            
+                            // Satış ləğv edilirsə, məhsulu anbara qaytar
+                            let stockItems = getStock();
+                            sale.items.forEach(soldItem => {
+                                const stockItem = stockItems.find(s => s.id === soldItem.stockId);
+                                if (stockItem) {
+                                    stockItem.isSold = false;
+                                    stockItem.saleId = null;
+                                }
+                            });
+                            saveStock(stockItems);
+
                             saveSales(sales);
                         }
                     }
@@ -1568,12 +1579,12 @@
                 credit: appContainer.querySelector('#creditSaleForm'),
                 corporate: appContainer.querySelector('#corporateSaleForm')
             };
-            const carts = { cash: [], credit: [], corporate: [] };
-            let activeTab = 'cash';
-            
             const imeiSearchInput = document.getElementById('imeiSearchInput');
             const imeiSearchInputCredit = document.getElementById('imeiSearchInputCredit');
             const imeiSearchInputCorporate = document.getElementById('imeiSearchInputCorporate');
+            
+            const carts = { cash: [], credit: [], corporate: [] };
+            let activeTab = 'cash';
             
             const populateDropdowns = (view) => {
                 const customers = getCustomers();
@@ -2044,7 +2055,7 @@
                         supplierId: supplier.id,
                         purchaseDate: new Date().toLocaleString('az-AZ'),
                         purchasePrice: item.purchasePrice,
-                        salePrice: null, // Satış qiyməti satış zamanı daxil ediləcək
+                        salePrice: null,
                         imei1: item.imei1,
                         imei2: item.imei2,
                         isSold: false,
@@ -2082,7 +2093,6 @@
             
             const renderAllSales = () => {
                 const salesHistoryTableBody = appContainer.querySelector('#salesHistoryTableBody');
-                const tfoot = salesHistoryTableBody.nextElementSibling;
                 const salesReportSearch = appContainer.querySelector('#salesReportSearch');
                 const query = salesReportSearch.value.toLowerCase();
                 let sales = getSales().reverse();
@@ -2092,18 +2102,19 @@
                 salesHistoryTableBody.innerHTML = '';
                 if (sales.length === 0) {
                     salesHistoryTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Satış tapılmadı.</td></tr>';
-                    tfoot.innerHTML = ''; return;
+                    return;
                 }
                 let totalSales = 0;
                 sales.forEach((sale, index) => {
                     totalSales += sale.totalAmount;
                     salesHistoryTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${sale.id}</td><td>${sale.date}</td><td>${sale.customerName}</td><td><span style="background:${['Kredit', 'Korporativ', 'Açıq Qaimə'].includes(sale.type) ? 'var(--warning-color)' : 'var(--success-color)'}; color:white; padding: 4px 10px; border-radius:6px; font-size:12px;">${sale.type}</span></td><td>${sale.totalAmount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-details" data-id="${sale.id}" data-type="sale">Detallar</button></td></tr>`;
                 });
+                const tfoot = salesHistoryTableBody.nextElementSibling;
                 tfoot.innerHTML = `<tr><td colspan="5" style="text-align:right;">CƏMİ:</td><td>${totalSales.toFixed(2)} ₼</td><td></td></tr>`;
             };
+
             const renderPurchases = () => {
                 const purchasesHistoryTableBody = appContainer.querySelector('#purchasesHistoryTableBody');
-                const tfoot = purchasesHistoryTableBody.nextElementSibling;
                 const purchasesReportSearch = appContainer.querySelector('#purchasesReportSearch');
                 const query = purchasesReportSearch.value.toLowerCase();
                 let purchases = getPurchases().reverse();
@@ -2113,18 +2124,19 @@
                 purchasesHistoryTableBody.innerHTML = '';
                 if (purchases.length === 0) {
                     purchasesHistoryTableBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Alış tapılmadı.</td></tr>';
-                    tfoot.innerHTML = ''; return;
+                    return;
                 }
                 let totalPurchases = 0;
                 purchases.forEach((purchase, index) => {
                     totalPurchases += purchase.totalAmount;
                     purchasesHistoryTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${purchase.id}</td><td>${purchase.date}</td><td>${purchase.supplierName}</td><td>${purchase.totalAmount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-details" data-id="${purchase.id}" data-type="purchase">Detallar</button></td></tr>`;
                 });
+                const tfoot = purchasesHistoryTableBody.nextElementSibling;
                 tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">CƏMİ:</td><td>${totalPurchases.toFixed(2)} ₼</td><td></td></tr>`;
             };
+
             const renderFinancial = () => {
                 const financialHistoryTableBody = appContainer.querySelector('#financialHistoryTableBody');
-                const tfoot = financialHistoryTableBody.nextElementSibling;
                 const financialReportSearch = appContainer.querySelector('#financialReportSearch');
                 const query = financialReportSearch.value.toLowerCase();
                 let transactions = getTransactions().reverse();
@@ -2134,13 +2146,14 @@
                 financialHistoryTableBody.innerHTML = '';
                 if (transactions.length === 0) {
                     financialHistoryTableBody.innerHTML = '<tr><td colspan="7" style="text-align:center;">Əməliyyat tapılmadı.</td></tr>';
-                    tfoot.innerHTML = ''; return;
+                    return;
                 }
                 let totalAmount = 0;
                 transactions.forEach((tr, index) => {
                     totalAmount += tr.amount;
                     financialHistoryTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${tr.id}</td><td>${tr.date}</td><td>${tr.type}</td><td>${tr.description}</td><td class="${tr.amount >= 0 ? 'positive' : 'negative'}">${tr.amount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-delete finance-delete-btn" data-id="${tr.id}">🗑️</button></td></tr>`;
                 });
+                const tfoot = financialHistoryTableBody.nextElementSibling;
                 tfoot.innerHTML = `<tr><td colspan="5" style="text-align:right;">YEKUN BALANS:</td><td class="${totalAmount >= 0 ? 'positive' : 'negative'}">${totalAmount.toFixed(2)} ₼</td><td></td></tr>`;
             };
             reportTabs.addEventListener('click', (e) => {
@@ -2355,7 +2368,7 @@
                     const sale = getSales().find(s => s.id === id);
                     if (!sale) return;
                     let detailsHtml = `<p><strong>Satış ID:</strong> ${sale.id}</p><p><strong>Müştəri:</strong> ${sale.customerName}</p><p><strong>Satış Növü:</strong> ${sale.type}</p><p><strong>Yekun Məbləğ:</strong> ${sale.totalAmount.toFixed(2)} ₼</p><p><strong>Ödənilmiş Məbləğ:</strong> ${sale.initialPayment.toFixed(2)} ₼</p><p><strong>Borc:</strong> ${(sale.totalAmount - sale.initialPayment).toFixed(2)} ₼</p><hr style="border-color:var(--border-color); margin: 15px 0;"><h4 style="margin-bottom:10px;">Satılan Məhsullar</h4><table class="data-table" style="width:100%;"><thead><tr><th>Məhsul</th><th>IMEI 1</th><th>IMEI 2</th><th>Qiymət</th></tr></thead><tbody>`;
-                    sale.items.forEach(i => { detailsHtml += `<tr><td>${i.name}</td><td>${i.imeiCodes[0] || '-'}</td><td>${i.imeiCodes[1] || '-'}</td><td>${i.salePrice.toFixed(2)} ₼</td></tr>`; });
+                    sale.items.forEach(i => { detailsHtml += `<tr><td>${i.name}</td><td>${i.imei1 || '-'}</td><td>${i.imei2 || '-'}</td><td>${i.salePrice.toFixed(2)} ₼</td></tr>`; });
                     detailsHtml += '</tbody></table>';
                     document.getElementById('saleDetailsContent').innerHTML = detailsHtml;
                     openModal(saleDetailsModal);
