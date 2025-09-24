@@ -684,7 +684,7 @@
         <div class="page-container">
             <div class="page-header">
                 <h1>Maliyyə</h1>
-                <div style="display:flex; gap: 1rem; flex-wrap: wrap;">
+                <div id="admin-actions" style="display:flex; gap: 1rem; flex-wrap: wrap;">
                     <button id="btnBackupData" class="btn btn-primary">
                         <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> Məlumatları Yüklə (Backup)</span>
                     </button>
@@ -737,7 +737,7 @@
                     <div class="page-header" style="padding: 1rem 0 0 0;">
                         <div class="search-container">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar...">
+                            <input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri, məbləğ və ya tarixə görə axtar...">
                         </div>
                     </div>
                     <table class="data-table">
@@ -750,7 +750,7 @@
                     <div class="page-header" style="padding: 1rem 0 0 0;">
                         <div class="search-container">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı və ya məbləğə görə axtar...">
+                            <input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı, məbləğ və ya tarixə görə axtar...">
                         </div>
                     </div>
                     <table class="data-table">
@@ -763,7 +763,7 @@
                     <div class="page-header" style="padding: 1rem 0 0 0;">
                         <div class="search-container">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <input type="search" id="financialReportSearch" class="search-input" placeholder="Növ və ya açıqlamaya görə axtar...">
+                            <input type="search" id="financialReportSearch" class="search-input" placeholder="Növ, açıqlama və ya tarixə görə axtar...">
                         </div>
                     </div>
                     <table class="data-table">
@@ -1004,7 +1004,7 @@
                     <div class="page-header" style="padding: 1rem 0 0 0;">
                         <div class="search-container">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <input type="search" id="customerDebtSearch" class="search-input" placeholder="Müştəri və ya məbləğə görə axtar...">
+                            <input type="search" id="customerDebtSearch" class="search-input" placeholder="Müştəri, məbləğ, tarixə görə axtar...">
                         </div>
                     </div>
                     <table class="data-table">
@@ -1020,7 +1020,7 @@
                     <div class="page-header" style="padding: 1rem 0 0 0;">
                         <div class="search-container">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <input type="search" id="supplierDebtSearch" class="search-input" placeholder="Təchizatçı və ya məbləğə görə axtar...">
+                            <input type="search" id="supplierDebtSearch" class="search-input" placeholder="Təchizatçı, məbləğ, tarixə görə axtar...">
                         </div>
                     </div>
                     <table class="data-table">
@@ -1374,12 +1374,13 @@
             const supplier = suppliers.find(s => s.id === supplierId);
             
             if (!supplier) { alert('Təchizatçı tapılmadı.'); return; }
+            let remainingDebt = 0;
 
             if (purchaseId) {
                 let purchases = getPurchases();
                 const purchase = purchases.find(p => p.id === purchaseId);
                 const paidAmount = getTransactions().filter(t => t.type === 'Təchizatçıya Ödəniş' && t.details && t.details.purchaseId === purchaseId).reduce((sum, t) => sum + Math.abs(t.amount), 0);
-                const remainingDebt = purchase.totalAmount - paidAmount;
+                remainingDebt = purchase.totalAmount - paidAmount;
                 if (amount <= 0 || amount > remainingDebt) {
                     alert('Ödəniş məbləği düzgün daxil edilməyib!');
                     return;
@@ -1387,7 +1388,8 @@
                 supplier.balance -= amount;
                 addTransaction('Təchizatçıya Ödəniş', `${supplier.name} üçün alış #${purchaseId} ödənişi`, -amount, { supplierId: supplier.id, purchaseId: purchaseId });
             } else {
-                 if(amount <= 0 || amount > supplier.balance) {
+                 remainingDebt = supplier.balance;
+                 if(amount <= 0 || amount > remainingDebt) {
                     alert('Ödəniş məbləği düzgün daxil edilməyib!');
                     return;
                  }
@@ -1399,7 +1401,7 @@
             closeModal(paySupplierModal);
             renderPage('finance');
         });
-        
+
         document.getElementById('paymentSupplierSelect').addEventListener('change', (e) => {
             const supplierId = parseInt(e.target.value);
             const purchases = getPurchases();
@@ -1429,7 +1431,7 @@
                 }
             });
             paymentPurchaseSelect.innerHTML = purchaseOptions;
-            paymentPurchaseGroup.style.display = hasDebts ? 'block' : 'none';
+            paymentPurchaseGroup.style.display = 'block';
             supplierPaymentAmountInput.value = '';
         });
 
@@ -1567,10 +1569,10 @@
             if (!transactionToDelete) return;
 
             if (confirm(`"${transactionToDelete.description}" əməliyyatını silməyə əminsiniz?`)) {
-                if (transactionToDelete.customerId && transactionToDelete.amount > 0) {
+                if (transactionToDelete.details && transactionToDelete.details.customerId && transactionToDelete.amount > 0) {
                     let customers = getCustomers();
                     let sales = getSales();
-                    let customer = customers.find(c => c.id === transactionToDelete.customerId);
+                    let customer = customers.find(c => c.id === transactionToDelete.details.customerId);
                     let sale = sales.find(s => s.id === transactionToDelete.details.saleId);
 
                     if (customer) {
@@ -1584,9 +1586,9 @@
                         }
                         saveSales(sales);
                     }
-                } else if (transactionToDelete.supplierId && transactionToDelete.amount < 0) {
+                } else if (transactionToDelete.details && transactionToDelete.details.supplierId && transactionToDelete.amount < 0) {
                      let suppliers = getSuppliers();
-                     let supplier = suppliers.find(s => s.id === transactionToDelete.supplierId);
+                     let supplier = suppliers.find(s => s.id === transactionToDelete.details.supplierId);
                      if (supplier) {
                          const paidAmount = Math.abs(transactionToDelete.amount);
                          supplier.balance += paidAmount;
@@ -2519,7 +2521,7 @@
                 const query = salesReportSearch.value.toLowerCase();
                 let sales = getSales().reverse();
                 if (query) {
-                    sales = sales.filter(s => s.customerName.toLowerCase().includes(query) || s.totalAmount.toString().includes(query) || s.id.toString().includes(query));
+                    sales = sales.filter(s => s.customerName.toLowerCase().includes(query) || s.totalAmount.toString().includes(query) || s.id.toString().includes(query) || s.date.includes(query));
                 }
                 salesHistoryTableBody.innerHTML = '';
                 if (sales.length === 0) {
@@ -2541,7 +2543,7 @@
                 const query = purchasesReportSearch.value.toLowerCase();
                 let purchases = getPurchases().reverse();
                 if (query) {
-                    purchases = purchases.filter(p => p.supplierName.toLowerCase().includes(query) || p.totalAmount.toString().includes(query) || p.id.toString().includes(query));
+                    purchases = purchases.filter(p => p.supplierName.toLowerCase().includes(query) || p.totalAmount.toString().includes(query) || p.id.toString().includes(query) || p.date.includes(query));
                 }
                 purchasesHistoryTableBody.innerHTML = '';
                 if (purchases.length === 0) {
@@ -2563,7 +2565,7 @@
                 const query = financialReportSearch.value.toLowerCase();
                 let transactions = getTransactions().reverse();
                 if (query) {
-                    transactions = transactions.filter(t => t.description.toLowerCase().includes(query) || t.type.toLowerCase().includes(query) || t.id.toString().includes(query));
+                    transactions = transactions.filter(t => t.description.toLowerCase().includes(query) || t.type.toLowerCase().includes(query) || t.id.toString().includes(query) || t.date.includes(query));
                 }
                 financialHistoryTableBody.innerHTML = '';
                 if (transactions.length === 0) {
@@ -2622,9 +2624,14 @@
             const tfoot = transactionsTableBody.nextElementSibling;
             const btnIncome = appContainer.querySelector('#btnIncome');
             const btnExpense = appContainer.querySelector('#btnExpense');
-            const btnBackupData = appContainer.querySelector('#btnBackupData');
-            const btnFixData = appContainer.querySelector('#btnFixData');
-            const btnResetData = appContainer.querySelector('#btnResetData');
+            const adminActions = appContainer.querySelector('#admin-actions');
+
+            const isAdmin = localStorage.getItem('isAdmin') === 'true';
+            if (isAdmin) {
+                adminActions.style.display = 'flex';
+            } else {
+                adminActions.style.display = 'none';
+            }
 
             const renderFinancePage = () => {
                 const transactions = getTransactions();
@@ -2643,7 +2650,7 @@
                 });
                 tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">YEKUN BALANS:</td><td class="${cashBalance >= 0 ? 'positive' : 'negative'}">${cashBalance.toFixed(2)} ₼</td><td></td></tr>`;
             };
-            btnBackupData.addEventListener('click', () => {
+            appContainer.querySelector('#btnBackupData').addEventListener('click', () => {
                 const backupData = { products: getProducts(), stock: getStock(), customers: getCustomers(), suppliers: getSuppliers(), sales: getSales(), purchases: getPurchases(), transactions: getTransactions() };
                 const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
                 const a = document.createElement('a');
@@ -2653,22 +2660,18 @@
                 a.click();
                 document.body.removeChild(a);
             });
-            if (btnFixData) {
-                btnFixData.addEventListener('click', () => {
-                    if (confirm('Diqqət! Bu əməliyyat bütün müştəri və təchizatçı borclarını yenidən hesablayacaq. Davam etmək istəyirsiniz?')) {
-                        recalculateAllDebtsAndBalances();
-                    }
-                });
-            }
-            if (btnResetData) {
-                btnResetData.addEventListener('click', () => {
-                    if (confirm('XƏBƏRDARLIQ: Bütün məlumatları (məhsullar, müştərilər, təchizatçılar, satışlar və s.) silmək istədiyinizə əminsiniz? Bu əməliyyat geri qaytarıla bilməz.')) {
-                        localStorage.clear();
-                        alert('Bütün məlumatlar silindi. Səhifə yenilənəcək.');
-                        location.reload();
-                    }
-                });
-            }
+            appContainer.querySelector('#btnFixData').addEventListener('click', () => {
+                if (confirm('Diqqət! Bu əməliyyat bütün müştəri və təchizatçı borclarını yenidən hesablayacaq. Davam etmək istəyirsiniz?')) {
+                    recalculateAllDebtsAndBalances();
+                }
+            });
+            appContainer.querySelector('#btnResetData').addEventListener('click', () => {
+                if (confirm('XƏBƏRDARLIQ: Bütün məlumatları (məhsullar, müştərilər, təchizatçılar, satışlar və s.) silmək istədiyinizə əminsiniz? Bu əməliyyat geri qaytarıla bilməz.')) {
+                    localStorage.clear();
+                    alert('Bütün məlumatlar silindi. Səhifə yenilənəcək.');
+                    location.reload();
+                }
+            });
             btnIncome.addEventListener('click', () => { openModal(incomeTypeModal); });
             btnExpense.addEventListener('click', () => { openModal(expenseTypeModal); });
             document.getElementById('btnAcceptPayment').addEventListener('click', () => {
@@ -2950,7 +2953,8 @@
             }
         });
         
-        renderPage('debts');
+        // Səhifənin yüklənməsi
+        renderPage('finance');
     });
     </script>
 </body>
