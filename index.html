@@ -1591,9 +1591,10 @@
                 credit: appContainer.querySelector('#creditSaleForm'),
                 corporate: appContainer.querySelector('#corporateSaleForm')
             };
-            const imeiSearchInput = document.getElementById('imeiSearchInput');
-            const imeiSearchInputCredit = document.getElementById('imeiSearchInputCredit');
-            const imeiSearchInputCorporate = document.getElementById('imeiSearchInputCorporate');
+            
+            const imeiSearchInput = forms.cash.querySelector('#imeiSearchInput');
+            const imeiSearchInputCredit = forms.credit.querySelector('#imeiSearchInputCredit');
+            const imeiSearchInputCorporate = forms.corporate.querySelector('#imeiSearchInputCorporate');
             
             const carts = { cash: [], credit: [], corporate: [] };
             let activeTab = 'cash';
@@ -1689,9 +1690,9 @@
                 renderCart(carts[activeTab], forms[activeTab]);
             });
 
-            const handleImeiSearch = (e) => {
+            const handleImeiSearch = (e, targetForm) => {
                 const imei = e.target.value.trim();
-                if (imei.length > 0) { // Sadece enter basmaq yerine, deyer daxil edildikde axtaris etsin
+                if (imei.length > 0) { 
                     const stockItems = getStock();
                     const availableItem = stockItems.find(item => 
                         (item.imei1 === imei || item.imei2 === imei) && !item.isSold
@@ -1725,30 +1726,15 @@
                     e.target.value = '';
                 }
             };
+            
+            imeiSearchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleImeiSearch(e, forms.cash); } });
+            imeiSearchInput.addEventListener('change', (e) => { handleImeiSearch(e, forms.cash); });
 
-            imeiSearchInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleImeiSearch(e);
-                }
-            });
-            imeiSearchInput.addEventListener('change', handleImeiSearch);
+            imeiSearchInputCredit.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleImeiSearch(e, forms.credit); } });
+            imeiSearchInputCredit.addEventListener('change', (e) => { handleImeiSearch(e, forms.credit); });
 
-            imeiSearchInputCredit.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleImeiSearch(e);
-                }
-            });
-            imeiSearchInputCredit.addEventListener('change', handleImeiSearch);
-
-            imeiSearchInputCorporate.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    handleImeiSearch(e);
-                }
-            });
-            imeiSearchInputCorporate.addEventListener('change', handleImeiSearch);
+            imeiSearchInputCorporate.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleImeiSearch(e, forms.corporate); } });
+            imeiSearchInputCorporate.addEventListener('change', (e) => { handleImeiSearch(e, forms.corporate); });
 
 
             appContainer.addEventListener('input', (e) => {
@@ -2145,7 +2131,7 @@
                 let totalPurchases = 0;
                 purchases.forEach((purchase, index) => {
                     totalPurchases += purchase.totalAmount;
-                    purchasesHistoryTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${purchase.id}</td><td>${purchase.date}</td><td>${purchase.supplierName}</td><td>${purchase.totalAmount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-details" data-id="${purchase.id}" data-type="purchase">Detallar</button></td></tr>`;
+                    purchasesHistoryTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${purchase.id}</td><td>${purchase.date}</td><td>${purchase.supplierName}</td><td>${purchase.totalAmount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-details" data-id="${purchase.id}" data-type="purchase">Detallar</button><button class="btn-delete-purchase" data-id="${purchase.id}">🗑️</button></td></tr>`;
                 });
                 const tfoot = purchasesHistoryTableBody.nextElementSibling;
                 tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">CƏMİ:</td><td>${totalPurchases.toFixed(2)} ₼</td><td></td></tr>`;
@@ -2384,18 +2370,80 @@
                     const sale = getSales().find(s => s.id === id);
                     if (!sale) return;
                     let detailsHtml = `<p><strong>Satış ID:</strong> ${sale.id}</p><p><strong>Müştəri:</strong> ${sale.customerName}</p><p><strong>Satış Növü:</strong> ${sale.type}</p><p><strong>Yekun Məbləğ:</strong> ${sale.totalAmount.toFixed(2)} ₼</p><p><strong>Ödənilmiş Məbləğ:</strong> ${sale.initialPayment.toFixed(2)} ₼</p><p><strong>Borc:</strong> ${(sale.totalAmount - sale.initialPayment).toFixed(2)} ₼</p><hr style="border-color:var(--border-color); margin: 15px 0;"><h4 style="margin-bottom:10px;">Satılan Məhsullar</h4><table class="data-table" style="width:100%;"><thead><tr><th>Məhsul</th><th>IMEI 1</th><th>IMEI 2</th><th>Qiymət</th></tr></thead><tbody>`;
-                    sale.items.forEach(i => { detailsHtml += `<tr><td>${i.name}</td><td>${i.imei1 || '-'}</td><td>${i.imei2 || '-'}</td><td>${i.salePrice.toFixed(2)} ₼</td></tr>`; });
+                    sale.items.forEach(i => { detailsHtml += `<tr><td>${i.name}</td><td>${i.imeiCodes[0] || '-'}</td><td>${i.imeiCodes[1] || '-'}</td><td>${i.salePrice.toFixed(2)} ₼</td></tr>`; });
                     detailsHtml += '</tbody></table>';
                     document.getElementById('saleDetailsContent').innerHTML = detailsHtml;
                     openModal(saleDetailsModal);
                 } else if (type === 'purchase') {
                     const purchase = getPurchases().find(p => p.id === id);
                     if (!purchase) return;
-                    let detailsHtml = `<p><strong>Alış ID:</strong> ${purchase.id}</p><p><strong>Təchizatçı:</strong> ${purchase.supplierName}</p><p><strong>Yekun Məbləğ:</strong> ${purchase.totalAmount.toFixed(2)} ₼</p><hr style="border-color:var(--border-color); margin: 15px 0;"><h4 style="margin-bottom:10px;">Alınan Məhsullar</h4><table class="data-table" style="width:100%;"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead><tbody>`;
-                    purchase.items.forEach(i => { detailsHtml += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.price.toFixed(2)} ₼</td><td>${(i.quantity * i.price).toFixed(2)} ₼</td></tr>`; });
+                    let detailsHtml = `<p><strong>Alış ID:</strong> ${purchase.id}</p><p><strong>Təchizatçı:</strong> ${purchase.supplierName}</p><p><strong>Yekun Məbləğ:</strong> ${purchase.totalAmount.toFixed(2)} ₼</p><hr style="border-color:var(--border-color); margin: 15px 0;"><h4 style="margin-bottom:10px;">Alınan Məhsullar</h4><table class="data-table" style="width:100%;"><thead><tr><th>Məhsul</th><th>Alış Qiyməti</th><th>IMEI 1</th><th>IMEI 2</th><th></th></tr></thead><tbody>`;
+                    
+                    purchase.items.forEach(i => {
+                        detailsHtml += `<tr>
+                            <td>${i.productName}</td>
+                            <td>${i.purchasePrice.toFixed(2)} ₼</td>
+                            <td>${i.imei1 || '-'}</td>
+                            <td>${i.imei2 || '-'}</td>
+                            <td class="actions-cell">
+                                <button class="btn-delete remove-purchase-item-btn" data-purchase-id="${purchase.id}" data-imei1="${i.imei1}">🗑️</button>
+                            </td>
+                        </tr>`;
+                    });
                     detailsHtml += '</tbody></table>';
                     document.getElementById('purchaseDetailsContent').innerHTML = detailsHtml;
                     openModal(purchaseDetailsModal);
+                }
+            }
+        });
+        
+        // Handle removal of single purchase item
+        purchaseDetailsModal.addEventListener('click', (e) => {
+            const btn = e.target.closest('.remove-purchase-item-btn');
+            if (btn) {
+                const purchaseId = parseInt(btn.dataset.purchaseId);
+                const imei1 = btn.dataset.imei1;
+                
+                if (confirm('Bu məhsulu alış qaiməsindən silməyə əminsiniz?')) {
+                    let purchases = getPurchases();
+                    let stock = getStock();
+                    let suppliers = getSuppliers();
+
+                    const purchaseIndex = purchases.findIndex(p => p.id === purchaseId);
+                    if (purchaseIndex !== -1) {
+                        const purchase = purchases[purchaseIndex];
+                        const itemIndex = purchase.items.findIndex(i => i.imei1 === imei1);
+
+                        if (itemIndex !== -1) {
+                            const itemToRemove = purchase.items[itemIndex];
+                            
+                            // Remove from stock
+                            stock = stock.filter(s => !(s.purchaseDate === purchase.date && s.imei1 === imei1));
+                            
+                            // Update supplier balance
+                            const supplier = suppliers.find(s => s.id === purchase.supplierId);
+                            if (supplier) {
+                                supplier.balance -= itemToRemove.price;
+                            }
+
+                            // Update purchase total
+                            purchase.totalAmount -= itemToRemove.price;
+                            purchase.items.splice(itemIndex, 1);
+
+                            // If all items are removed, remove the whole purchase
+                            if (purchase.items.length === 0) {
+                                purchases.splice(purchaseIndex, 1);
+                            }
+
+                            savePurchases(purchases);
+                            saveStock(stock);
+                            saveSuppliers(suppliers);
+                            
+                            alert('Məhsul uğurla silindi!');
+                            closeModal(purchaseDetailsModal);
+                            renderPage('reports');
+                        }
+                    }
                 }
             }
         });
