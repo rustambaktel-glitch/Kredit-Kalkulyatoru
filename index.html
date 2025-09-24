@@ -430,6 +430,24 @@
             background-color: var(--danger-color);
         }
 
+        /* YENI STILLER */
+        .cart-price-input {
+            width: 100px;
+            padding: 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            text-align: right;
+            font-size: 0.875rem;
+            background-color: var(--bg-main);
+            transition: all 0.2s ease-in-out;
+        }
+        .cart-price-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
+        }
+        /* YENI STILLER SON */
+
         @media (max-width: 768px) {
             .sidebar {
                 width: 100%;
@@ -1603,7 +1621,7 @@
             };
 
             const calculateTotal = (cart, view) => {
-                const total = cart.reduce((sum, item) => sum + (item.salePrice), 0);
+                const total = cart.reduce((sum, item) => sum + (item.salePrice || 0), 0);
                 view.querySelector('.summary-total').textContent = `${total.toFixed(2)} ₼`;
 
                 const tfoot = view.querySelector('.cart-table-body').nextElementSibling;
@@ -1612,7 +1630,10 @@
                 if (view.id === 'corporate-sale-view' || view.id === 'credit-sale-view') {
                     const initialPayment = parseFloat(view.querySelector('.initial-payment').value) || 0;
                     const debt = total - initialPayment;
-                    view.querySelector('.debt-total').textContent = `${debt.toFixed(2)} ₼`;
+                    const debtTotalEl = view.querySelector('.debt-total');
+                    if (debtTotalEl) { // DÜZƏLİŞ: Elementin mövcudluğunu yoxlayır
+                        debtTotalEl.textContent = `${debt.toFixed(2)} ₼`;
+                    }
                 }
                 return total;
             };
@@ -1629,7 +1650,7 @@
                             <td>${item.name}</td>
                             <td>${item.imei1 || '-'}</td>
                             <td>${item.imei2 || '-'}</td>
-                            <td><input type="number" class="cart-price-input" data-id="${item.stockId}" value="${item.salePrice.toFixed(2)}" step="0.01" min="0"></td>
+                            <td><input type="number" class="cart-price-input" data-id="${item.stockId}" value="${(item.salePrice || 0).toFixed(2)}" step="0.01" min="0"></td>
                             <td class="actions-cell"><button type="button" class="btn-delete cart-remove-btn" data-id="${item.stockId}">🗑️</button></td>
                         </tr>`;
                     });
@@ -1653,7 +1674,7 @@
                 const loanAmount = total - initialPayment;
                 const monthlyPayment = loanAmount / loanTerm;
 
-                let scheduleHtml = '<h4>Ödəniş Cədvəli</h4><table class="data-table" style="margin-top: 1rem;"><thead><tr><th>#</th><th>Ödəniş Tarixi</th><th>Aylıq Ödəniş</th></tr></thead><tbody>';
+                let scheduleHtml = '<h4>Ödəniş Cədvəli</h4><table class="data-table" style="margin-top: 1rem;"><thead><tr><th>Ödəniş Tarixi</th><th>Aylıq Ödəniş</th></tr></thead><tbody>';
                 let currentDate = new Date();
                 for (let i = 1; i <= loanTerm; i++) {
                     currentDate.setMonth(currentDate.getMonth() + 1);
@@ -1676,12 +1697,11 @@
                     view.style.display = view.id.startsWith(activeTab) ? 'block' : 'none';
                 });
                 
-                // Switch cart data for the new tab
                 renderCart(carts[activeTab], forms[activeTab]);
                 populateDropdowns(forms[activeTab]);
             });
 
-            const handleImeiSearch = (e, targetForm) => {
+            const handleImeiSearch = (e) => {
                 const imei = e.target.value.trim();
                 if (e.key === 'Enter') {
                     e.preventDefault();
@@ -1753,7 +1773,7 @@
             appContainer.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
                 if (!btn) return;
-                if(btn.classList.contains('cart-remove-btn')) {
+                if(btn.classList.contains('cart-remove-btn')) { // DÜZƏLİŞ: Bu hissə artıq işləyir
                     const stockId = parseInt(btn.dataset.id);
                     carts[activeTab] = carts[activeTab].filter(i => i.stockId !== stockId);
                     renderCart(carts[activeTab], forms[activeTab]);
@@ -1774,7 +1794,7 @@
                 const view = forms.cash;
                 const customerId = parseInt(view.querySelector('.sale-customer').value);
                 const paymentType = view.querySelector('.payment-type').value;
-                if (cart.length === 0 || (customerId !== 0 && !customerId)) {
+                if (cart.length === 0 || isNaN(customerId)) {
                     alert('Müştəri seçin və səbətə məhsul əlavə edin!');
                     return;
                 }
