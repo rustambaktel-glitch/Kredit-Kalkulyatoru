@@ -609,16 +609,6 @@
             <div id="paymentHistoryContent" style="margin-top: 20px;"></div>
         </div>
     </div>
-    <div id="imeiEntryModal" class="modal">
-        <div class="modal-content">
-            <span class="modal-close">&times;</span>
-            <h2>IMEI Kodlarını daxil edin</h2>
-            <div id="imeiEntryContent"></div>
-            <div class="form-actions" style="margin-top: 1rem;">
-                <button id="saveImeisBtn" class="btn btn-primary">Yadda Saxla</button>
-            </div>
-        </div>
-    </div>
 
     <template id="finance-page-template">
         <div class="page-container">
@@ -1619,7 +1609,7 @@
                 const tfoot = view.querySelector('.cart-table-body').nextElementSibling;
                 tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">CƏMİ:</td><td>${total.toFixed(2)} ₼</td><td></td></tr>`;
 
-                if (view.id === 'corporate-sale-view') {
+                if (view.id === 'corporate-sale-view' || view.id === 'credit-sale-view') {
                     const initialPayment = parseFloat(view.querySelector('.initial-payment').value) || 0;
                     const debt = total - initialPayment;
                     view.querySelector('.debt-total').textContent = `${debt.toFixed(2)} ₼`;
@@ -1685,14 +1675,14 @@
                 saleViews.forEach(view => {
                     view.style.display = view.id.startsWith(activeTab) ? 'block' : 'none';
                 });
-
-                populateDropdowns(forms[activeTab]);
+                
+                // Switch cart data for the new tab
                 renderCart(carts[activeTab], forms[activeTab]);
+                populateDropdowns(forms[activeTab]);
             });
 
-            const handleImeiSearch = (e) => {
+            const handleImeiSearch = (e, targetForm) => {
                 const imei = e.target.value.trim();
-                const currentForm = e.target.closest('form');
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     if (imei.length > 0) {
@@ -1714,7 +1704,7 @@
                                         name: product.name,
                                         imei1: availableItem.imei1,
                                         imei2: availableItem.imei2,
-                                        salePrice: availableItem.salePrice || 0, // Avtomatik olaraq satış qiymətini gətirir
+                                        salePrice: availableItem.salePrice || 0,
                                         productId: product.id
                                     });
                                     renderCart(cart, forms[activeTab]);
@@ -1747,12 +1737,9 @@
                     calculateTotal(cart, forms[activeTab]);
                 }
                 if (e.target.classList.contains('initial-payment')) {
+                    calculateTotal(carts[activeTab], forms[activeTab]);
                     if (activeTab === 'credit') {
-                         calculateTotal(carts.credit, forms.credit);
                          generatePaymentSchedule();
-                    }
-                    if (activeTab === 'corporate') {
-                         calculateTotal(carts.corporate, forms.corporate);
                     }
                 }
             });
@@ -1837,8 +1824,8 @@
                 const loanTerm = parseInt(view.querySelector('.loan-term').value);
                 const debt = totalAmount - initialPayment;
 
-                if (initialPayment >= totalAmount) {
-                    alert('İlkin ödəniş ümumi məbləğdən kiçik olmalıdır!');
+                if (initialPayment > totalAmount) {
+                    alert('İlkin ödəniş ümumi məbləğdən böyük ola bilməz!');
                     return;
                 }
 
