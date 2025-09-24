@@ -416,6 +416,19 @@
             margin-top: 1rem;
             font-size: 0.9rem;
         }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            color: white;
+        }
+        .status-badge.anbarda {
+            background-color: var(--success-color);
+        }
+        .status-badge.satilib {
+            background-color: var(--danger-color);
+        }
 
         @media (max-width: 768px) {
             .sidebar {
@@ -1187,7 +1200,6 @@
                                 sale.payments = sale.payments.filter(p => p.transactionId !== id);
                             }
                             
-                            // Satış ləğv edilirsə, məhsulu anbara qaytar
                             let stockItems = getStock();
                             sale.items.forEach(soldItem => {
                                 const stockItem = stockItems.find(s => s.id === soldItem.stockId);
@@ -1285,7 +1297,8 @@
                 stockItems.forEach((item, index) => {
                     const product = products.find(p => p.id === item.productId);
                     const supplier = suppliers.find(s => s.id === item.supplierId);
-                    const status = item.isSold ? 'Satılıb' : 'Anbarda';
+                    const statusText = item.isSold ? 'Satılıb' : 'Anbarda';
+                    const statusClass = item.isSold ? 'satilib' : 'anbarda';
                     stockTableBody.innerHTML += `
                         <tr>
                             <td>${index + 1}</td>
@@ -1295,7 +1308,7 @@
                             <td>${item.purchasePrice.toFixed(2)} ₼</td>
                             <td>${item.imei1 || '-'}</td>
                             <td>${item.imei2 || '-'}</td>
-                            <td>${status}</td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
                         </tr>
                     `;
                 });
@@ -1457,14 +1470,13 @@
                                         <div class="product-details">
                                             <strong>Məhsullar:</strong>
                                             <table class="data-table" style="width: 100%; margin-top: 0.5rem;">
-                                                <thead><tr><th>Məhsul Adı</th><th>Say</th><th>IMEI 1</th><th>IMEI 2</th></tr></thead>
+                                                <thead><tr><th>Məhsul Adı</th><th>IMEI 1</th><th>IMEI 2</th></tr></thead>
                                                 <tbody>
                                                 ${sale.items.map(item => `
                                                     <tr>
                                                         <td>${item.name}</td>
-                                                        <td>${item.quantity}</td>
-                                                        <td>${(item.imeiCodes && item.imeiCodes[0]) ? item.imeiCodes[0] : '-'}</td>
-                                                        <td>${(item.imeiCodes && item.imeiCodes[1]) ? item.imeiCodes[1] : '-'}</td>
+                                                        <td>${item.imei1 || '-'}</td>
+                                                        <td>${item.imei2 || '-'}</td>
                                                     </tr>
                                                 `).join('')}
                                                 </tbody>
@@ -1679,15 +1691,14 @@
 
             const handleImeiSearch = (e) => {
                 const imei = e.target.value.trim();
-                if (imei.length === 15 || imei.length === 16) {
+                if (imei.length > 0) { // Sadece enter basmaq yerine, deyer daxil edildikde axtaris etsin
                     const stockItems = getStock();
-                    const products = getProducts();
                     const availableItem = stockItems.find(item => 
                         (item.imei1 === imei || item.imei2 === imei) && !item.isSold
                     );
                     
                     if (availableItem) {
-                        const product = products.find(p => p.id === availableItem.productId);
+                        const product = getProducts().find(p => p.id === availableItem.productId);
                         if (product) {
                             const cart = carts[activeTab];
                             const existingItem = cart.find(item => item.stockId === availableItem.id);
@@ -1721,18 +1732,23 @@
                     handleImeiSearch(e);
                 }
             });
+            imeiSearchInput.addEventListener('change', handleImeiSearch);
+
             imeiSearchInputCredit.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     handleImeiSearch(e);
                 }
             });
+            imeiSearchInputCredit.addEventListener('change', handleImeiSearch);
+
             imeiSearchInputCorporate.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     handleImeiSearch(e);
                 }
             });
+            imeiSearchInputCorporate.addEventListener('change', handleImeiSearch);
 
 
             appContainer.addEventListener('input', (e) => {
