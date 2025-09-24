@@ -1690,8 +1690,9 @@
                 renderCart(carts[activeTab], forms[activeTab]);
             });
 
-            const handleImeiSearch = (e, targetForm) => {
+            const handleImeiSearch = (e) => {
                 const imei = e.target.value.trim();
+                const currentForm = e.target.closest('form');
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     if (imei.length > 0) {
@@ -1713,7 +1714,7 @@
                                         name: product.name,
                                         imei1: availableItem.imei1,
                                         imei2: availableItem.imei2,
-                                        salePrice: availableItem.salePrice || 0,
+                                        salePrice: availableItem.salePrice || 0, // Avtomatik olaraq satış qiymətini gətirir
                                         productId: product.id
                                     });
                                     renderCart(cart, forms[activeTab]);
@@ -1731,9 +1732,9 @@
                 }
             };
             
-            imeiSearchInput.addEventListener('keydown', (e) => { handleImeiSearch(e, forms.cash); });
-            imeiSearchInputCredit.addEventListener('keydown', (e) => { handleImeiSearch(e, forms.credit); });
-            imeiSearchInputCorporate.addEventListener('keydown', (e) => { handleImeiSearch(e, forms.corporate); });
+            imeiSearchInput.addEventListener('keydown', handleImeiSearch);
+            imeiSearchInputCredit.addEventListener('keydown', handleImeiSearch);
+            imeiSearchInputCorporate.addEventListener('keydown', handleImeiSearch);
 
             appContainer.addEventListener('input', (e) => {
                 if (e.target.classList.contains('cart-price-input')) {
@@ -1745,20 +1746,20 @@
                     item.salePrice = parseFloat(e.target.value) || 0;
                     calculateTotal(cart, forms[activeTab]);
                 }
+                if (e.target.classList.contains('initial-payment')) {
+                    if (activeTab === 'credit') {
+                         calculateTotal(carts.credit, forms.credit);
+                         generatePaymentSchedule();
+                    }
+                    if (activeTab === 'corporate') {
+                         calculateTotal(carts.corporate, forms.corporate);
+                    }
+                }
             });
-            
+
             if(forms.credit) {
-                forms.credit.querySelector('.initial-payment').addEventListener('input', (e) => {
-                    calculateTotal(carts.credit, forms.credit);
-                    generatePaymentSchedule();
-                });
                 forms.credit.querySelector('.loan-term').addEventListener('change', (e) => {
                     generatePaymentSchedule();
-                });
-            }
-            if(forms.corporate) {
-                forms.corporate.querySelector('.initial-payment').addEventListener('input', (e) => {
-                    calculateTotal(carts.corporate, forms.corporate);
                 });
             }
             
