@@ -445,6 +445,14 @@
             border-color: var(--primary-color);
             box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
         }
+        .date-input {
+            width: 10rem;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border-color);
+            background: var(--bg-content);
+            font-size: 0.875rem;
+        }
 
         @media (max-width: 768px) {
             .sidebar {
@@ -497,7 +505,8 @@
         <div class="logo">BİZNES PANEL</div>
         <nav id="sidebar-nav">
             <ul>
-                <li><a data-page="finance" class="active"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> <span>Maliyyə</span></a></li>
+                <li><a data-page="home" class="active"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10"></path></svg> <span>Ana Səhifə</span></a></li>
+                <li><a data-page="finance"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> <span>Maliyyə</span></a></li>
                 <li><a data-page="reports"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0h6m-6-10h6m-6 4h6m0 0v6a2 2 0 002 2h2a2 2 0 002-2v-6a2 2 0 00-2-2h-2a2 2 0 00-2 2z"></path></svg> <span>Hesabatlar</span></a></li>
                 <li><a data-page="sales"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg> <span>Satış Etmək</span></a></li>
                 <li><a data-page="purchases"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg> <span>Mal Alışı</span></a></li>
@@ -505,13 +514,30 @@
                 <li><a data-page="stock"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10m-8-4l-4-2.26v4.52L4 16m16-4l4-2.26v4.52L20 16"></path></svg> <span>Anbar</span></a></li>
                 <li><a data-page="customers"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-1-3.794M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span>Müştərilər</span></a></li>
                 <li><a data-page="suppliers"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg> <span>Təchizatçılar</span></a></li>
-                <li><a data-page="debts" class="active"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 4v4m0 4v2m-6-2h12a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> <span>Borclar</span></a></li>
+                <li><a data-page="debts"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 4v4m0 4v2m-6-2h12a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> <span>Borclar</span></a></li>
             </ul>
         </nav>
     </div>
 
     <main class="main-content" id="app-container">
     </main>
+    
+    <div id="adminLoginModal" class="modal">
+        <div class="modal-content" style="max-width: 25rem;">
+            <span class="modal-close">&times;</span>
+            <h2>Admin Girişi</h2>
+            <form id="adminLoginForm">
+                <div class="form-group">
+                    <label for="adminPassword">Şifrə</label>
+                    <input type="password" id="adminPassword" required>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Daxil Ol</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
     <div id="addProductModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Yeni Məhsul</h2><form id="addProductForm"><div class="form-group"><label for="productNameModal">Məhsul Adı</label><input type="text" id="productNameModal" required></div><div class="form-group"><label for="productCategoryModal">Kateqoriya</label><input type="text" id="productCategoryModal"></div><div class="form-actions"><button type="submit" class="btn btn-primary">Yadda Saxla</button></div></form></div></div>
     <div id="editProductModal" class="modal"><div class="modal-content"><span class="modal-close">&times;</span><h2>Məhsulu Redaktə Et</h2><form id="editProductForm"><input type="hidden" id="editProductId"><div class="form-group"><label for="editProductName">Məhsul Adı</label><input type="text" id="editProductName" required></div><div class="form-group"><label for="editProductCategory">Kateqoriya</label><input type="text" id="editProductCategory"></div><div class="form-actions"><button type="submit" class="btn btn-primary">Dəyişikliyi Saxla</button></div></form></div></div>
@@ -631,7 +657,7 @@
                     <label>Təchizatçı</label>
                     <select id="paymentSupplierSelect" required></select>
                 </div>
-                <div class="form-group" id="payment-purchase-group" style="display:none;">
+                <div class="form-group" id="payment-purchase-group">
                     <label>Qaimə</label>
                     <select id="paymentPurchaseSelect"></select>
                 </div>
@@ -687,6 +713,19 @@
             <div id="supplierDebtDetailsContent" style="margin-top: 20px;"></div>
         </div>
     </div>
+
+
+    <template id="home-page-template">
+        <div class="page-container">
+            <div class="page-header">
+                <h1>Ana Səhifə</h1>
+            </div>
+            <div class="content-area">
+                <p>Xoş gəlmisiniz! Bu proqramın idarəetmə panelidir. Yan menyudan istədiyiniz bölməni seçə bilərsiniz.</p>
+                <p>Admin funksiyalarına daxil olmaq üçün brauzerin konsolunda `showAdminLogin()` əmrini yazın.</p>
+            </div>
+        </div>
+    </template>
 
 
     <template id="finance-page-template">
@@ -1069,6 +1108,7 @@
         const otherIncomeModal = document.getElementById('otherIncomeModal');
         const paymentHistoryModal = document.getElementById('paymentHistoryModal');
         const supplierDebtDetailsModal = document.getElementById('supplierDebtDetailsModal');
+        const adminLoginModal = document.getElementById('adminLoginModal');
         
         const addProductForm = document.getElementById('addProductForm');
         const editProductForm = document.getElementById('editProductForm');
@@ -1080,6 +1120,26 @@
         const addExpenseForm = document.getElementById('addExpenseForm');
         const paySupplierForm = document.getElementById('paySupplierForm');
         const otherIncomeForm = document.getElementById('otherIncomeForm');
+        const adminLoginForm = document.getElementById('adminLoginForm');
+        const ADMIN_PASSWORD = 'admin';
+
+        window.showAdminLogin = () => {
+            openModal(adminLoginModal);
+        };
+        
+        adminLoginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const password = document.getElementById('adminPassword').value;
+            if (password === ADMIN_PASSWORD) {
+                localStorage.setItem('isAdmin', 'true');
+                alert('Admin rejiminə xoş gəldiniz!');
+                closeModal(adminLoginModal);
+                renderPage(document.querySelector('.sidebar nav a.active').dataset.page);
+            } else {
+                alert('Şifrə yanlışdır!');
+            }
+        });
+
 
         const getFromStorage = (key) => JSON.parse(localStorage.getItem(key)) || [];
         const saveToStorage = (key, data) => localStorage.setItem(key, JSON.stringify(data));
@@ -1134,6 +1194,7 @@
         }
 
         const pageSetups = {
+            'home': setupHomePage,
             'finance': setupFinancePage, 'reports': setupReportsPage, 'sales': setupSalesPage,
             'purchases': setupPurchasesPage, 'products': setupProductsPage, 'stock': setupStockPage, 'customers': setupCustomersPage, 'suppliers': setupSuppliersPage,
             'debts': setupDebtsPage
@@ -1385,11 +1446,12 @@
             
             if (!supplier) { alert('Təchizatçı tapılmadı.'); return; }
             let remainingDebt = 0;
+            const transactions = getTransactions();
 
             if (purchaseId) {
                 let purchases = getPurchases();
                 const purchase = purchases.find(p => p.id === purchaseId);
-                const paidAmount = getTransactions().filter(t => t.type === 'Təchizatçıya Ödəniş' && t.details && t.details.purchaseId === purchaseId).reduce((sum, t) => sum + Math.abs(t.amount), 0);
+                const paidAmount = transactions.filter(t => t.type === 'Təchizatçıya Ödəniş' && t.details && t.details.purchaseId === purchaseId).reduce((sum, t) => sum + Math.abs(t.amount), 0);
                 remainingDebt = purchase.totalAmount - paidAmount;
                 if (amount <= 0 || amount > remainingDebt) {
                     alert('Ödəniş məbləği düzgün daxil edilməyib!');
@@ -1652,6 +1714,11 @@
                 saveTransactions(transactions);
                 renderPage(document.querySelector('.sidebar nav a.active').dataset.page);
             }
+        }
+
+        function setupHomePage() {
+            // Ana səhifə məzmunu
+            // Gələcəkdə bura daha çox məlumat (dashboard) əlavə oluna bilər.
         }
 
         function setupProductsPage() {
@@ -2703,28 +2770,30 @@
                 });
                 tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">YEKUN BALANS:</td><td class="${cashBalance >= 0 ? 'positive' : 'negative'}">${cashBalance.toFixed(2)} ₼</td><td></td></tr>`;
             };
-            appContainer.querySelector('#btnBackupData').addEventListener('click', () => {
-                const backupData = { products: getProducts(), stock: getStock(), customers: getCustomers(), suppliers: getSuppliers(), sales: getSales(), purchases: getPurchases(), transactions: getTransactions() };
-                const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
-                const a = document.createElement('a');
-                a.href = URL.createObjectURL(blob);
-                a.download = `biznes-panel-backup-${new Date().toISOString().slice(0, 10)}.json`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-            });
-            appContainer.querySelector('#btnFixData').addEventListener('click', () => {
-                if (confirm('Diqqət! Bu əməliyyat bütün müştəri və təchizatçı borclarını yenidən hesablayacaq. Davam etmək istəyirsiniz?')) {
-                    recalculateAllDebtsAndBalances();
-                }
-            });
-            appContainer.querySelector('#btnResetData').addEventListener('click', () => {
-                if (confirm('XƏBƏRDARLIQ: Bütün məlumatları (məhsullar, müştərilər, təchizatçılar, satışlar və s.) silmək istədiyinizə əminsiniz? Bu əməliyyat geri qaytarıla bilməz.')) {
-                    localStorage.clear();
-                    alert('Bütün məlumatlar silindi. Səhifə yenilənəcək.');
-                    location.reload();
-                }
-            });
+            if(isAdmin) {
+                appContainer.querySelector('#btnBackupData').addEventListener('click', () => {
+                    const backupData = { products: getProducts(), stock: getStock(), customers: getCustomers(), suppliers: getSuppliers(), sales: getSales(), purchases: getPurchases(), transactions: getTransactions() };
+                    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = `biznes-panel-backup-${new Date().toISOString().slice(0, 10)}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                });
+                appContainer.querySelector('#btnFixData').addEventListener('click', () => {
+                    if (confirm('Diqqət! Bu əməliyyat bütün müştəri və təchizatçı borclarını yenidən hesablayacaq. Davam etmək istəyirsiniz?')) {
+                        recalculateAllDebtsAndBalances();
+                    }
+                });
+                appContainer.querySelector('#btnResetData').addEventListener('click', () => {
+                    if (confirm('XƏBƏRDARLIQ: Bütün məlumatları (məhsullar, müştərilər, təchizatçılar, satışlar və s.) silmək istədiyinizə əminsiniz? Bu əməliyyat geri qaytarıla bilməz.')) {
+                        localStorage.clear();
+                        alert('Bütün məlumatlar silindi. Səhifə yenilənəcək.');
+                        location.reload();
+                    }
+                });
+            }
             btnIncome.addEventListener('click', () => { openModal(incomeTypeModal); });
             btnExpense.addEventListener('click', () => { openModal(expenseTypeModal); });
             document.getElementById('btnAcceptPayment').addEventListener('click', () => {
@@ -2874,7 +2943,7 @@
                             <td>${debt.totalPaid.toFixed(2)} ₼</td>
                             <td class="negative">${debt.totalDebt.toFixed(2)} ₼</td>
                             <td class="actions-cell">
-                                <button class="btn btn-details" data-id="${debt.id}" data-type="supplier-debt-details" title="Qaimə detalları">ℹ️</button>
+                                <button class="btn btn-details supplier-debt-details-btn" data-id="${debt.id}" title="Qaimə detalları">ℹ️</button>
                             </td>
                             <td class="actions-cell">
                                 <button class="btn btn-warning pay-supplier-debt-btn" data-id="${debt.id}" style="color:white; background:var(--warning-color);">Ödəniş et</button>
@@ -2967,8 +3036,44 @@
                     
                     openModal(paySupplierModal);
                 }
-
             });
+            
+            // Təchizatçı borc detalları pəncərəsindəki düymələrə click
+            supplierDebtDetailsModal.addEventListener('click', (e) => {
+                const btn = e.target.closest('button.pay-supplier-debt-btn');
+                 if(btn) {
+                    const purchaseId = parseInt(btn.dataset.id);
+                    const supplierId = parseInt(btn.dataset.supplierid);
+                    const supplier = getSuppliers().find(s => s.id === supplierId);
+                    const purchase = getPurchases().find(p => p.id === purchaseId);
+                    if(!supplier || !purchase) return;
+
+                    const paidAmount = getTransactions().filter(t => t.type === 'Təchizatçıya Ödəniş' && t.details && t.details.purchaseId === purchaseId).reduce((sum, t) => sum + Math.abs(t.amount), 0);
+                    const remainingDebt = purchase.totalAmount - paidAmount;
+
+                    if(remainingDebt <= 0.01) {
+                         alert("Bu qaimə üzrə borc yoxdur.");
+                         return;
+                    }
+
+                    closeModal(supplierDebtDetailsModal);
+                    paySupplierForm.reset();
+                    document.getElementById('paymentSupplierSelect').innerHTML = `<option value="${supplierId}">${supplier.name} (Borc: ${supplier.balance.toFixed(2)} ₼)</option>`;
+                    document.getElementById('paymentSupplierSelect').value = supplierId;
+                    
+                    const paymentPurchaseSelect = document.getElementById('paymentPurchaseSelect');
+                    paymentPurchaseSelect.innerHTML = `<option value="${purchaseId}" data-debt="${remainingDebt.toFixed(2)}">#${purchaseId} - Borc: ${remainingDebt.toFixed(2)} ₼</option>`;
+                    paymentPurchaseSelect.value = purchaseId;
+                    document.getElementById('payment-purchase-group').style.display = 'block';
+
+                    const paymentInput = document.getElementById('supplierPaymentAmount');
+                    paymentInput.value = remainingDebt.toFixed(2);
+                    paymentInput.max = remainingDebt;
+                    
+                    openModal(paySupplierModal);
+                 }
+            });
+
             customerDebtSearch.addEventListener('input', () => {
                 renderCustomerDebts(currentDebtType);
             });
@@ -2989,9 +3094,8 @@
                     }
                  }
             });
-            
-            // Səhifə ilk açıldıqda render etmək
-            debtTabs.querySelector(`[data-debt-type="${currentDebtType}"]`).click();
+
+            renderCustomerDebts(currentDebtType);
         }
 
         appContainer.addEventListener('click', (e) => {
@@ -3008,7 +3112,7 @@
         });
         
         // Səhifənin yüklənməsi
-        renderPage('finance');
+        renderPage('home');
     });
     </script>
 </body>
