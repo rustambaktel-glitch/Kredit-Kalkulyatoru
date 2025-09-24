@@ -406,8 +406,8 @@
             border-bottom: none;
         }
         #customerSalesHistoryModal .modal-content {
-            width: 90%; 
-            max-width: 95rem; 
+            width: 90%;
+            max-width: 95rem;
         }
 
         .product-details {
@@ -909,7 +909,6 @@
         const otherIncomeModal = document.getElementById('otherIncomeModal');
         const payDebtModal = document.getElementById('payDebtModal');
         const paymentHistoryModal = document.getElementById('paymentHistoryModal');
-        const imeiEntryModal = document.getElementById('imeiEntryModal');
         
         const addProductForm = document.getElementById('addProductForm');
         const editProductForm = document.getElementById('editProductForm');
@@ -940,26 +939,46 @@
             window.addEventListener('click', (event) => { if (event.target === modal) closeModal(modal); });
         });
         
-        function recalculateAllCustomerDebts() {
-            let allSales = getSales();
-            let allCustomers = getCustomers();
-            if (allCustomers.length === 0) return;
-            allCustomers.forEach(customer => {
-                let newDebt = 0;
-                const customerSales = allSales.filter(sale => sale.customerId === customer.id);
-                customerSales.forEach(sale => {
-                    const totalAmount = parseFloat(sale.totalAmount) || 0;
-                    const initialPayment = parseFloat(sale.initialPayment) || 0;
-                    const remainingSaleDebt = totalAmount - initialPayment;
-                    if (remainingSaleDebt > 0) {
-                        newDebt += remainingSaleDebt;
+        function recalculateAllDebtsAndBalances() {
+            let sales = getSales();
+            let purchases = getPurchases();
+            let customers = getCustomers();
+            let suppliers = getSuppliers();
+            let transactions = getTransactions();
+
+            customers.forEach(c => c.debt = 0);
+            suppliers.forEach(s => s.balance = 0);
+
+            sales.forEach(sale => {
+                const debt = sale.totalAmount - sale.initialPayment;
+                if (debt > 0.01) {
+                    const customer = customers.find(c => c.id === sale.customerId);
+                    if (customer) {
+                        customer.debt += debt;
                     }
-                });
-                customer.debt = newDebt;
+                }
             });
-            saveCustomers(allCustomers);
-            alert('Proses tamamlandı! Bütün müştəri borcları satışlara əsasən yenidən hesablandı. Səhifə avtomatik yenilənəcək.');
-            location.reload();
+
+            purchases.forEach(purchase => {
+                const supplier = suppliers.find(s => s.id === purchase.supplierId);
+                if (supplier) {
+                    supplier.balance += purchase.totalAmount;
+                }
+            });
+
+            transactions.forEach(tr => {
+                if (tr.type === 'Təchizatçıya Ödəniş' && tr.supplierId) {
+                    const supplier = suppliers.find(s => s.id === tr.supplierId);
+                    if (supplier) {
+                        supplier.balance += tr.amount; // amount is negative
+                    }
+                }
+            });
+            
+            saveCustomers(customers);
+            saveSuppliers(suppliers);
+            alert('Proses tamamlandı! Bütün borclar və balanslar yenidən hesablandı.');
+            renderPage(document.querySelector('.sidebar nav a.active').dataset.page);
         }
 
         const pageSetups = {
@@ -1141,7 +1160,7 @@
             const supplier = suppliers.find(s => s.id === supplierId);
             if (!supplier || amount > supplier.balance || amount <= 0) { alert('Ödəniş məbləği düzgün deyil!'); return; }
             supplier.balance -= amount;
-            addTransaction('Təchizatçıya Ödəniş', `${supplier.name} üçün ödəniş`, -amount);
+            addTransaction('Təchizatçıya Ödəniş', `${supplier.name} üçün ödəniş`, -amount, { supplierId: supplier.id });
             closeModal(paySupplierModal);
             renderPage('finance');
         });
@@ -1196,7 +1215,6 @@
                 if (customer) {
                     customer.debt += transactionToDelete.amount;
                     saveCustomers(customers);
-
                     if (transactionToDelete.saleId) {
                         let sales = getSales();
                         let sale = sales.find(s => s.id === transactionToDelete.saleId);
@@ -1205,22 +1223,21 @@
                             if (sale.payments) {
                                 sale.payments = sale.payments.filter(p => p.transactionId !== id);
                             }
-                            
-                            let stockItems = getStock();
-                            sale.items.forEach(soldItem => {
-                                const stockItem = stockItems.find(s => s.id === soldItem.stockId);
-                                if (stockItem) {
-                                    stockItem.isSold = false;
-                                    stockItem.saleId = null;
-                                }
-                            });
-                            saveStock(stockItems);
-
                             saveSales(sales);
                         }
                     }
-                     alert(`Əməliyyat silindi. ${customer.name} adlı müştərinin borcuna ${transactionToDelete.amount.toFixed(2)} ₼ geri əlavə edildi.`);
+                    alert(`Əməliyyat silindi. ${customer.name} adlı müştərinin borcuna ${transactionToDelete.amount.toFixed(2)} ₼ geri əlavə edildi.`);
                 }
+            } else if (transactionToDelete.supplierId && transactionToDelete.amount < 0) {
+                 let suppliers = getSuppliers();
+                 let supplier = suppliers.find(s => s.id === transactionToDelete.supplierId);
+                 if (supplier) {
+                     supplier.balance -= transactionToDelete.amount;
+                     saveSuppliers(suppliers);
+                     alert(`Əməliyyat silindi. ${supplier.name} adlı təchizatçının borcundan ${Math.abs(transactionToDelete.amount).toFixed(2)} ₼ çıxarıldı.`);
+                 }
+            } else {
+                 alert('Əməliyyat silindi.');
             }
 
             transactions = transactions.filter(t => t.id !== id);
@@ -1256,6 +1273,12 @@
                 if (!btn) return;
                 const id = parseInt(btn.dataset.id);
                 if (btn.classList.contains('btn-delete')) {
+                    const stockItems = getStock();
+                    const isUsedInStock = stockItems.some(item => item.productId === id);
+                    if (isUsedInStock) {
+                        alert('Bu məhsul anbarda olduğu üçün silinə bilməz!');
+                        return;
+                    }
                     if (confirm('Məhsulu silməyə əminsiniz?')) {
                         saveProducts(getProducts().filter(p => p.id !== id));
                         renderProducts();
@@ -1288,9 +1311,10 @@
                 if (query) {
                     stockItems = stockItems.filter(item => {
                         const product = products.find(p => p.id === item.productId);
-                        return (product && product.name.toLowerCase().includes(query)) ||
-                                (item.imei1 && item.imei1.toLowerCase().includes(query)) ||
-                                (item.imei2 && item.imei2.toLowerCase().includes(query));
+                        const productName = product ? product.name.toLowerCase() : 'silinmis mehsul';
+                        return (productName.includes(query)) ||
+                               (item.imei1 && item.imei1.toLowerCase().includes(query)) ||
+                               (item.imei2 && item.imei2.toLowerCase().includes(query));
                     });
                 }
                 
@@ -1476,13 +1500,14 @@
                                         <div class="product-details">
                                             <strong>Məhsullar:</strong>
                                             <table class="data-table" style="width: 100%; margin-top: 0.5rem;">
-                                                <thead><tr><th>Məhsul Adı</th><th>IMEI 1</th><th>IMEI 2</th></tr></thead>
+                                                <thead><tr><th>Məhsul Adı</th><th>IMEI 1</th><th>IMEI 2</th><th>Qiymət</th></tr></thead>
                                                 <tbody>
                                                 ${sale.items.map(item => `
                                                     <tr>
                                                         <td>${item.name}</td>
                                                         <td>${item.imei1 || '-'}</td>
                                                         <td>${item.imei2 || '-'}</td>
+                                                        <td>${item.salePrice.toFixed(2)} ₼</td>
                                                     </tr>
                                                 `).join('')}
                                                 </tbody>
@@ -1615,7 +1640,7 @@
             };
 
             const calculateTotal = (cart, view) => {
-                const total = cart.reduce((sum, item) => sum + (item.salePrice || 0), 0);
+                const total = cart.reduce((sum, item) => sum + (parseFloat(item.salePrice) || 0), 0);
                 view.querySelector('.summary-total').textContent = `${total.toFixed(2)} ₼`;
 
                 const tfoot = view.querySelector('.cart-table-body').nextElementSibling;
@@ -1678,13 +1703,12 @@
                 scheduleDiv.innerHTML = scheduleHtml;
             };
 
-            // DÜZƏLİŞ: Mərkəzləşdirilmiş hadisə dinləyiciləri
             appContainer.addEventListener('input', (e) => {
                 const activeView = forms[activeTab];
                 if (!activeView.contains(e.target)) return;
 
                 if (e.target.classList.contains('cart-price-input')) {
-                    const stockId = parseInt(e.target.dataset.id);
+                    const stockId = parseFloat(e.target.dataset.id);
                     const cart = carts[activeTab];
                     const item = cart.find(i => i.stockId === stockId);
                     if (!item) return;
@@ -1695,7 +1719,12 @@
                 if (e.target.classList.contains('initial-payment')) {
                     calculateTotal(carts[activeTab], activeView);
                     if (activeTab === 'credit') {
-                         generatePaymentSchedule();
+                            generatePaymentSchedule();
+                    }
+                }
+                 if (e.target.classList.contains('loan-term')) {
+                    if (activeTab === 'credit') {
+                            generatePaymentSchedule();
                     }
                 }
             });
@@ -1708,7 +1737,7 @@
                 if (!btn) return;
 
                 if(btn.classList.contains('cart-remove-btn')) {
-                    const stockId = parseInt(btn.dataset.id);
+                    const stockId = parseFloat(btn.dataset.id);
                     carts[activeTab] = carts[activeTab].filter(i => i.stockId !== stockId);
                     renderCart(carts[activeTab], activeView);
                 }
@@ -1916,10 +1945,12 @@
                 });
                 saveStock(stockItems);
 
-                if (debt > 0) {
+                if (debt > 0.01) {
                     let customers = getCustomers();
                     let customer = customers.find(c => c.id === customerId);
-                    if (customer) customer.debt += debt;
+                    if (customer) {
+                        customer.debt += debt;
+                    }
                     saveCustomers(customers);
                 }
                 
@@ -1975,7 +2006,7 @@
             };
             
             const calculatePurchaseTotal = () => {
-                const total = currentPurchaseItems.reduce((sum, item) => sum + (item.purchasePrice || 0), 0);
+                const total = currentPurchaseItems.reduce((sum, item) => sum + (parseFloat(item.purchasePrice) || 0), 0);
                 purchaseTotalEl.textContent = `${total.toFixed(2)} ₼`;
                 return total;
             };
@@ -2054,11 +2085,13 @@
                     return;
                 }
 
-                const imeiSet = new Set();
+                const stock = getStock();
+                const imeiSet = new Set(stock.map(item => item.imei1).concat(stock.map(item => item.imei2)).filter(Boolean));
+                
                 for (const item of currentPurchaseItems) {
                     if (!item.imei1) {
-                         alert(`Məhsulun IMEI 1 kodu boş ola bilməz!`);
-                         return;
+                        alert(`Məhsulun IMEI 1 kodu boş ola bilməz!`);
+                        return;
                     }
                     if (imeiSet.has(item.imei1)) {
                         alert(`Dublikat IMEI 1 kodu aşkarlandı: ${item.imei1}`);
@@ -2073,7 +2106,6 @@
                 }
 
                 const totalAmount = calculatePurchaseTotal();
-                let stock = getStock();
                 let suppliers = getSuppliers();
                 const supplier = suppliers.find(s => s.id === supplierId);
                 if (!supplier) return;
@@ -2244,7 +2276,7 @@
                 transactions.slice().reverse().forEach((tr, index) => {
                     transactionsTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${tr.date}</td><td>${tr.type}</td><td>${tr.description}</td><td class="${tr.amount >= 0 ? 'positive' : 'negative'}">${tr.amount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-delete finance-delete-btn" data-id="${tr.id}">🗑️</button></td></tr>`;
                 });
-                 tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">YEKUN BALANS:</td><td class="${cashBalance >= 0 ? 'positive' : 'negative'}">${cashBalance.toFixed(2)} ₼</td><td></td></tr>`;
+                tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">YEKUN BALANS:</td><td class="${cashBalance >= 0 ? 'positive' : 'negative'}">${cashBalance.toFixed(2)} ₼</td><td></td></tr>`;
             };
             btnBackupData.addEventListener('click', () => {
                 const backupData = { products: getProducts(), stock: getStock(), customers: getCustomers(), suppliers: getSuppliers(), sales: getSales(), purchases: getPurchases(), transactions: getTransactions() };
@@ -2258,8 +2290,8 @@
             });
             if (btnFixData) {
                 btnFixData.addEventListener('click', () => {
-                    if (confirm('Diqqət! Bu əməliyyat bütün müştəri borclarını satışlara əsasən yenidən hesablayacaq. Yalnız səhv məlumatları (məs. mənfi borc) düzəltmək üçün istifadə edin. Davam etmək istəyirsiniz?')) {
-                        recalculateAllCustomerDebts();
+                    if (confirm('Diqqət! Bu əməliyyat bütün müştəri və təchizatçı borclarını yenidən hesablayacaq. Davam etmək istəyirsiniz?')) {
+                        recalculateAllDebtsAndBalances();
                     }
                 });
             }
@@ -2366,7 +2398,7 @@
                     openModal(payDebtModal);
                 }
                 if (btn.classList.contains('payment-history-btn')) {
-                     const sale = getSales().find(s => s.id === saleId);
+                    const sale = getSales().find(s => s.id === saleId);
                     if (!sale) return;
                     const paymentHistoryTitle = document.getElementById('payment-history-title');
                     const paymentHistoryContent = document.getElementById('paymentHistoryContent');
@@ -2407,7 +2439,7 @@
                 } else if (type === 'purchase') {
                     const purchase = getPurchases().find(p => p.id === id);
                     if (!purchase) return;
-                    let detailsHtml = `<p><strong>Alış ID:</strong> ${purchase.id}</p><p><strong>Təchizatçı:</strong> ${purchase.supplierName}</p><p><strong>Yekun Məbləğ:</strong> ${purchase.totalAmount.toFixed(2)} ₼</p><hr style="border-color:var(--border-color); margin: 15px 0;"><h4 style="margin-bottom:10px;">Alınan Məhsullar</h4><table class="data-table" style="width:100%;"><thead><tr><th>Məhsul</th><th>Alış Qiyməti</th><th>IMEI 1</th><th>IMEI 2</th><th></th></tr></thead><tbody>`;
+                    let detailsHtml = `<p><strong>Alış ID:</strong> ${purchase.id}</p><p><strong>Təchizatçı:</strong> ${purchase.supplierName}</p><p><strong>Yekun Məbləğ:</strong> ${purchase.totalAmount.toFixed(2)} ₼</p><hr style="border-color:var(--border-color); margin: 15px 0;"><h4 style="margin-bottom:10px;">Alınan Məhsullar</h4><table class="data-table" style="width:100%;"><thead><tr><th>Məhsul</th><th>Alış Qiyməti</th><th>IMEI 1</th><th>IMEI 2</th></tr></thead><tbody>`;
                     
                     purchase.items.forEach(i => {
                         detailsHtml += `<tr>
@@ -2415,9 +2447,6 @@
                             <td>${i.purchasePrice.toFixed(2)} ₼</td>
                             <td>${i.imei1 || '-'}</td>
                             <td>${i.imei2 || '-'}</td>
-                            <td class="actions-cell">
-                                <button class="btn-delete remove-purchase-item-btn" data-purchase-id="${purchase.id}" data-imei1="${i.imei1}">🗑️</button>
-                            </td>
                         </tr>`;
                     });
                     detailsHtml += '</tbody></table>';
@@ -2472,7 +2501,6 @@
                 }
             }
         });
-
         renderPage('finance');
     });
     </script>
