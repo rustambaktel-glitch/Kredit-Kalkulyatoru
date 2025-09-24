@@ -1310,13 +1310,20 @@
                         openModal(editCustomerModal);
                     }
                 }
-                if(btn.classList.contains('payment-history-btn')) {
+            });
+
+            // YENİ ƏLAVƏ OLUNMUŞ HİSSƏ: Ödəniş Tarixçəsi düyməsinin işləməsi üçün
+            customerSalesHistoryModal.addEventListener('click', (e) => {
+                const btn = e.target.closest('button');
+                if (btn && btn.classList.contains('payment-history-btn')) {
                     const saleId = parseInt(btn.dataset.id);
                     const sale = getSales().find(s => s.id === saleId);
                     if (!sale) return;
+                    
                     const paymentHistoryTitle = document.getElementById('payment-history-title');
                     const paymentHistoryContent = document.getElementById('paymentHistoryContent');
                     paymentHistoryTitle.textContent = `Satış #${sale.id} - Ödəniş Tarixçəsi`;
+                    
                     let paymentsHtml = `<table class="data-table"><thead><tr><th>#</th><th>Tarix</th><th>Ödəniş Növü</th><th>Məbləğ</th></tr></thead><tbody>`;
                     if (!sale.payments || sale.payments.length === 0) {
                         paymentsHtml += `<tr><td colspan="4" style="text-align:center;">Hələ ödəniş edilməyib.</td></tr>`;
@@ -1327,10 +1334,12 @@
                     }
                     const totalPayments = (sale.payments || []).reduce((sum, p) => sum + p.amount, 0);
                     paymentsHtml += `</tbody><tfoot><tr><td colspan="3" style="text-align:right;">CƏMİ ÖDƏNİŞ:</td><td>${totalPayments.toFixed(2)} ₼</td></tr></tfoot></table>`;
+                    
                     paymentHistoryContent.innerHTML = paymentsHtml;
                     openModal(paymentHistoryModal);
                 }
             });
+
             customerSearch.addEventListener('input', renderCustomers);
             renderCustomers();
         }
