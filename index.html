@@ -676,12 +676,13 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Məhsul Əlavə Et</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <select class="sale-product" style="flex-grow: 1;"></select>
-                                        <button type="button" class="btn btn-primary add-product-imei-btn" style="padding: 0.5rem; line-height: 1;">IMEI</button>
+                                    <label>IMEI ilə Axtar</label>
+                                    <div class="search-container">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="left: 0.5rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                        <input type="search" id="imeiSearchInput" class="search-input" placeholder="IMEI daxil edin" style="width: 100%; min-width: unset; padding-left: 2.5rem;">
                                     </div>
                                 </div>
+                                <hr style="border-color:var(--border-color); margin: 15px 0;">
                                 <table class="data-table">
                                     <thead><tr><th>#</th><th>Məhsul</th><th>IMEI 1</th><th>IMEI 2</th><th>Qiymət</th><th></th></tr></thead>
                                     <tbody class="cart-table-body"></tbody>
@@ -718,12 +719,13 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Məhsul Əlavə Et</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <select class="sale-product" style="flex-grow: 1;"></select>
-                                        <button type="button" class="btn btn-primary add-product-imei-btn" style="padding: 0.5rem; line-height: 1;">IMEI</button>
+                                    <label>IMEI ilə Axtar</label>
+                                    <div class="search-container">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="left: 0.5rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                        <input type="search" id="imeiSearchInputCredit" class="search-input" placeholder="IMEI daxil edin" style="width: 100%; min-width: unset; padding-left: 2.5rem;">
                                     </div>
                                 </div>
+                                <hr style="border-color:var(--border-color); margin: 15px 0;">
                                 <table class="data-table">
                                     <thead><tr><th>#</th><th>Məhsul</th><th>IMEI 1</th><th>IMEI 2</th><th>Qiymət</th><th></th></tr></thead>
                                     <tbody class="cart-table-body"></tbody>
@@ -764,12 +766,13 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label>Məhsul Əlavə Et</label>
-                                    <div style="display: flex; gap: 0.5rem; align-items: center;">
-                                        <select class="sale-product" style="flex-grow: 1;"></select>
-                                        <button type="button" class="btn btn-primary add-product-imei-btn" style="padding: 0.5rem; line-height: 1;">IMEI</button>
+                                    <label>IMEI ilə Axtar</label>
+                                    <div class="search-container">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="left: 0.5rem;"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                        <input type="search" id="imeiSearchInputCorporate" class="search-input" placeholder="IMEI daxil edin" style="width: 100%; min-width: unset; padding-left: 2.5rem;">
                                     </div>
                                 </div>
+                                <hr style="border-color:var(--border-color); margin: 15px 0;">
                                 <table class="data-table">
                                     <thead><tr><th>#</th><th>Məhsul</th><th>IMEI 1</th><th>IMEI 2</th><th>Qiymət</th><th></th></tr></thead>
                                     <tbody class="cart-table-body"></tbody>
@@ -1253,8 +1256,6 @@
                 const products = getProducts();
                 const suppliers = getSuppliers();
 
-                stockItems = stockItems.filter(item => item.isSold === false);
-
                 if (query) {
                     stockItems = stockItems.filter(item => {
                         const product = products.find(p => p.id === item.productId);
@@ -1570,17 +1571,13 @@
             const carts = { cash: [], credit: [], corporate: [] };
             let activeTab = 'cash';
             
-            const imeiEntryContent = document.getElementById('imeiEntryContent');
-            const saveImeisBtn = document.getElementById('saveImeisBtn');
-            let currentImeisToEnter = { productId: null, quantity: 0, stockItems: [] };
-
+            const imeiSearchInput = document.getElementById('imeiSearchInput');
+            const imeiSearchInputCredit = document.getElementById('imeiSearchInputCredit');
+            const imeiSearchInputCorporate = document.getElementById('imeiSearchInputCorporate');
+            
             const populateDropdowns = (view) => {
                 const customers = getCustomers();
-                const products = getProducts();
-                const stockItems = getStock();
-
                 const customerSelect = view.querySelector('.sale-customer');
-                const productSelect = view.querySelector('.sale-product');
                 
                 const currentCustomerId = customerSelect.value;
                 customerSelect.innerHTML = '<option value="">-- Müştəri Seçin --</option>';
@@ -1589,20 +1586,12 @@
                 }
                 customers.forEach(c => { customerSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
                 customerSelect.value = currentCustomerId;
-
-                productSelect.innerHTML = '<option value="">-- Məhsul Əlavə Et --</option>';
-                products.forEach(p => { 
-                    const availableCount = stockItems.filter(s => s.productId === p.id && !s.isSold).length;
-                    if (availableCount > 0) {
-                        productSelect.innerHTML += `<option value="${p.id}" data-available="${availableCount}">${p.name} (Stok: ${availableCount})</option>`;
-                    }
-                });
             };
 
             const calculateTotal = (cart, view) => {
-                const total = cart.reduce((sum, item) => sum + (item.quantity * item.salePrice), 0);
+                const total = cart.reduce((sum, item) => sum + (item.salePrice), 0);
                 view.querySelector('.summary-total').textContent = `${total.toFixed(2)} ₼`;
-                
+
                 const tfoot = view.querySelector('.cart-table-body').nextElementSibling;
                 tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">CƏMİ:</td><td>${total.toFixed(2)} ₼</td><td></td></tr>`;
 
@@ -1621,14 +1610,13 @@
                     cartBody.innerHTML = '<tr><td colspan="6" style="text-align:center;">Səbət boşdur</td></tr>';
                 } else {
                     cart.forEach((item, index) => {
-                        const itemTotal = item.quantity * item.salePrice;
                         cartBody.innerHTML += `<tr>
                             <td>${index + 1}</td>
                             <td>${item.name}</td>
-                            <td>${item.imeiCodes[0] || '-'}</td>
-                            <td>${item.imeiCodes[1] || '-'}</td>
-                            <td><input type="number" class="cart-price-input" data-id="${item.id}" value="${item.salePrice.toFixed(2)}" step="0.01" min="0"></td>
-                            <td class="actions-cell"><button type="button" class="btn-delete cart-remove-btn" data-id="${item.id}">🗑️</button></td>
+                            <td>${item.imei1 || '-'}</td>
+                            <td>${item.imei2 || '-'}</td>
+                            <td><input type="number" class="cart-price-input" data-id="${item.stockId}" value="${item.salePrice.toFixed(2)}" step="0.01" min="0"></td>
+                            <td class="actions-cell"><button type="button" class="btn-delete cart-remove-btn" data-id="${item.stockId}">🗑️</button></td>
                         </tr>`;
                     });
                 }
@@ -1678,86 +1666,69 @@
                 renderCart(carts[activeTab], forms[activeTab]);
             });
 
-            appContainer.addEventListener('change', (e) => {
-                if (e.target.classList.contains('sale-product')) {
-                    const productId = parseInt(e.target.value);
-                    if (!productId) return;
+            const handleImeiSearch = (e) => {
+                const imei = e.target.value.trim();
+                if (imei.length === 15 || imei.length === 16) {
+                    const stockItems = getStock();
+                    const products = getProducts();
+                    const availableItem = stockItems.find(item => 
+                        (item.imei1 === imei || item.imei2 === imei) && !item.isSold
+                    );
                     
-                    const product = getProducts().find(p => p.id === productId);
-                    const availableItems = getStock().filter(s => s.productId === productId && !s.isSold);
-                    
-                    currentImeisToEnter.productId = productId;
-                    currentImeisToEnter.quantity = 1;
-                    currentImeisToEnter.stockItems = availableItems;
+                    if (availableItem) {
+                        const product = products.find(p => p.id === availableItem.productId);
+                        if (product) {
+                            const cart = carts[activeTab];
+                            const existingItem = cart.find(item => item.stockId === availableItem.id);
 
-                    openImeiEntryModal(product);
+                            if (!existingItem) {
+                                cart.push({
+                                    stockId: availableItem.id,
+                                    name: product.name,
+                                    imei1: availableItem.imei1,
+                                    imei2: availableItem.imei2,
+                                    salePrice: availableItem.salePrice,
+                                    productId: product.id
+                                });
+                                renderCart(cart, forms[activeTab]);
+                            } else {
+                                alert('Bu IMEI-ə aid məhsul artıq səbətdədir.');
+                            }
+                        } else {
+                            alert('Bu IMEI-ə aid məhsul tapılmadı.');
+                        }
+                    } else {
+                        alert('Məhsul anbarda tapılmadı və ya artıq satılıb.');
+                    }
                     e.target.value = '';
                 }
-            });
-            
-            function openImeiEntryModal(product) {
-                imeiEntryContent.innerHTML = '';
-                const availableItems = getStock().filter(s => s.productId === product.id && !s.isSold);
-
-                imeiEntryContent.innerHTML = `
-                    <div class="form-group">
-                        <label for="imei-select">Mövcud IMEI Kodlarından Seçin</label>
-                        <select id="imei-select" class="form-control">
-                            <option value="">-- IMEI Seçin --</option>
-                            ${availableItems.map(item => `<option value="${item.id}" data-imei1="${item.imei1}" data-imei2="${item.imei2}" data-price="${item.salePrice || 0}">${item.imei1 || '-'}</option>`).join('')}
-                        </select>
-                    </div>
-                `;
-                imeiEntryModal.style.display = 'flex';
-            }
-
-            saveImeisBtn.onclick = () => {
-                const selectElement = imeiEntryContent.querySelector('#imei-select');
-                const selectedOption = selectElement.options[selectElement.selectedIndex];
-                const stockId = parseInt(selectedOption.value);
-                
-                if (!stockId) {
-                    alert('IMEI kodu seçin!');
-                    return;
-                }
-
-                const selectedStockItem = getStock().find(s => s.id === stockId);
-                const product = getProducts().find(p => p.id === selectedStockItem.productId);
-
-                if(!product) {
-                     alert('Məhsul tapılmadı!');
-                     return;
-                }
-
-                const cart = carts[activeTab];
-                const existingItem = cart.find(item => item.id === stockId);
-
-                if(existingItem) {
-                    alert('Bu IMEI kodu artıq səbətdədir.');
-                    return;
-                }
-
-                const newCartItem = {
-                    id: selectedStockItem.id,
-                    productId: product.id,
-                    name: product.name,
-                    salePrice: selectedStockItem.salePrice || 0,
-                    imeiCodes: [selectedStockItem.imei1, selectedStockItem.imei2],
-                    quantity: 1
-                };
-                
-                cart.push(newCartItem);
-                
-                closeModal(imeiEntryModal);
-                renderCart(cart, forms[activeTab]);
             };
+
+            imeiSearchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleImeiSearch(e);
+                }
+            });
+            imeiSearchInputCredit.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleImeiSearch(e);
+                }
+            });
+            imeiSearchInputCorporate.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleImeiSearch(e);
+                }
+            });
 
 
             appContainer.addEventListener('input', (e) => {
                 if (e.target.classList.contains('cart-price-input')) {
-                    const itemId = parseInt(e.target.dataset.id);
+                    const stockId = parseInt(e.target.dataset.id);
                     const cart = carts[activeTab];
-                    const item = cart.find(i => i.id === itemId);
+                    const item = cart.find(i => i.stockId === stockId);
                     if (!item) return;
 
                     item.salePrice = parseFloat(e.target.value) || 0;
@@ -1769,8 +1740,8 @@
                 const btn = e.target.closest('button');
                 if (!btn) return;
                 if(btn.classList.contains('cart-remove-btn')) {
-                    const itemId = parseInt(btn.dataset.id);
-                    carts[activeTab] = carts[activeTab].filter(i => i.id !== itemId);
+                    const stockId = parseInt(btn.dataset.id);
+                    carts[activeTab] = carts[activeTab].filter(i => i.stockId !== stockId);
                     renderCart(carts[activeTab], forms[activeTab]);
                 }
                 if (btn.classList.contains('add-customer-quick')) {
@@ -1885,16 +1856,18 @@
                 const soldItems = [];
 
                 cart.forEach(cartItem => {
-                    const itemInStock = stockItems.find(s => s.id === cartItem.id);
+                    const itemInStock = stockItems.find(s => s.id === cartItem.stockId);
                     if (itemInStock) {
                         itemInStock.isSold = true;
                         itemInStock.salePrice = cartItem.salePrice;
+                        itemInStock.saleId = new Date().getTime(); // Məhsulun satıldığı satışın ID-sini qeyd edirik
                         soldItems.push({ 
                             stockId: itemInStock.id, 
                             productId: itemInStock.productId,
                             name: cartItem.name,
                             salePrice: cartItem.salePrice,
-                            imeiCodes: cartItem.imeiCodes
+                            imei1: itemInStock.imei1,
+                            imei2: itemInStock.imei2
                         });
                     }
                 });
@@ -2038,7 +2011,6 @@
                     return;
                 }
 
-                // IMEI yoxlaması
                 const imeiSet = new Set();
                 for (const item of currentPurchaseItems) {
                     if (!item.imei1) {
@@ -2066,13 +2038,13 @@
                 currentPurchaseItems.forEach(item => {
                     const product = getProducts().find(p => p.id === item.productId);
                     const newStockItem = {
-                        id: Date.now() + Math.random(), // Unique ID for each item
+                        id: Date.now() + Math.random(),
                         productId: item.productId,
-                        productName: item.productName,
+                        productName: product.name,
                         supplierId: supplier.id,
                         purchaseDate: new Date().toLocaleString('az-AZ'),
                         purchasePrice: item.purchasePrice,
-                        salePrice: product.salePrice || 0,
+                        salePrice: null, // Satış qiyməti satış zamanı daxil ediləcək
                         imei1: item.imei1,
                         imei2: item.imei2,
                         isSold: false,
@@ -2230,7 +2202,7 @@
                  tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">YEKUN BALANS:</td><td class="${cashBalance >= 0 ? 'positive' : 'negative'}">${cashBalance.toFixed(2)} ₼</td><td></td></tr>`;
             };
             btnBackupData.addEventListener('click', () => {
-                const backupData = { products: getProducts(), customers: getCustomers(), suppliers: getSuppliers(), sales: getSales(), purchases: getPurchases(), transactions: getTransactions() };
+                const backupData = { products: getProducts(), stock: getStock(), customers: getCustomers(), suppliers: getSuppliers(), sales: getSales(), purchases: getPurchases(), transactions: getTransactions() };
                 const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
                 const a = document.createElement('a');
                 a.href = URL.createObjectURL(blob);
@@ -2391,7 +2363,7 @@
                     const purchase = getPurchases().find(p => p.id === id);
                     if (!purchase) return;
                     let detailsHtml = `<p><strong>Alış ID:</strong> ${purchase.id}</p><p><strong>Təchizatçı:</strong> ${purchase.supplierName}</p><p><strong>Yekun Məbləğ:</strong> ${purchase.totalAmount.toFixed(2)} ₼</p><hr style="border-color:var(--border-color); margin: 15px 0;"><h4 style="margin-bottom:10px;">Alınan Məhsullar</h4><table class="data-table" style="width:100%;"><thead><tr><th>Məhsul</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead><tbody>`;
-                    purchase.items.forEach(i => { detailsHtml += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.purchasePrice.toFixed(2)} ₼</td><td>${(i.quantity * i.purchasePrice).toFixed(2)} ₼</td></tr>`; });
+                    purchase.items.forEach(i => { detailsHtml += `<tr><td>${i.name}</td><td>${i.quantity}</td><td>${i.price.toFixed(2)} ₼</td><td>${(i.quantity * i.price).toFixed(2)} ₼</td></tr>`; });
                     detailsHtml += '</tbody></table>';
                     document.getElementById('purchaseDetailsContent').innerHTML = detailsHtml;
                     openModal(purchaseDetailsModal);
