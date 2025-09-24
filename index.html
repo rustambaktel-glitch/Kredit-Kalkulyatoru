@@ -1232,10 +1232,10 @@
                     let salesHistoryHtml = `
                         <h4>Satış Tarixçəsi</h4>
                         <table class="data-table" style="margin-top: 1rem; font-size: 0.8rem;">
-                            <thead><tr><th>#</th><th>Satış ID</th><th>Tarix</th><th>Növ</th><th>Yekun Məbləğ</th><th>Ödənilib</th><th>Borc Qalığı</th></tr></thead>
+                            <thead><tr><th>#</th><th>Satış ID</th><th>Tarix</th><th>Növ</th><th>Yekun Məbləğ</th><th>Ödənilib</th><th>Borc Qalığı</th><th></th></tr></thead>
                             <tbody>`;
                     if (sales.length === 0) {
-                        salesHistoryHtml += '<tr><td colspan="7" style="text-align:center;">Bu müştərinin satış tarixçəsi yoxdur.</td></tr>';
+                        salesHistoryHtml += '<tr><td colspan="8" style="text-align:center;">Bu müştərinin satış tarixçəsi yoxdur.</td></tr>';
                     } else {
                         sales.forEach((sale, index) => {
                             const debt = (sale.totalAmount - sale.initialPayment);
@@ -1248,17 +1248,27 @@
                                     <td>${sale.totalAmount.toFixed(2)} ₼</td>
                                     <td class="positive">${sale.initialPayment.toFixed(2)} ₼</td>
                                     <td class="${debt > 0.01 ? 'negative' : ''}">${debt.toFixed(2)} ₼</td>
+                                    <td class="actions-cell">
+                                        <button class="btn btn-warning payment-history-btn" data-id="${sale.id}" style="padding: 0.5rem; color:#212121;">Ödəniş Tarixçəsi</button>
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td colspan="7" style="padding-top: 0;">
+                                    <td colspan="8" style="padding-top: 0;">
                                         <div class="product-details">
                                             <strong>Məhsullar:</strong>
-                                            <ul>
-                                                ${sale.items.map(item => `<li>
-                                                    ${item.name} (${item.quantity} ədəd) - ${item.salePrice.toFixed(2)} ₼/ədəd
-                                                    ${(item.imeiCodes && item.imeiCodes.length > 0) ? ` (IMEI: ${item.imeiCodes.join(', ')})` : ''}
-                                                </li>`).join('')}
-                                            </ul>
+                                            <table class="data-table" style="width: 100%; margin-top: 0.5rem;">
+                                                <thead><tr><th>Məhsul Adı</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead>
+                                                <tbody>
+                                                ${sale.items.map(item => `
+                                                    <tr>
+                                                        <td>${item.name} ${(item.imeiCodes && item.imeiCodes.length > 0) ? `(IMEI: ${item.imeiCodes.join(', ')})` : ''}</td>
+                                                        <td>${item.quantity}</td>
+                                                        <td>${item.salePrice.toFixed(2)} ₼</td>
+                                                        <td>${(item.quantity * item.salePrice).toFixed(2)} ₼</td>
+                                                    </tr>
+                                                `).join('')}
+                                                </tbody>
+                                            </table>
                                         </div>
                                     </td>
                                 </tr>`;
@@ -1268,7 +1278,7 @@
                     const totalPaid = sales.reduce((sum, s) => sum + s.initialPayment, 0);
                     const totalDebtRem = sales.reduce((sum, s) => sum + (s.totalAmount - s.initialPayment), 0);
                     salesHistoryHtml += `</tbody>
-                        <tfoot><tr><td colspan="4" style="text-align:right;">CƏMİ:</td><td>${totalSale.toFixed(2)} ₼</td><td>${totalPaid.toFixed(2)} ₼</td><td>${totalDebtRem.toFixed(2)} ₼</td></tr></tfoot>
+                        <tfoot><tr><td colspan="4" style="text-align:right;">CƏMİ:</td><td>${totalSale.toFixed(2)} ₼</td><td>${totalPaid.toFixed(2)} ₼</td><td>${totalDebtRem.toFixed(2)} ₼</td><td></td></tr></tfoot>
                     </table>`;
                     
                     historyContent.innerHTML = summaryCardsHtml + customerInfoHtml + salesHistoryHtml;
@@ -1299,6 +1309,26 @@
                         document.getElementById('editCustomerGuarantor').value = customer.guarantorId || '';
                         openModal(editCustomerModal);
                     }
+                }
+                if(btn.classList.contains('payment-history-btn')) {
+                    const saleId = parseInt(btn.dataset.id);
+                    const sale = getSales().find(s => s.id === saleId);
+                    if (!sale) return;
+                    const paymentHistoryTitle = document.getElementById('payment-history-title');
+                    const paymentHistoryContent = document.getElementById('paymentHistoryContent');
+                    paymentHistoryTitle.textContent = `Satış #${sale.id} - Ödəniş Tarixçəsi`;
+                    let paymentsHtml = `<table class="data-table"><thead><tr><th>#</th><th>Tarix</th><th>Ödəniş Növü</th><th>Məbləğ</th></tr></thead><tbody>`;
+                    if (!sale.payments || sale.payments.length === 0) {
+                        paymentsHtml += `<tr><td colspan="4" style="text-align:center;">Hələ ödəniş edilməyib.</td></tr>`;
+                    } else {
+                        sale.payments.forEach((p, index) => {
+                            paymentsHtml += `<tr><td>${index + 1}</td><td>${p.date}</td><td>${p.type}</td><td>${p.amount.toFixed(2)} ₼</td></tr>`;
+                        });
+                    }
+                    const totalPayments = (sale.payments || []).reduce((sum, p) => sum + p.amount, 0);
+                    paymentsHtml += `</tbody><tfoot><tr><td colspan="3" style="text-align:right;">CƏMİ ÖDƏNİŞ:</td><td>${totalPayments.toFixed(2)} ₼</td></tr></tfoot></table>`;
+                    paymentHistoryContent.innerHTML = paymentsHtml;
+                    openModal(paymentHistoryModal);
                 }
             });
             customerSearch.addEventListener('input', renderCustomers);
