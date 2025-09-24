@@ -429,8 +429,7 @@
         .status-badge.satilib {
             background-color: var(--danger-color);
         }
-
-        /* YENI STILLER */
+        
         .cart-price-input {
             width: 100px;
             padding: 0.5rem;
@@ -446,7 +445,6 @@
             border-color: var(--primary-color);
             box-shadow: 0 0 0 2px rgba(63, 81, 181, 0.2);
         }
-        /* YENI STILLER SON */
 
         @media (max-width: 768px) {
             .sidebar {
@@ -1600,10 +1598,6 @@
                 corporate: appContainer.querySelector('#corporateSaleForm')
             };
             
-            const imeiSearchInput = forms.cash.querySelector('#imeiSearchInput');
-            const imeiSearchInputCredit = forms.credit.querySelector('#imeiSearchInputCredit');
-            const imeiSearchInputCorporate = forms.corporate.querySelector('#imeiSearchInputCorporate');
-            
             const carts = { cash: [], credit: [], corporate: [] };
             let activeTab = 'cash';
             
@@ -1631,7 +1625,7 @@
                     const initialPayment = parseFloat(view.querySelector('.initial-payment').value) || 0;
                     const debt = total - initialPayment;
                     const debtTotalEl = view.querySelector('.debt-total');
-                    if (debtTotalEl) { // DÜZƏLİŞ: Elementin mövcudluğunu yoxlayır
+                    if (debtTotalEl) {
                         debtTotalEl.textContent = `${debt.toFixed(2)} ₼`;
                     }
                 }
@@ -1683,6 +1677,50 @@
                 scheduleHtml += '</tbody></table>';
                 scheduleDiv.innerHTML = scheduleHtml;
             };
+
+            // DÜZƏLİŞ: Mərkəzləşdirilmiş hadisə dinləyiciləri
+            appContainer.addEventListener('input', (e) => {
+                const activeView = forms[activeTab];
+                if (!activeView.contains(e.target)) return;
+
+                if (e.target.classList.contains('cart-price-input')) {
+                    const stockId = parseInt(e.target.dataset.id);
+                    const cart = carts[activeTab];
+                    const item = cart.find(i => i.stockId === stockId);
+                    if (!item) return;
+
+                    item.salePrice = parseFloat(e.target.value) || 0;
+                    calculateTotal(cart, activeView);
+                }
+                if (e.target.classList.contains('initial-payment')) {
+                    calculateTotal(carts[activeTab], activeView);
+                    if (activeTab === 'credit') {
+                         generatePaymentSchedule();
+                    }
+                }
+            });
+
+            appContainer.addEventListener('click', (e) => {
+                const activeView = forms[activeTab];
+                if (!activeView.contains(e.target)) return;
+
+                const btn = e.target.closest('button');
+                if (!btn) return;
+
+                if(btn.classList.contains('cart-remove-btn')) {
+                    const stockId = parseInt(btn.dataset.id);
+                    carts[activeTab] = carts[activeTab].filter(i => i.stockId !== stockId);
+                    renderCart(carts[activeTab], activeView);
+                }
+                if (btn.classList.contains('add-customer-quick')) {
+                    addCustomerForm.reset();
+                    const guarantorSelect = document.getElementById('customerGuarantorModal');
+                    const customers = getCustomers();
+                    guarantorSelect.innerHTML = '<option value="">-- Zamin Seçin --</option>';
+                    customers.forEach(c => { guarantorSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
+                    openModal(addCustomerModal);
+                }
+            });
 
             saleTabs.addEventListener('click', (e) => {
                 const button = e.target.closest('button');
@@ -1742,51 +1780,9 @@
                 }
             };
             
-            imeiSearchInput.addEventListener('keydown', handleImeiSearch);
-            imeiSearchInputCredit.addEventListener('keydown', handleImeiSearch);
-            imeiSearchInputCorporate.addEventListener('keydown', handleImeiSearch);
-
-            appContainer.addEventListener('input', (e) => {
-                if (e.target.classList.contains('cart-price-input')) {
-                    const stockId = parseInt(e.target.dataset.id);
-                    const cart = carts[activeTab];
-                    const item = cart.find(i => i.stockId === stockId);
-                    if (!item) return;
-
-                    item.salePrice = parseFloat(e.target.value) || 0;
-                    calculateTotal(cart, forms[activeTab]);
-                }
-                if (e.target.classList.contains('initial-payment')) {
-                    calculateTotal(carts[activeTab], forms[activeTab]);
-                    if (activeTab === 'credit') {
-                         generatePaymentSchedule();
-                    }
-                }
-            });
-
-            if(forms.credit) {
-                forms.credit.querySelector('.loan-term').addEventListener('change', (e) => {
-                    generatePaymentSchedule();
-                });
-            }
-            
-            appContainer.addEventListener('click', (e) => {
-                const btn = e.target.closest('button');
-                if (!btn) return;
-                if(btn.classList.contains('cart-remove-btn')) { // DÜZƏLİŞ: Bu hissə artıq işləyir
-                    const stockId = parseInt(btn.dataset.id);
-                    carts[activeTab] = carts[activeTab].filter(i => i.stockId !== stockId);
-                    renderCart(carts[activeTab], forms[activeTab]);
-                }
-                if (btn.classList.contains('add-customer-quick')) {
-                    addCustomerForm.reset();
-                    const guarantorSelect = document.getElementById('customerGuarantorModal');
-                    const customers = getCustomers();
-                    guarantorSelect.innerHTML = '<option value="">-- Zamin Seçin --</option>';
-                    customers.forEach(c => { guarantorSelect.innerHTML += `<option value="${c.id}">${c.name}</option>`; });
-                    openModal(addCustomerModal);
-                }
-            });
+            appContainer.querySelector('#imeiSearchInput').addEventListener('keydown', handleImeiSearch);
+            appContainer.querySelector('#imeiSearchInputCredit').addEventListener('keydown', handleImeiSearch);
+            appContainer.querySelector('#imeiSearchInputCorporate').addEventListener('keydown', handleImeiSearch);
 
             forms.cash.addEventListener('submit', (e) => {
                 e.preventDefault();
