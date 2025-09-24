@@ -502,7 +502,9 @@
 </head>
 <body>
     <div class="sidebar">
-        <div class="logo">BİZNES PANEL</div>
+        <div class="logo">
+            <img src="https://github.com/rustambaktel-glitch/Kredit-Kalkulyatoru/blob/main/Screenshot%202025-09-13%20at%2015.07.28.png" alt="Biznes Panel Logo" style="width: 150px; height: auto;">
+        </div>
         <nav id="sidebar-nav">
             <ul>
                 <li><a data-page="home" class="active"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l9-9 9 9M5 10v10a1 1 0 001 1h3a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1h3a1 1 0 001-1V10"></path></svg> <span>Ana Səhifə</span></a></li>
@@ -515,7 +517,7 @@
                 <li><a data-page="customers"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21v-1a6 6 0 00-1-3.794M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> <span>Müştərilər</span></a></li>
                 <li><a data-page="suppliers"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg> <span>Təchizatçılar</span></a></li>
                 <li><a data-page="debts"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8V6m0 4v4m0 4v2m-6-2h12a2 2 0 002-2V8a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg> <span>Borclar</span></a></li>
-                <li id="admin-button-container" style="display:none;"><a id="admin-login-btn"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2v2m-4-6a2 2 0 012 2v2m-6-6a2 2 0 012 2v2M3 13a2 2 0 012-2h4m5-2h-4a2 2 0 00-2 2v4a2 2 0 002 2h4m-2 2H9a2 2 0 01-2-2v-4a2 2 0 012-2h2m-4 2h4m-4 2h4m-4-4a2 2 0 01-2 2v4a2 2 0 012 2h4m-2-2h2m-2-2h2m-2-4h2m-2-2h2"></path></svg> <span>Admin</span></a></li>
+                <li><a id="admin-login-btn"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2v2m-4-6a2 2 0 012 2v2m-6-6a2 2 0 012 2v2M3 13a2 2 0 012-2h4m5-2h-4a2 2 0 00-2 2v4a2 2 0 002 2h4m-2 2H9a2 2 0 01-2-2v-4a2 2 0 012-2h2m-4 2h4m-4 2h4m-4-4a2 2 0 01-2 2v4a2 2 0 012 2h4m-2-2h2m-2-2h2m-2-4h2m-2-2h2"></path></svg> <span>Admin</span></a></li>
             </ul>
         </nav>
     </div>
@@ -594,10 +596,6 @@
             <div class="form-group">
                 <label for="editCustomerAddress">Ünvan</label>
                 <input type="text" id="editCustomerAddress">
-            </div>
-            <div class="form-group">
-                <label for="editCustomerPhone">Telefon Nömrəsi</label>
-                <input type="text" id="editCustomerPhone" required>
             </div>
             <div class="form-group">
                 <label for="editCustomerGuarantor">Zamin</label>
@@ -721,9 +719,13 @@
             <div class="page-header">
                 <h1>Ana Səhifə</h1>
             </div>
-            <div class="content-area">
-                <p>Xoş gəlmisiniz! Bu proqramın idarəetmə panelidir. Yan menyudan istədiyiniz bölməni seçə bilərsiniz.</p>
-                <p id="admin-info">Admin funksiyalarına daxil olmaq üçün naviqasiya panelindəki "Admin" düyməsinə klikləyin.</p>
+            <div class="summary-cards" id="dashboard-stats" style="grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));">
+                <div class="card"><h3>Ümumi Dövriyyə</h3><p id="total-turnover">0.00 ₼</p></div>
+                <div class="card"><h3>Ümumi Xərc</h3><p id="total-expense">0.00 ₼</p></div>
+                <div class="card"><h3>Xalis Mənfəət</h3><p id="net-profit">0.00 ₼</p></div>
+                <div class="card"><h3>Anbar Dəyəri</h3><p id="stock-value">0.00 ₼</p></div>
+                <div class="card"><h3>Satılan Məhsullar</h3><p id="sold-products">0 ədəd</p></div>
+                <div class="card"><h3>Anbarda Olan Məhsullar</h3><p id="in-stock-products">0 ədəd</p></div>
             </div>
         </div>
     </template>
@@ -786,7 +788,7 @@
                     <div class="page-header" style="padding: 1rem 0 0 0;">
                         <div class="search-container">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri, məbləğ, tarixə görə axtar...">
+                            <input type="search" id="salesReportSearch" class="search-input" placeholder="Müştəri, məbləğ və ya tarixə görə axtar...">
                         </div>
                     </div>
                     <table class="data-table">
@@ -799,7 +801,7 @@
                     <div class="page-header" style="padding: 1rem 0 0 0;">
                         <div class="search-container">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                            <input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı, məbləğ, tarixə görə axtar...">
+                            <input type="search" id="purchasesReportSearch" class="search-input" placeholder="Təchizatçı, məbləğ və ya tarixə görə axtar...">
                         </div>
                     </div>
                     <table class="data-table">
@@ -1124,9 +1126,10 @@
         const adminLoginForm = document.getElementById('adminLoginForm');
         const ADMIN_PASSWORD = 'admin';
 
-        window.showAdminLogin = () => {
+        document.getElementById('admin-login-btn').addEventListener('click', () => {
             openModal(adminLoginModal);
-        };
+            document.getElementById('adminPassword').focus();
+        });
         
         adminLoginForm.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -1718,8 +1721,33 @@
         }
 
         function setupHomePage() {
-            // Ana səhifə məzmunu
-            // Gələcəkdə bura daha çox məlumat (dashboard) əlavə oluna bilər.
+            const sales = getSales();
+            const purchases = getPurchases();
+            const transactions = getTransactions();
+            const stock = getStock();
+            
+            const totalSalesIncome = sales.reduce((sum, sale) => sum + sale.totalAmount, 0);
+            const totalOtherIncome = transactions.filter(t => t.type === 'Digər Mədaxil').reduce((sum, t) => sum + t.amount, 0);
+            const totalTurnover = totalSalesIncome + totalOtherIncome;
+            
+            const totalPurchaseCost = purchases.reduce((sum, purchase) => sum + purchase.totalAmount, 0);
+            const totalExpenses = transactions.filter(t => t.amount < 0).reduce((sum, t) => sum + Math.abs(t.amount), 0);
+            const totalAllExpenses = totalPurchaseCost + totalExpenses;
+
+            const netProfit = totalTurnover - totalAllExpenses;
+            
+            const stockValue = stock.filter(item => !item.isSold).reduce((sum, item) => sum + item.purchasePrice, 0);
+
+            const soldProductsCount = stock.filter(item => item.isSold).length;
+            const inStockProductsCount = stock.filter(item => !item.isSold).length;
+            
+            document.getElementById('total-turnover').textContent = `${totalTurnover.toFixed(2)} ₼`;
+            document.getElementById('total-expense').textContent = `${totalAllExpenses.toFixed(2)} ₼`;
+            document.getElementById('net-profit').textContent = `${netProfit.toFixed(2)} ₼`;
+            document.getElementById('net-profit').classList.toggle('negative', netProfit < 0);
+            document.getElementById('stock-value').textContent = `${stockValue.toFixed(2)} ₼`;
+            document.getElementById('sold-products').textContent = `${soldProductsCount} ədəd`;
+            document.getElementById('in-stock-products').textContent = `${inStockProductsCount} ədəd`;
         }
 
         function setupProductsPage() {
@@ -1944,7 +1972,7 @@
                     let customerInfoHtml = `
                         <div style="background: #f9fafb; padding: 1.5rem; border-radius: 0.75rem; border: 1px solid var(--border-color); margin-bottom: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
                             <p><strong><span style="color: var(--text-secondary);">Ş/V Seriya:</span></strong><br>${customer.sv_seria || 'Qeyd edilməyib'}</p>
-                            <p><strong><span style="color: var(--text-secondary);">FİN Kod:</span></strong><br>${customer.fin || 'Qeyd edilməyib'}</p>
+                            <p><strong><span style="color: var(--text-secondary);">FİN Kodu:</span></strong><br>${customer.fin || 'Qeyd edilməyib'}</p>
                             <p><strong><span style="color: var(--text-secondary);">Telefon:</span></strong><br>${customer.phone || 'Qeyd edilməyib'}</p>
                             <p><strong><span style="color: var(--text-secondary);">Zamin:</span></strong><br>${guarantorName}</p>
                             <p style="grid-column: 1 / -1;"><strong><span style="color: var(--text-secondary);">Ünvan:</span></strong><br>${customer.unvan || 'Qeyd edilməyib'}</p>
@@ -3112,8 +3140,8 @@
                 }
             }
         });
-        
-        // Səhifənin yüklənməsi
+
+        // Səhifə yüklənəndə `home` səhifəsini render et
         renderPage('home');
     });
     </script>
