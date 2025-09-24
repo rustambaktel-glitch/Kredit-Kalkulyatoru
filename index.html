@@ -631,7 +631,7 @@
                     <label>Təchizatçı</label>
                     <select id="paymentSupplierSelect" required></select>
                 </div>
-                <div class="form-group" id="payment-purchase-group">
+                <div class="form-group" id="payment-purchase-group" style="display:none;">
                     <label>Qaimə</label>
                     <select id="paymentPurchaseSelect"></select>
                 </div>
@@ -1003,13 +1003,13 @@
             <div class="page-header"><h1>Borclar</h1></div>
             <div class="content-area">
                 <div class="report-actions" id="debt-tabs">
-                    <button class="btn btn-primary" data-debt-type="customer-credit">Kredit Borcları</button>
+                    <button class="btn btn-primary active" data-debt-type="customer-credit">Kredit Borcları</button>
                     <button class="btn btn-primary" data-debt-type="customer-corporate">Korporativ Borclar</button>
                     <button class="btn btn-primary" data-debt-type="customer-invoice">Açıq Qaimə Borcları</button>
-                    <button class="btn btn-primary active" data-debt-type="supplier">Təchizatçı Borcları</button>
+                    <button class="btn btn-primary" data-debt-type="supplier">Təchizatçı Borcları</button>
                 </div>
                 
-                <div id="customer-debts-view" class="debt-view" style="display:none;">
+                <div id="customer-debts-view" class="debt-view">
                     <div class="page-header" style="padding: 1rem 0 0 0;">
                         <div class="search-container">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -1025,7 +1025,7 @@
                     </table>
                 </div>
 
-                <div id="supplier-debts-view" class="debt-view">
+                <div id="supplier-debts-view" class="debt-view" style="display:none;">
                     <div class="page-header" style="padding: 1rem 0 0 0;">
                         <div class="search-container">
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -1536,7 +1536,7 @@
             document.getElementById('supplierDebtDetailsContent').innerHTML = detailsHtml;
             openModal(supplierDebtDetailsModal);
         }
-        
+
         function deleteSale(saleId) {
             if (!confirm('Satışı silməyə əminsiniz? Bu, bütün əlaqəli məlumatları siləcək!')) return;
             
@@ -2678,7 +2678,7 @@
             const btnIncome = appContainer.querySelector('#btnIncome');
             const btnExpense = appContainer.querySelector('#btnExpense');
             const adminActions = appContainer.querySelector('#admin-actions');
-
+            
             const isAdmin = localStorage.getItem('isAdmin') === 'true';
             if (isAdmin) {
                 adminActions.style.display = 'flex';
@@ -2940,7 +2940,7 @@
                     let hasDebts = false;
                     let purchaseOptions = `<option value="">-- Ümumi Ödəniş --</option>`;
                     purchases.forEach(p => {
-                        const paidAmount = transactions.filter(t => t.details && t.details.purchaseId === p.id).reduce((sum, t) => sum + Math.abs(t.amount), 0);
+                        const paidAmount = transactions.filter(t => t.type === 'Təchizatçıya Ödəniş' && t.details && t.details.purchaseId === p.id).reduce((sum, t) => sum + Math.abs(t.amount), 0);
                         const remainingDebt = p.totalAmount - paidAmount;
                         if(remainingDebt > 0.01) {
                             hasDebts = true;
@@ -2953,7 +2953,7 @@
                     document.getElementById('paymentSupplierSelect').value = supplierId;
                     
                     document.getElementById('paymentPurchaseSelect').innerHTML = purchaseOptions;
-                    document.getElementById('payment-purchase-group').style.display = hasDebts ? 'block' : 'none';
+                    document.getElementById('payment-purchase-group').style.display = 'block';
 
                     const paymentInput = document.getElementById('supplierPaymentAmount');
                     if(hasDebts) {
@@ -2989,8 +2989,9 @@
                     }
                  }
             });
-
-            renderCustomerDebts(currentDebtType);
+            
+            // Səhifə ilk açıldıqda render etmək
+            debtTabs.querySelector(`[data-debt-type="${currentDebtType}"]`).click();
         }
 
         appContainer.addEventListener('click', (e) => {
