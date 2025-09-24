@@ -587,6 +587,9 @@
                     <button id="btnFixData" class="btn btn-danger">
                         <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg> Məlumatları Düzəlt (Birdəfəlik)</span>
                     </button>
+                    <button id="btnResetData" class="btn btn-danger" style="background: #e53935; color: white;">
+                        <span><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> Bütün məlumatları sil (Sıfırla)</span>
+                    </button>
                 </div>
             </div>
             <div class="summary-cards">
@@ -1935,6 +1938,8 @@
             const btnExpense = appContainer.querySelector('#btnExpense');
             const btnBackupData = appContainer.querySelector('#btnBackupData');
             const btnFixData = appContainer.querySelector('#btnFixData');
+            const btnResetData = appContainer.querySelector('#btnResetData');
+
             const renderFinancePage = () => {
                 const transactions = getTransactions();
                 const customers = getCustomers();
@@ -1966,6 +1971,15 @@
                 btnFixData.addEventListener('click', () => {
                     if (confirm('Diqqət! Bu əməliyyat bütün müştəri borclarını satışlara əsasən yenidən hesablayacaq. Yalnız səhv məlumatları (məs. mənfi borc) düzəltmək üçün istifadə edin. Davam etmək istəyirsiniz?')) {
                         recalculateAllCustomerDebts();
+                    }
+                });
+            }
+            if (btnResetData) {
+                btnResetData.addEventListener('click', () => {
+                    if (confirm('XƏBƏRDARLIQ: Bütün məlumatları (məhsullar, müştərilər, təchizatçılar, satışlar və s.) silmək istədiyinizə əminsiniz? Bu əməliyyat geri qaytarıla bilməz.')) {
+                        localStorage.clear();
+                        alert('Bütün məlumatlar silindi. Səhifə yenilənəcək.');
+                        location.reload();
                     }
                 });
             }
