@@ -1695,13 +1695,12 @@
                 if (e.key === 'Enter' || e.type === 'change') {
                      if (imei.length > 0) { 
                         const stockItems = getStock();
-                        const products = getProducts();
                         const availableItem = stockItems.find(item => 
                             (item.imei1 === imei || item.imei2 === imei) && !item.isSold
                         );
                         
                         if (availableItem) {
-                            const product = products.find(p => p.id === availableItem.productId);
+                            const product = getProducts().find(p => p.id === availableItem.productId);
                             if (product) {
                                 const cart = carts[activeTab];
                                 const existingItem = cart.find(item => item.stockId === availableItem.id);
@@ -1781,6 +1780,11 @@
                 }
                 
                 const totalAmount = calculateTotal(cart, view);
+                if(totalAmount <= 0) {
+                    alert('Satış məbləği 0-dan böyük olmalıdır!');
+                    return;
+                }
+                
                 const isDebt = paymentType === 'Açıq Qaimə';
                 const initialPayment = isDebt ? 0 : totalAmount;
                 const debt = totalAmount - initialPayment;
@@ -1812,6 +1816,10 @@
                 }
 
                 const totalAmount = calculateTotal(cart, view);
+                if(totalAmount <= 0) {
+                    alert('Satış məbləği 0-dan böyük olmalıdır!');
+                    return;
+                }
                 const initialPayment = parseFloat(view.querySelector('.initial-payment').value) || 0;
                 const loanTerm = parseInt(view.querySelector('.loan-term').value);
                 const debt = totalAmount - initialPayment;
@@ -1845,6 +1853,10 @@
                 }
 
                 const totalAmount = calculateTotal(cart, view);
+                if(totalAmount <= 0) {
+                    alert('Satış məbləği 0-dan böyük olmalıdır!');
+                    return;
+                }
                 const initialPayment = parseFloat(view.querySelector('.initial-payment').value) || 0;
                 const debt = totalAmount - initialPayment;
                 
