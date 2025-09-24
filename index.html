@@ -1692,50 +1692,52 @@
 
             const handleImeiSearch = (e, targetForm) => {
                 const imei = e.target.value.trim();
-                if (imei.length > 0) { 
-                    const stockItems = getStock();
-                    const availableItem = stockItems.find(item => 
-                        (item.imei1 === imei || item.imei2 === imei) && !item.isSold
-                    );
-                    
-                    if (availableItem) {
-                        const product = getProducts().find(p => p.id === availableItem.productId);
-                        if (product) {
-                            const cart = carts[activeTab];
-                            const existingItem = cart.find(item => item.stockId === availableItem.id);
+                if (e.key === 'Enter' || e.type === 'change') {
+                     if (imei.length > 0) { 
+                        const stockItems = getStock();
+                        const products = getProducts();
+                        const availableItem = stockItems.find(item => 
+                            (item.imei1 === imei || item.imei2 === imei) && !item.isSold
+                        );
+                        
+                        if (availableItem) {
+                            const product = products.find(p => p.id === availableItem.productId);
+                            if (product) {
+                                const cart = carts[activeTab];
+                                const existingItem = cart.find(item => item.stockId === availableItem.id);
 
-                            if (!existingItem) {
-                                cart.push({
-                                    stockId: availableItem.id,
-                                    name: product.name,
-                                    imei1: availableItem.imei1,
-                                    imei2: availableItem.imei2,
-                                    salePrice: availableItem.salePrice,
-                                    productId: product.id
-                                });
-                                renderCart(cart, forms[activeTab]);
+                                if (!existingItem) {
+                                    cart.push({
+                                        stockId: availableItem.id,
+                                        name: product.name,
+                                        imei1: availableItem.imei1,
+                                        imei2: availableItem.imei2,
+                                        salePrice: availableItem.salePrice || 0,
+                                        productId: product.id
+                                    });
+                                    renderCart(cart, forms[activeTab]);
+                                } else {
+                                    alert('Bu IMEI-ə aid məhsul artıq səbətdədir.');
+                                }
                             } else {
-                                alert('Bu IMEI-ə aid məhsul artıq səbətdədir.');
+                                alert('Bu IMEI-ə aid məhsul tapılmadı.');
                             }
                         } else {
-                            alert('Bu IMEI-ə aid məhsul tapılmadı.');
+                            alert('Məhsul anbarda tapılmadı və ya artıq satılıb.');
                         }
-                    } else {
-                        alert('Məhsul anbarda tapılmadı və ya artıq satılıb.');
+                        e.target.value = '';
                     }
-                    e.target.value = '';
                 }
             };
             
-            imeiSearchInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleImeiSearch(e, forms.cash); } });
+            imeiSearchInput.addEventListener('keydown', (e) => { handleImeiSearch(e, forms.cash); });
             imeiSearchInput.addEventListener('change', (e) => { handleImeiSearch(e, forms.cash); });
 
-            imeiSearchInputCredit.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleImeiSearch(e, forms.credit); } });
+            imeiSearchInputCredit.addEventListener('keydown', (e) => { handleImeiSearch(e, forms.credit); });
             imeiSearchInputCredit.addEventListener('change', (e) => { handleImeiSearch(e, forms.credit); });
 
-            imeiSearchInputCorporate.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); handleImeiSearch(e, forms.corporate); } });
+            imeiSearchInputCorporate.addEventListener('keydown', (e) => { handleImeiSearch(e, forms.corporate); });
             imeiSearchInputCorporate.addEventListener('change', (e) => { handleImeiSearch(e, forms.corporate); });
-
 
             appContainer.addEventListener('input', (e) => {
                 if (e.target.classList.contains('cart-price-input')) {
@@ -1873,7 +1875,7 @@
                     if (itemInStock) {
                         itemInStock.isSold = true;
                         itemInStock.salePrice = cartItem.salePrice;
-                        itemInStock.saleId = new Date().getTime(); // Məhsulun satıldığı satışın ID-sini qeyd edirik
+                        itemInStock.saleId = new Date().getTime(); 
                         soldItems.push({ 
                             stockId: itemInStock.id, 
                             productId: itemInStock.productId,
@@ -2131,7 +2133,7 @@
                 let totalPurchases = 0;
                 purchases.forEach((purchase, index) => {
                     totalPurchases += purchase.totalAmount;
-                    purchasesHistoryTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${purchase.id}</td><td>${purchase.date}</td><td>${purchase.supplierName}</td><td>${purchase.totalAmount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-details" data-id="${purchase.id}" data-type="purchase">Detallar</button><button class="btn-delete-purchase" data-id="${purchase.id}">🗑️</button></td></tr>`;
+                    purchasesHistoryTableBody.innerHTML += `<tr><td>${index + 1}</td><td>${purchase.id}</td><td>${purchase.date}</td><td>${purchase.supplierName}</td><td>${purchase.totalAmount.toFixed(2)} ₼</td><td class="actions-cell"><button class="btn-details" data-id="${purchase.id}" data-type="purchase">Detallar</button></td></tr>`;
                 });
                 const tfoot = purchasesHistoryTableBody.nextElementSibling;
                 tfoot.innerHTML = `<tr><td colspan="4" style="text-align:right;">CƏMİ:</td><td>${totalPurchases.toFixed(2)} ₼</td><td></td></tr>`;
@@ -2370,7 +2372,7 @@
                     const sale = getSales().find(s => s.id === id);
                     if (!sale) return;
                     let detailsHtml = `<p><strong>Satış ID:</strong> ${sale.id}</p><p><strong>Müştəri:</strong> ${sale.customerName}</p><p><strong>Satış Növü:</strong> ${sale.type}</p><p><strong>Yekun Məbləğ:</strong> ${sale.totalAmount.toFixed(2)} ₼</p><p><strong>Ödənilmiş Məbləğ:</strong> ${sale.initialPayment.toFixed(2)} ₼</p><p><strong>Borc:</strong> ${(sale.totalAmount - sale.initialPayment).toFixed(2)} ₼</p><hr style="border-color:var(--border-color); margin: 15px 0;"><h4 style="margin-bottom:10px;">Satılan Məhsullar</h4><table class="data-table" style="width:100%;"><thead><tr><th>Məhsul</th><th>IMEI 1</th><th>IMEI 2</th><th>Qiymət</th></tr></thead><tbody>`;
-                    sale.items.forEach(i => { detailsHtml += `<tr><td>${i.name}</td><td>${i.imeiCodes[0] || '-'}</td><td>${i.imeiCodes[1] || '-'}</td><td>${i.salePrice.toFixed(2)} ₼</td></tr>`; });
+                    sale.items.forEach(i => { detailsHtml += `<tr><td>${i.name}</td><td>${i.imei1 || '-'}</td><td>${i.imei2 || '-'}</td><td>${i.salePrice.toFixed(2)} ₼</td></tr>`; });
                     detailsHtml += '</tbody></table>';
                     document.getElementById('saleDetailsContent').innerHTML = detailsHtml;
                     openModal(saleDetailsModal);
@@ -2397,7 +2399,6 @@
             }
         });
         
-        // Handle removal of single purchase item
         purchaseDetailsModal.addEventListener('click', (e) => {
             const btn = e.target.closest('.remove-purchase-item-btn');
             if (btn) {
@@ -2417,20 +2418,16 @@
                         if (itemIndex !== -1) {
                             const itemToRemove = purchase.items[itemIndex];
                             
-                            // Remove from stock
                             stock = stock.filter(s => !(s.purchaseDate === purchase.date && s.imei1 === imei1));
                             
-                            // Update supplier balance
                             const supplier = suppliers.find(s => s.id === purchase.supplierId);
                             if (supplier) {
                                 supplier.balance -= itemToRemove.price;
                             }
 
-                            // Update purchase total
                             purchase.totalAmount -= itemToRemove.price;
                             purchase.items.splice(itemIndex, 1);
 
-                            // If all items are removed, remove the whole purchase
                             if (purchase.items.length === 0) {
                                 purchases.splice(purchaseIndex, 1);
                             }
