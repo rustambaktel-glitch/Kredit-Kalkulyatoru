@@ -1188,6 +1188,36 @@
                 populateGuarantorSelects();
                 openModal(addCustomerModal); 
             });
+            
+            // Müştəri məlumatları modalı içərisindəki bütün düymələr üçün click hadisəsi dinləyicisi
+            customerSalesHistoryModal.addEventListener('click', (e) => {
+                const btn = e.target.closest('button');
+                if (btn && btn.classList.contains('payment-history-btn')) {
+                    const saleId = parseInt(btn.dataset.id);
+                    const sale = getSales().find(s => s.id === saleId);
+                    if (!sale) return;
+                    
+                    const paymentHistoryTitle = document.getElementById('payment-history-title');
+                    const paymentHistoryContent = document.getElementById('paymentHistoryContent');
+                    paymentHistoryTitle.textContent = `Satış #${sale.id} - Ödəniş Tarixçəsi`;
+                    
+                    let paymentsHtml = `<table class="data-table"><thead><tr><th>#</th><th>Tarix</th><th>Ödəniş Növü</th><th>Məbləğ</th></tr></thead><tbody>`;
+                    if (!sale.payments || sale.payments.length === 0) {
+                        paymentsHtml += `<tr><td colspan="4" style="text-align:center;">Hələ ödəniş edilməyib.</td></tr>`;
+                    } else {
+                        sale.payments.forEach((p, index) => {
+                            paymentsHtml += `<tr><td>${index + 1}</td><td>${p.date}</td><td>${p.type}</td><td>${p.amount.toFixed(2)} ₼</td></tr>`;
+                        });
+                    }
+                    const totalPayments = (sale.payments || []).reduce((sum, p) => sum + p.amount, 0);
+                    paymentsHtml += `</tbody><tfoot><tr><td colspan="3" style="text-align:right;">CƏMİ ÖDƏNİŞ:</td><td>${totalPayments.toFixed(2)} ₼</td></tr></tfoot></table>`;
+                    
+                    paymentHistoryContent.innerHTML = paymentsHtml;
+                    openModal(paymentHistoryModal);
+                }
+            });
+
+
             customerTableBody.addEventListener('click', (e) => {
                 const btn = e.target.closest('button');
                 if (!btn) return;
@@ -1257,14 +1287,14 @@
                                         <div class="product-details">
                                             <strong>Məhsullar:</strong>
                                             <table class="data-table" style="width: 100%; margin-top: 0.5rem;">
-                                                <thead><tr><th>Məhsul Adı</th><th>Say</th><th>Qiymət</th><th>Toplam</th></tr></thead>
+                                                <thead><tr><th>Məhsul Adı</th><th>Say</th><th>IMEI 1</th><th>IMEI 2</th></tr></thead>
                                                 <tbody>
                                                 ${sale.items.map(item => `
                                                     <tr>
-                                                        <td>${item.name} ${(item.imeiCodes && item.imeiCodes.length > 0) ? `(IMEI: ${item.imeiCodes.join(', ')})` : ''}</td>
+                                                        <td>${item.name}</td>
                                                         <td>${item.quantity}</td>
-                                                        <td>${item.salePrice.toFixed(2)} ₼</td>
-                                                        <td>${(item.quantity * item.salePrice).toFixed(2)} ₼</td>
+                                                        <td>${(item.imeiCodes && item.imeiCodes[0]) ? item.imeiCodes[0] : '-'}</td>
+                                                        <td>${(item.imeiCodes && item.imeiCodes[1]) ? item.imeiCodes[1] : '-'}</td>
                                                     </tr>
                                                 `).join('')}
                                                 </tbody>
@@ -1309,34 +1339,6 @@
                         document.getElementById('editCustomerGuarantor').value = customer.guarantorId || '';
                         openModal(editCustomerModal);
                     }
-                }
-            });
-
-            // YENİ ƏLAVƏ OLUNMUŞ HİSSƏ: Ödəniş Tarixçəsi düyməsinin işləməsi üçün
-            customerSalesHistoryModal.addEventListener('click', (e) => {
-                const btn = e.target.closest('button');
-                if (btn && btn.classList.contains('payment-history-btn')) {
-                    const saleId = parseInt(btn.dataset.id);
-                    const sale = getSales().find(s => s.id === saleId);
-                    if (!sale) return;
-                    
-                    const paymentHistoryTitle = document.getElementById('payment-history-title');
-                    const paymentHistoryContent = document.getElementById('paymentHistoryContent');
-                    paymentHistoryTitle.textContent = `Satış #${sale.id} - Ödəniş Tarixçəsi`;
-                    
-                    let paymentsHtml = `<table class="data-table"><thead><tr><th>#</th><th>Tarix</th><th>Ödəniş Növü</th><th>Məbləğ</th></tr></thead><tbody>`;
-                    if (!sale.payments || sale.payments.length === 0) {
-                        paymentsHtml += `<tr><td colspan="4" style="text-align:center;">Hələ ödəniş edilməyib.</td></tr>`;
-                    } else {
-                        sale.payments.forEach((p, index) => {
-                            paymentsHtml += `<tr><td>${index + 1}</td><td>${p.date}</td><td>${p.type}</td><td>${p.amount.toFixed(2)} ₼</td></tr>`;
-                        });
-                    }
-                    const totalPayments = (sale.payments || []).reduce((sum, p) => sum + p.amount, 0);
-                    paymentsHtml += `</tbody><tfoot><tr><td colspan="3" style="text-align:right;">CƏMİ ÖDƏNİŞ:</td><td>${totalPayments.toFixed(2)} ₼</td></tr></tfoot></table>`;
-                    
-                    paymentHistoryContent.innerHTML = paymentsHtml;
-                    openModal(paymentHistoryModal);
                 }
             });
 
