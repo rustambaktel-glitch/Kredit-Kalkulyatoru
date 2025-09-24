@@ -1693,15 +1693,16 @@
             const handleImeiSearch = (e, targetForm) => {
                 const imei = e.target.value.trim();
                 if (e.key === 'Enter') {
-                     e.preventDefault();
-                     if (imei.length > 0) { 
+                    e.preventDefault();
+                    if (imei.length > 0) {
                         const stockItems = getStock();
                         const availableItem = stockItems.find(item => 
                             (item.imei1 === imei || item.imei2 === imei) && !item.isSold
                         );
                         
                         if (availableItem) {
-                            const product = getProducts().find(p => p.id === availableItem.productId);
+                            const products = getProducts();
+                            const product = products.find(p => p.id === availableItem.productId);
                             if (product) {
                                 const cart = carts[activeTab];
                                 const existingItem = cart.find(item => item.stockId === availableItem.id);
@@ -1731,13 +1732,8 @@
             };
             
             imeiSearchInput.addEventListener('keydown', (e) => { handleImeiSearch(e, forms.cash); });
-            imeiSearchInput.addEventListener('change', (e) => { if (e.target.value.trim() !== '') handleImeiSearch(e, forms.cash); });
-
             imeiSearchInputCredit.addEventListener('keydown', (e) => { handleImeiSearch(e, forms.credit); });
-            imeiSearchInputCredit.addEventListener('change', (e) => { if (e.target.value.trim() !== '') handleImeiSearch(e, forms.credit); });
-
             imeiSearchInputCorporate.addEventListener('keydown', (e) => { handleImeiSearch(e, forms.corporate); });
-            imeiSearchInputCorporate.addEventListener('change', (e) => { if (e.target.value.trim() !== '') handleImeiSearch(e, forms.corporate); });
 
             appContainer.addEventListener('input', (e) => {
                 if (e.target.classList.contains('cart-price-input')) {
@@ -1750,7 +1746,7 @@
                     calculateTotal(cart, forms[activeTab]);
                 }
             });
-
+            
             if(forms.credit) {
                 forms.credit.querySelector('.initial-payment').addEventListener('input', (e) => {
                     calculateTotal(carts.credit, forms.credit);
