@@ -409,7 +409,7 @@
             width: 90%;
             max-width: 95rem;
         }
-        /* Yeni əlavə olunan detal stilləri */
+        
         #saleDetailsModal .modal-content, 
         #purchaseDetailsModal .modal-content {
             width: 90%;
@@ -435,7 +435,6 @@
             font-weight: 600;
             color: var(--text-primary);
         }
-        /* End of new detail styles */
 
         .product-details {
             border-left: 3px solid var(--primary-color);
@@ -1158,7 +1157,7 @@
             const saleDetailsModal = document.getElementById('saleDetailsModal');
             const customerSalesHistoryModal = document.getElementById('customerSalesHistoryModal');
             const purchaseDetailsModal = document.getElementById('purchaseDetailsModal');
-            const supplierPurchaseDetailsModal = document.getElementById('supplierPurchaseDetailsModal');
+            const supplierPurchaseDetailsModal = document.getElementById('supplierDebtDetailsModal');
             
             const addProductModal = document.getElementById('addProductModal');
             const editProductModal = document.getElementById('editProductModal');
@@ -3436,7 +3435,7 @@
                            openPaymentModalForSale(saleId, customerId);
                     }
                     
-                    if (btn.classList.contains('pay-supplier-debt-btn') && !btn.dataset.supplierid) { // Ümumi borcdan ödəniş
+                    if (btn.classList.contains('pay-supplier-debt-btn') && !btn.dataset.supplierid) { 
                         const supplierId = parseInt(btn.dataset.id);
                         const supplier = getSuppliers().find(s => s.id === supplierId);
                         if (!supplier) return;
