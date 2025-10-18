@@ -1473,14 +1473,20 @@
                 if (saleId) {
                     sale.initialPayment = parseFloat((sale.initialPayment + amount).toFixed(2));
                     if (!sale.payments) sale.payments = [];
+                    
+                    const newTransaction = addTransaction(`Müştəri Ödənişi`, `${customer.name} tərəfindən ödəniş`, amount, cashType, { customerId: customer.id, saleId: saleId });
+
                     sale.payments.push({
                         date: new Date().toLocaleString('az-AZ'),
                         amount: amount,
                         type: cashType,
+                        transactionId: newTransaction.id // Add transaction ID to link payment record
                     });
+                } else {
+                    // Ümumi ödənişlər üçün sadəcə transaction əlavə et
+                    addTransaction(`Müştəri Ödənişi`, `${customer.name} tərəfindən ümumi ödəniş`, amount, cashType, { customerId: customer.id });
                 }
                 
-                addTransaction(`Müştəri Ödənişi`, `${customer.name} tərəfindən ödəniş`, amount, cashType, { customerId: customer.id, saleId: saleId });
                 closeModal(acceptPaymentModal);
                 renderPage(document.querySelector('.sidebar nav a.active').dataset.page);
             });
@@ -1645,7 +1651,7 @@
                         <td>${i.name}</td>
                         <td>${i.imei1 || '-'}</td>
                         <td>${i.imei2 || '-'}</td>
-                        <td>${i.salePrice.toFixed(2)} ₼</td>
+                        <td>${(i.salePrice || 0).toFixed(2)} ₼</td>
                     </tr>
                 `).join('');
 
@@ -1831,7 +1837,6 @@
             };
 
             function showSupplierDebtDetails(supplierId) {
-                // Bu funksiya Borclar səhifəsində ümumi borcu göstərmək üçün istifadə olunur
                 showSupplierFullDetails(supplierId);
             }
 
@@ -1852,7 +1857,7 @@
                     if(item.saleId === saleId) {
                         item.isSold = false;
                         item.saleId = null;
-                        item.salePrice = 0;
+                        item.salePrice = null; // Changed back to null
                     }
                 });
 
@@ -2223,7 +2228,7 @@
 
                         paymentHistoryContent.innerHTML = `
                             <table class="data-table">
-                                <thead><tr><th>#</th><th>Tarix</th><th>Kassa Növü</th><th>Məbləğ</th></tr></thead>
+                                <thead><tr><th>#</th><th>Tarix</th><th>Ödəniş Növü/Kassası</th><th>Məbləğ</th></tr></thead>
                                 <tbody>
                                     ${payments.length === 0 ? `<tr><td colspan="4" style="text-align:center;">Hələ ödəniş edilməyib.</td></tr>` : paymentsHtml}
                                 </tbody>
@@ -2302,7 +2307,7 @@
                                             <td>${product ? product.name : 'Silinmiş Məhsul'}</td>
                                             <td>${item.imei1 || '-'}</td>
                                             <td>${item.imei2 || '-'}</td>
-                                            <td>${item.salePrice.toFixed(2)} ₼</td>
+                                            <td>${(item.salePrice || 0).toFixed(2)} ₼</td>
                                         </tr>`;
                                 }).join('');
 
@@ -2497,7 +2502,8 @@
                     } else {
                         cart.forEach((item, index) => {
                             const tr = document.createElement('tr');
-                            const salePriceValue = item.salePrice > 0 ? item.salePrice.toFixed(2) : '';
+                            // Qiymət 0-dan böyükdürsə göstər, əks halda boş qoy (Manual input üçün)
+                            const salePriceValue = (item.salePrice && item.salePrice > 0) ? item.salePrice.toFixed(2) : ''; 
                             tr.innerHTML = `<tr>
                                 <td>${index + 1}</td>
                                 <td>${item.name}</td>
@@ -2526,7 +2532,7 @@
                         const item = cart.find(i => i.stockId === stockId);
                         if (!item) return;
 
-                        item.salePrice = parseFloat(e.target.value) || 0;
+                        item.salePrice = parseFloat(e.target.value) || null; // null if empty/invalid
                         renderCart(cart, activeView); 
                     }
                     if (e.target.classList.contains('initial-payment') || e.target.classList.contains('loan-term')) {
@@ -2581,7 +2587,7 @@
                     if(btn.classList.contains('cart-remove-btn')) {
                         const stockId = parseFloat(btn.dataset.id);
                         const stockItem = getStock().find(s => s.id === stockId);
-                        if(stockItem) stockItem.salePrice = 0; 
+                        if(stockItem) stockItem.salePrice = null; // Changed to null
                         carts[activeTab] = carts[activeTab].filter(i => i.stockId !== stockId);
                         renderCart(carts[activeTab], activeView);
                     }
@@ -2639,7 +2645,7 @@
                                         name: product.name,
                                         imei1: availableItem.imei1,
                                         imei2: availableItem.imei2,
-                                        salePrice: availableItem.salePrice || null, // Changed from 0 to null for manual input
+                                        salePrice: availableItem.salePrice || null, // Changed from 0 to null
                                         productId: product.id
                                     });
                                     renderCart(cart, forms[activeTab]);
@@ -2716,6 +2722,10 @@
                     DATA.sales.push(newSale);
                     saveToStorage();
                 };
+                
+                const validateCartPrices = (cart) => {
+                     return cart.every(item => item.salePrice && item.salePrice > 0);
+                }
 
 
                 forms.cash.addEventListener('submit', (e) => {
@@ -2730,9 +2740,8 @@
                         alert('Müştəri seçin və səbətə məhsul əlavə edin!');
                         return;
                     }
-                    // Check if any salePrice is empty or zero
-                    if (cart.some(item => !item.salePrice || item.salePrice <= 0)) {
-                         alert('Zəhmət olmasa, bütün məhsullar üçün satış qiymətini daxil edin!');
+                    if (!validateCartPrices(cart)) {
+                         alert('Zəhmət olmasa, bütün məhsullar üçün satış qiymətini daxil edin (0-dan böyük olmalıdır)!');
                          return;
                     }
                     
@@ -2771,8 +2780,8 @@
                         alert('Müştəri seçin və səbətə məhsul əlavə edin!');
                         return;
                     }
-                    if (cart.some(item => !item.salePrice || item.salePrice <= 0)) {
-                         alert('Zəhmət olmasa, bütün məhsullar üçün satış qiymətini daxil edin!');
+                    if (!validateCartPrices(cart)) {
+                         alert('Zəhmət olmasa, bütün məhsullar üçün satış qiymətini daxil edin (0-dan böyük olmalıdır)!');
                          return;
                     }
 
@@ -2812,8 +2821,8 @@
                         alert('Müştəri seçin və səbətə məhsul əlavə edin!');
                         return;
                     }
-                    if (cart.some(item => !item.salePrice || item.salePrice <= 0)) {
-                         alert('Zəhmət olmasa, bütün məhsullar üçün satış qiymətini daxil edin!');
+                    if (!validateCartPrices(cart)) {
+                         alert('Zəhmət olmasa, bütün məhsullar üçün satış qiymətini daxil edin (0-dan böyük olmalıdır)!');
                          return;
                     }
 
