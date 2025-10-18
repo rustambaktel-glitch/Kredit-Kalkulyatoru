@@ -1327,6 +1327,17 @@
                     }
                 }
             });
+            
+            // --- General Helpers ---
+            // Function to safely convert input value (supports commas and dots) to float
+            function safeParseFloat(value) {
+                if (typeof value !== 'string') return null;
+                // Replace comma with dot and then parse
+                const cleanedValue = value.replace(',', '.');
+                const parsed = parseFloat(cleanedValue);
+                // Return null if parsing results in NaN
+                return isNaN(parsed) ? null : parsed;
+            }
 
             function addTransaction(type, description, amount, cashType, details = {}) {
                 const newTransaction = { 
@@ -1438,7 +1449,7 @@
             otherIncomeForm.addEventListener('submit', e => {
                 e.preventDefault();
                 const desc = document.getElementById('otherIncomeDescription').value;
-                const amount = parseFloat(document.getElementById('otherIncomeAmount').value);
+                const amount = safeParseFloat(document.getElementById('otherIncomeAmount').value);
                 const cashType = document.getElementById('otherIncomeCashType').value;
 
                 if (!desc || amount <= 0) { alert('Məlumatları düzgün daxil edin.'); return; }
@@ -1454,7 +1465,7 @@
                 const saleId = document.getElementById('paymentSaleSelect').value ? parseInt(document.getElementById('paymentSaleSelect').value) : null;
                 if (!customerId) { alert("Müştəri seçin."); return; }
 
-                const amount = parseFloat(document.getElementById('paymentAmount').value);
+                const amount = safeParseFloat(document.getElementById('paymentAmount').value);
                 const cashType = document.getElementById('paymentCashType').value;
                 
                 let customer = DATA.customers.find(c => c.id === customerId);
@@ -1542,7 +1553,7 @@
             addExpenseForm.addEventListener('submit', e => {
                 e.preventDefault();
                 const expenseType = document.getElementById('expenseType').value;
-                const amount = parseFloat(document.getElementById('expenseAmount').value);
+                const amount = safeParseFloat(document.getElementById('expenseAmount').value);
                 const cashType = document.getElementById('expenseCashType').value;
                 if(!expenseType || amount <= 0) { alert("Məlumatları düzgün daxil edin."); return; }
                 
@@ -1559,7 +1570,7 @@
                 
                 if(!supplierId){ alert("Təchizatçı seçin."); return; }
                 
-                const amount = parseFloat(document.getElementById('supplierPaymentAmount').value);
+                const amount = safeParseFloat(document.getElementById('supplierPaymentAmount').value);
                 let supplier = DATA.suppliers.find(s => s.id === supplierId);
                 
                 if (!supplier) { alert('Təchizatçı tapılmadı.'); return; }
@@ -2501,12 +2512,13 @@
                         cart.forEach((item, index) => {
                             const tr = document.createElement('tr');
                             const salePriceValue = (item.salePrice && item.salePrice > 0) ? item.salePrice.toFixed(2) : ''; 
+                            // Change type="number" to type="text" to allow non-dot separators (will be cleaned by JS later)
                             tr.innerHTML = `<tr>
                                 <td>${index + 1}</td>
                                 <td>${item.name}</td>
                                 <td>${item.imei1 || '-'}</td>
                                 <td>${item.imei2 || '-'}</td>
-                                <td><input type="number" class="cart-price-input" data-id="${item.stockId}" value="${salePriceValue}" step="0.01" min="0"></td>
+                                <td><input type="text" class="cart-price-input" data-id="${item.stockId}" value="${salePriceValue}" step="0.01" min="0"></td>
                                 <td class="actions-cell"><button type="button" class="btn-delete cart-remove-btn" data-id="${item.stockId}">🗑️</button></td>
                             </tr>`;
                             fragment.appendChild(tr);
@@ -2529,10 +2541,11 @@
                         const item = cart.find(i => i.stockId === stockId);
                         if (!item) return;
 
-                        const value = parseFloat(e.target.value);
+                        // Use safeParseFloat to handle comma/dot and empty string
+                        const value = safeParseFloat(e.target.value); 
                         item.salePrice = (value && value > 0) ? value : null; 
 
-                        renderCart(cart, activeView); 
+                        calculateTotal(cart, activeView); // Only recalculate, no full rerender needed here
                     }
                     if (e.target.classList.contains('initial-payment') || e.target.classList.contains('loan-term')) {
                         calculateTotal(carts[activeTab], activeView);
@@ -2723,7 +2736,6 @@
                 };
                 
                 const validateCartPrices = (cart) => {
-                     // Check if salePrice is a number > 0
                      return cart.every(item => item.salePrice && item.salePrice > 0);
                 }
 
@@ -2933,7 +2945,7 @@
                     const input = e.target;
                     const index = parseInt(input.dataset.index);
                     if (input.classList.contains('purchase-price-input')) {
-                        currentPurchaseItems[index].purchasePrice = parseFloat(input.value) || null;
+                        currentPurchaseItems[index].purchasePrice = safeParseFloat(input.value);
                     } else if (input.classList.contains('purchase-imei1-input')) {
                         currentPurchaseItems[index].imei1 = input.value.trim().toUpperCase();
                     } else if (input.classList.contains('purchase-imei2-input')) {
@@ -3493,10 +3505,8 @@
                     const btn = e.target.closest('button.btn-details');
                     if (btn && btn.dataset.type === 'purchase') {
                         const purchaseId = parseInt(btn.dataset.id);
+                        closeModal(supplierDebtDetailsModal); // Close parent modal before opening child modal
                         showPurchaseDetails(purchaseId);
-                        // Qeyd: Bu, Borc Detalları modalını saxlayır, amma Purchase Details modalını açır. 
-                        // UX üçün əvvəlcə Borc Detalları modalını bağlamaq daha yaxşı olardı.
-                        // closeModal(supplierDebtDetailsModal); // Əlavə olaraq bu sətri də əlavə etdim
                         return; 
                     }
                     const payBtn = e.target.closest('button.pay-supplier-debt-btn');
@@ -3509,13 +3519,12 @@
                 
                 // Təchizatçılar səhifəsindəki ətraflı düyməsi
                 appContainer.addEventListener('click', (e) => {
-                    const btn = e.target.closest('.supplier-debt-details-btn');
+                    const btn = e.target.closest('.supplier-details-btn');
                     if(btn) {
                         const id = parseInt(btn.dataset.id);
                         showSupplierFullDetails(id);
                     }
                 });
-
 
                 customerDebtSearch.addEventListener('input', () => {
                     renderCustomerDebts(currentDebtType);
@@ -3554,18 +3563,6 @@
                     }
                 }
             });
-            
-            // Satış Səhifəsi üçün əlavə klik hadisəsi dinləyicisi (Yuxarıdakı appContainer event listener-də olmadığından)
-            appContainer.addEventListener('click', (e) => {
-                const btn = e.target.closest('button');
-                if(btn && btn.dataset.type === 'purchase' && e.target.closest('#supplierDebtDetailsContent')) {
-                    const id = parseInt(btn.dataset.id);
-                    // Əvvəlki modalı bağlayıb, yeni modalı açırıq
-                    closeModal(supplierDebtDetailsModal); 
-                    showPurchaseDetails(id);
-                }
-            });
-
 
             renderPage('home');
         });
