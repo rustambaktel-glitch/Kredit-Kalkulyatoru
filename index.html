@@ -2500,7 +2500,6 @@
                     } else {
                         cart.forEach((item, index) => {
                             const tr = document.createElement('tr');
-                            // Qiymət 0-dan böyükdürsə göstər, əks halda boş qoy (Manual input üçün)
                             const salePriceValue = (item.salePrice && item.salePrice > 0) ? item.salePrice.toFixed(2) : ''; 
                             tr.innerHTML = `<tr>
                                 <td>${index + 1}</td>
@@ -2529,8 +2528,7 @@
                         const cart = carts[activeTab];
                         const item = cart.find(i => i.stockId === stockId);
                         if (!item) return;
-                        
-                        // Parse the value, set to null if empty or non-positive
+
                         const value = parseFloat(e.target.value);
                         item.salePrice = (value && value > 0) ? value : null; 
 
@@ -3490,14 +3488,34 @@
                     }
                 });
                 
+                // Borclar səhifəsindəki 'Qaimə Detalları' düyməsi
                 supplierDebtDetailsModal.addEventListener('click', (e) => {
-                    const btn = e.target.closest('button.pay-supplier-debt-btn');
-                     if(btn) {
+                    const btn = e.target.closest('button.btn-details');
+                    if (btn && btn.dataset.type === 'purchase') {
                         const purchaseId = parseInt(btn.dataset.id);
-                        const supplierId = parseInt(btn.dataset.supplierid);
+                        showPurchaseDetails(purchaseId);
+                        // Qeyd: Bu, Borc Detalları modalını saxlayır, amma Purchase Details modalını açır. 
+                        // UX üçün əvvəlcə Borc Detalları modalını bağlamaq daha yaxşı olardı.
+                        // closeModal(supplierDebtDetailsModal); // Əlavə olaraq bu sətri də əlavə etdim
+                        return; 
+                    }
+                    const payBtn = e.target.closest('button.pay-supplier-debt-btn');
+                     if(payBtn) {
+                        const purchaseId = parseInt(payBtn.dataset.id);
+                        const supplierId = parseInt(payBtn.dataset.supplierid);
                         openSupplierPaymentModalForPurchase(purchaseId, supplierId);
                      }
                 });
+                
+                // Təchizatçılar səhifəsindəki ətraflı düyməsi
+                appContainer.addEventListener('click', (e) => {
+                    const btn = e.target.closest('.supplier-debt-details-btn');
+                    if(btn) {
+                        const id = parseInt(btn.dataset.id);
+                        showSupplierFullDetails(id);
+                    }
+                });
+
 
                 customerDebtSearch.addEventListener('input', () => {
                     renderCustomerDebts(currentDebtType);
@@ -3536,6 +3554,18 @@
                     }
                 }
             });
+            
+            // Satış Səhifəsi üçün əlavə klik hadisəsi dinləyicisi (Yuxarıdakı appContainer event listener-də olmadığından)
+            appContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('button');
+                if(btn && btn.dataset.type === 'purchase' && e.target.closest('#supplierDebtDetailsContent')) {
+                    const id = parseInt(btn.dataset.id);
+                    // Əvvəlki modalı bağlayıb, yeni modalı açırıq
+                    closeModal(supplierDebtDetailsModal); 
+                    showPurchaseDetails(id);
+                }
+            });
+
 
             renderPage('home');
         });
