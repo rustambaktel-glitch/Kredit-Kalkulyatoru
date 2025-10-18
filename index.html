@@ -1201,7 +1201,7 @@
                     // Ensure cashBalance structure exists
                     if (!DATA.cashBalance || typeof DATA.cashBalance.naqd === 'undefined') {
                         DATA.cashBalance = { naqd: 0, pos: 0 };
-                        recalculateAllDebtsAndBalances(true); // Recalculate if old structure is found
+                        recalculateAllDebtsAndBalances(true); 
                     }
                 } catch (e) {
                     console.error("Local Storage-dan məlumat yüklənərkən xəta: ", e);
@@ -2497,12 +2497,13 @@
                     } else {
                         cart.forEach((item, index) => {
                             const tr = document.createElement('tr');
+                            const salePriceValue = item.salePrice > 0 ? item.salePrice.toFixed(2) : '';
                             tr.innerHTML = `<tr>
                                 <td>${index + 1}</td>
                                 <td>${item.name}</td>
                                 <td>${item.imei1 || '-'}</td>
                                 <td>${item.imei2 || '-'}</td>
-                                <td><input type="number" class="cart-price-input" data-id="${item.stockId}" value="${(item.salePrice || 0).toFixed(2)}" step="0.01" min="0"></td>
+                                <td><input type="number" class="cart-price-input" data-id="${item.stockId}" value="${salePriceValue}" step="0.01" min="0"></td>
                                 <td class="actions-cell"><button type="button" class="btn-delete cart-remove-btn" data-id="${item.stockId}">🗑️</button></td>
                             </tr>`;
                             fragment.appendChild(tr);
@@ -2515,7 +2516,26 @@
                     if (activeTab === 'credit') generatePaymentSchedule();
                 };
 
-                // NOTE: All input handling is already linked below to automatically recalculate totals when price inputs change.
+                appContainer.addEventListener('input', (e) => {
+                    const activeView = forms[activeTab];
+                    if (!activeView.contains(e.target)) return;
+
+                    if (e.target.classList.contains('cart-price-input')) {
+                        const stockId = parseFloat(e.target.dataset.id);
+                        const cart = carts[activeTab];
+                        const item = cart.find(i => i.stockId === stockId);
+                        if (!item) return;
+
+                        item.salePrice = parseFloat(e.target.value) || 0;
+                        renderCart(cart, activeView); 
+                    }
+                    if (e.target.classList.contains('initial-payment') || e.target.classList.contains('loan-term')) {
+                        calculateTotal(carts[activeTab], activeView);
+                        if (activeTab === 'credit') {
+                                generatePaymentSchedule();
+                        }
+                    }
+                });
                 
                 const generatePaymentSchedule = () => {
                     const view = forms.credit;
@@ -2541,27 +2561,6 @@
                     scheduleHtml += '</tbody></table>';
                     scheduleDiv.innerHTML = scheduleHtml;
                 };
-
-                appContainer.addEventListener('input', (e) => {
-                    const activeView = forms[activeTab];
-                    if (!activeView.contains(e.target)) return;
-
-                    if (e.target.classList.contains('cart-price-input')) {
-                        const stockId = parseFloat(e.target.dataset.id);
-                        const cart = carts[activeTab];
-                        const item = cart.find(i => i.stockId === stockId);
-                        if (!item) return;
-
-                        item.salePrice = parseFloat(e.target.value) || 0;
-                        renderCart(cart, activeView); 
-                    }
-                    if (e.target.classList.contains('initial-payment') || e.target.classList.contains('loan-term')) {
-                        calculateTotal(carts[activeTab], activeView);
-                        if (activeTab === 'credit') {
-                                generatePaymentSchedule();
-                        }
-                    }
-                });
                 
                 forms.cash.querySelector('.payment-type').addEventListener('change', (e) => {
                     const cashTypeGroup = forms.cash.querySelector('#cash-sale-cash-type-group');
@@ -2640,7 +2639,7 @@
                                         name: product.name,
                                         imei1: availableItem.imei1,
                                         imei2: availableItem.imei2,
-                                        salePrice: availableItem.salePrice || 0,
+                                        salePrice: availableItem.salePrice || null, // Changed from 0 to null for manual input
                                         productId: product.id
                                     });
                                     renderCart(cart, forms[activeTab]);
@@ -2726,16 +2725,18 @@
                     const customerId = parseInt(view.querySelector('.sale-customer').value);
                     const paymentType = view.querySelector('.payment-type').value;
                     const cashType = view.querySelector('.cash-type').value;
+                    
                     if (cart.length === 0 || isNaN(customerId) || (customerId === 0 && paymentType !== 'Nağd' && paymentType !== 'POS Terminal')) {
                         alert('Müştəri seçin və səbətə məhsul əlavə edin!');
                         return;
                     }
+                    // Check if any salePrice is empty or zero
+                    if (cart.some(item => !item.salePrice || item.salePrice <= 0)) {
+                         alert('Zəhmət olmasa, bütün məhsullar üçün satış qiymətini daxil edin!');
+                         return;
+                    }
                     
                     const totalAmount = calculateTotal(cart, view);
-                    if(totalAmount <= 0) {
-                        alert('Satış məbləği 0-dan böyük olmalıdır!');
-                        return;
-                    }
                     
                     const isDebt = paymentType === 'Açıq Qaimə';
                     const initialPayment = isDebt ? 0 : totalAmount;
@@ -2765,16 +2766,17 @@
                     const cart = carts.credit;
                     const view = forms.credit;
                     const customerId = parseInt(view.querySelector('.sale-customer').value);
+                    
                     if (cart.length === 0 || !customerId) {
                         alert('Müştəri seçin və səbətə məhsul əlavə edin!');
                         return;
                     }
+                    if (cart.some(item => !item.salePrice || item.salePrice <= 0)) {
+                         alert('Zəhmət olmasa, bütün məhsullar üçün satış qiymətini daxil edin!');
+                         return;
+                    }
 
                     const totalAmount = calculateTotal(cart, view);
-                    if(totalAmount <= 0) {
-                        alert('Satış məbləği 0-dan böyük olmalıdır!');
-                        return;
-                    }
                     const initialPayment = parseFloat(view.querySelector('.initial-payment').value) || 0;
                     const loanTerm = parseInt(view.querySelector('.loan-term').value);
                     const cashType = view.querySelector('.cash-type').value;
@@ -2805,16 +2807,17 @@
                     const cart = carts.corporate;
                     const view = forms.corporate;
                     const customerId = parseInt(view.querySelector('.sale-customer').value);
+                    
                     if (cart.length === 0 || !customerId) {
                         alert('Müştəri seçin və səbətə məhsul əlavə edin!');
                         return;
                     }
+                    if (cart.some(item => !item.salePrice || item.salePrice <= 0)) {
+                         alert('Zəhmət olmasa, bütün məhsullar üçün satış qiymətini daxil edin!');
+                         return;
+                    }
 
                     const totalAmount = calculateTotal(cart, view);
-                    if(totalAmount <= 0) {
-                        alert('Satış məbləği 0-dan böyük olmalıdır!');
-                        return;
-                    }
                     const initialPayment = parseFloat(view.querySelector('.initial-payment').value) || 0;
                     const cashType = view.querySelector('.cash-type').value;
                     const debt = totalAmount - initialPayment;
@@ -2992,7 +2995,7 @@
                             purchaseId: newPurchaseId,
                             purchaseDate: new Date().toLocaleString('az-AZ'),
                             purchasePrice: item.purchasePrice,
-                            salePrice: 0, 
+                            salePrice: null, // Set to null for manual input in sales
                             imei1: item.imei1.trim().toUpperCase(),
                             imei2: item.imei2.trim().toUpperCase(),
                             isSold: false,
@@ -3517,7 +3520,6 @@
                     } else if (type === 'purchase') {
                         showPurchaseDetails(id);
                     }
-                    // Təchizatçılar səhifəsindəki detallar düyməsi
                     if (btn.classList.contains('supplier-details-btn')) {
                         showSupplierFullDetails(id);
                     }
