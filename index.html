@@ -1480,10 +1480,9 @@
                         date: new Date().toLocaleString('az-AZ'),
                         amount: amount,
                         type: cashType,
-                        transactionId: newTransaction.id // Add transaction ID to link payment record
+                        transactionId: newTransaction.id
                     });
                 } else {
-                    // Ümumi ödənişlər üçün sadəcə transaction əlavə et
                     addTransaction(`Müştəri Ödənişi`, `${customer.name} tərəfindən ümumi ödəniş`, amount, cashType, { customerId: customer.id });
                 }
                 
@@ -1519,7 +1518,6 @@
                     paymentSaleSelect.innerHTML = '';
                 }
                 
-                // Ümumi borcu ilkin dəyər kimi yaz
                 const customer = getCustomers().find(c => c.id === customerId);
                 paymentAmountInput.value = customer ? customer.debt.toFixed(2) : '';
                 paymentAmountInput.max = customer ? customer.debt.toFixed(2) : '';
@@ -1857,7 +1855,7 @@
                     if(item.saleId === saleId) {
                         item.isSold = false;
                         item.saleId = null;
-                        item.salePrice = null; // Changed back to null
+                        item.salePrice = null; 
                     }
                 });
 
@@ -2531,8 +2529,11 @@
                         const cart = carts[activeTab];
                         const item = cart.find(i => i.stockId === stockId);
                         if (!item) return;
+                        
+                        // Parse the value, set to null if empty or non-positive
+                        const value = parseFloat(e.target.value);
+                        item.salePrice = (value && value > 0) ? value : null; 
 
-                        item.salePrice = parseFloat(e.target.value) || null; // null if empty/invalid
                         renderCart(cart, activeView); 
                     }
                     if (e.target.classList.contains('initial-payment') || e.target.classList.contains('loan-term')) {
@@ -2587,7 +2588,7 @@
                     if(btn.classList.contains('cart-remove-btn')) {
                         const stockId = parseFloat(btn.dataset.id);
                         const stockItem = getStock().find(s => s.id === stockId);
-                        if(stockItem) stockItem.salePrice = null; // Changed to null
+                        if(stockItem) stockItem.salePrice = null; 
                         carts[activeTab] = carts[activeTab].filter(i => i.stockId !== stockId);
                         renderCart(carts[activeTab], activeView);
                     }
@@ -2645,7 +2646,7 @@
                                         name: product.name,
                                         imei1: availableItem.imei1,
                                         imei2: availableItem.imei2,
-                                        salePrice: availableItem.salePrice || null, // Changed from 0 to null
+                                        salePrice: availableItem.salePrice || null, 
                                         productId: product.id
                                     });
                                     renderCart(cart, forms[activeTab]);
@@ -2724,6 +2725,7 @@
                 };
                 
                 const validateCartPrices = (cart) => {
+                     // Check if salePrice is a number > 0
                      return cart.every(item => item.salePrice && item.salePrice > 0);
                 }
 
